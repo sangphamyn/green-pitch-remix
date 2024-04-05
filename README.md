@@ -34,3 +34,32 @@ Make sure to deploy the output of `npm run build`
 
 - `build/server`
 - `build/client`
+
+# My note
+
+## Used command
+
+Install remix:
+
+```shellscript
+npx create-remix@latest
+```
+
+Install tailwind:
+
+```shellscript
+npm install -D tailwindcss postcss autoprefixer
+npx tailwindcss init --ts -p
+```
+
+Install daisyUI:
+
+```shellscript
+npm i -D daisyui@latest
+```
+
+React Icons:
+
+```shellscript
+npm i react-icons
+```
