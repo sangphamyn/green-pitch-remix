@@ -10,7 +10,10 @@ function SideBarManagerComponent() {
   const handleNavigate = () => {};
   return (
     <div>
-      <div className="w-64 bg-gray-200 border-r border-gray-200 min-h-screen h-full">
+      <div
+        className="w-64 bg-gray-200 border-r border-gray-200 h-full"
+        style={{ minHeight: "calc(100vh - 57px)" }}
+      >
         <div className="py-4 px-6 mb-2">
           <Link to="/" className="header-logo flex items-center">
             <img src={logo} />
@@ -85,13 +88,13 @@ function SideBarManagerComponent() {
             Cụm sân
           </NavLink>
 
-          <a
-            href="#"
+          <Link
+            to="http://localhost:5173/"
             className="flex gap-3 items-center px-6 py-2.5 text-gray-600 hover:text-orange-600 hover:bg-orange-100 group transition"
           >
             <FaUsersRectangle />
             Nhân viên
-          </a>
+          </Link>
         </div>
       </div>
     </div>

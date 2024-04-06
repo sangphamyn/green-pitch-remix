@@ -35,9 +35,9 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <div className="flex flex-col min-h-screen">
           {data != "manager" ? <HeaderComponent /> : <></>}
           <div className="flex">
-            {data == "manager" ? <SideBarManagerComponent /> : <></>}
+            {/* {data == "manager" ? <SideBarManagerComponent /> : <></>} */}
             <div className="w-full">
-              {data == "manager" ? <HeaderManagerComponent /> : <></>}
+              {/* {data == "manager" ? <HeaderManagerComponent /> : <></>} */}
               <div>{children}</div>
             </div>
           </div>

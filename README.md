@@ -63,3 +63,5 @@ React Icons:
 ```shellscript
 npm i react-icons
 ```
+
+npx prisma @prisma/client esbuild-register ts-node tsconfig-paths

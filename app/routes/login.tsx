@@ -13,12 +13,6 @@ function login() {
   const data = useLoaderData<typeof loader>();
   const handleSubmit = () => {};
   const handleChange = () => {};
-  if (data == "manager")
-    return (
-      <div className="w-[800px] h-[200px] mx-auto mt-10 flex justify-center items-center border-dashed border-red-700 border-2 text-2xl font-bold">
-        CHỦ SÂN ĐĂNG NHẬP
-      </div>
-    );
   return (
     <div className="container mx-auto mt-16 max-w-[1000px] grid grid-cols-2 items-center">
       <img src={RegisterGif} />
