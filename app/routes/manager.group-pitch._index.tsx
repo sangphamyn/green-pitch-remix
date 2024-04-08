@@ -7,21 +7,21 @@ const pitches = [
   {
     name: "Sân CNTT",
     address: "Đường Bắc Sơn, Hoàng Văn Thụ, Thành phố Thái Nguyên, Thái Nguyên",
-    imageUrl: "/san-co-nhan-tao-7-nguoi-dep.jpg",
+    imageUrl: "/images/san-co-nhan-tao-7-nguoi-dep.jpg",
     status: 1,
     quantity: 4,
   },
   {
     name: "Sân Thanh Niên",
     address: "Đường Bắc Sơn, Hoàng Văn Thụ, Thành phố Thái Nguyên, Thái Nguyên",
-    imageUrl: "/san-co-nhan-tao-7-nguoi-dep.jpg",
+    imageUrl: "/images/san-co-nhan-tao-7-nguoi-dep.jpg",
     status: 0,
     quantity: 6,
   },
   {
     name: "Sân Công Nghiệp",
     address: "Đường Bắc Sơn, Hoàng Văn Thụ, Thành phố Thái Nguyên, Thái Nguyên",
-    imageUrl: "/san-co-nhan-tao-7-nguoi-dep.jpg",
+    imageUrl: "/images/san-co-nhan-tao-7-nguoi-dep.jpg",
     status: 3,
     quantity: 2,
   },
@@ -32,7 +32,7 @@ function group_pitch() {
     <div>
       <Outlet />
       <div className="join join-vertical lg:join-horizontal">
-        <Link to="/group-pitch/add" className="btn btn-primary">
+        <Link to="/manager/group-pitch/add" className="btn btn-primary">
           <FiPlusCircle />
           Thêm
         </Link>
@@ -44,7 +44,7 @@ function group_pitch() {
         <div className="grid grid-cols-2 gap-10 mt-5">
           {pitches.map((pitch, index) => (
             <Link
-              to={"/group-pitch/" + index}
+              to={"/manager/group-pitch/" + index}
               key={index}
               className="border rounded p-4 flex gap-5 hover:shadow transition hover:text-primary cursor-pointer"
             >

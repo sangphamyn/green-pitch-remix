@@ -1,15 +1,8 @@
 import { Link, useLoaderData } from "@remix-run/react";
-import logo from "/logo.svg";
-import {
-  ActionFunctionArgs,
-  LoaderFunction,
-  redirectDocument,
-} from "@remix-run/node";
-import { destroySession, getSession } from "~/session.server";
-import { loader } from "~/routes/$";
+import logo from "/images/logo.svg";
+import { loader } from "~/routes/_.$";
 
 const HeaderComponent = () => {
-  // const handleLogout = props.action;
   const data: { user: { [key: string]: string } } =
     useLoaderData<typeof loader>();
   let user = data.user;
@@ -93,10 +86,7 @@ const HeaderComponent = () => {
         </div>
         <div className="navbar-end">
           <div className="flex items-center gap-4">
-            <Link
-              to="http://manager.localhost:5173/"
-              className="btn bg-white text-black"
-            >
+            <Link to="/manager" className="btn bg-white text-black">
               Dành cho chủ sân
             </Link>
             {isLogin ? (

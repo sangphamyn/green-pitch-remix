@@ -24,13 +24,7 @@ import { destroySession, getSession } from "./session.server";
 export const links: LinksFunction = () => [
   { rel: "stylesheet", href: stylesheet },
 ];
-export let loader: LoaderFunction = async ({ request }) => {
-  const subdomain = request.headers.get("host")?.split(".")[0];
-  let session = await getSession(request.headers.get("cookie"));
-  return { subdomain, user: session.data };
-};
 export function Layout({ children }: { children: React.ReactNode }) {
-  const data = useLoaderData<typeof loader>();
   return (
     <html lang="en">
       <head>
@@ -41,14 +35,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
       </head>
       <body>
         <div className="flex flex-col min-h-screen">
-          {data.subdomain != "manager" ? <HeaderComponent /> : <></>}
-          <div className="flex">
-            {data.subdomain == "manager" ? <SideBarManagerComponent /> : <></>}
-            <div className="w-full">
-              {data.subdomain == "manager" ? <HeaderManagerComponent /> : <></>}
-              <div>{children}</div>
-            </div>
-          </div>
+          <div>{children}</div>
           <ScrollRestoration />
           <FooterComponent />
           <Scripts />

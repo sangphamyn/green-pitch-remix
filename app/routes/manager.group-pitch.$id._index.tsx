@@ -11,7 +11,7 @@ function group_pitch_detail() {
   return (
     <div>
       <div className="join join-vertical lg:join-horizontal">
-        <Link to={`/group-pitch/edit/1`} className="btn btn-primary">
+        <Link to={`/manager/group-pitch/1/edit`} className="btn btn-primary">
           <CiEdit />
           Sửa
         </Link>
@@ -27,7 +27,7 @@ function group_pitch_detail() {
         <div>
           <img
             className="w-full h-full object-cover rounded-lg"
-            src="/san-co-nhan-tao-7-nguoi-dep.jpg"
+            src="/images/san-co-nhan-tao-7-nguoi-dep.jpg"
             alt=""
           />
         </div>

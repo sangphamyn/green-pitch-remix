@@ -1,5 +1,5 @@
 import React from "react";
-import logo from "/logo.svg";
+import logo from "/images/logo.svg";
 import { Link, NavLink } from "@remix-run/react";
 import { AiOutlineHome } from "react-icons/ai";
 import { IoAnalytics, IoCalendarOutline } from "react-icons/io5";
@@ -15,7 +15,7 @@ function SideBarManagerComponent() {
         style={{ minHeight: "calc(100vh - 57px)" }}
       >
         <div className="py-4 px-6 mb-2">
-          <Link to="/" className="header-logo flex items-center">
+          <Link to="/manager" className="header-logo flex items-center">
             <img src={logo} />
             <span className="ml-4 font-bold text-xl">Green Pitch</span>
           </Link>
@@ -27,7 +27,8 @@ function SideBarManagerComponent() {
           </h3>
 
           <NavLink
-            to="/"
+            to="/manager"
+            end
             onClick={() => handleNavigate()}
             className={({ isActive }) =>
               "flex gap-3 items-center px-6 py-2.5 text-gray-600 hover:bg-orange-100 hover:text-orange-600 group transition " +
@@ -41,7 +42,7 @@ function SideBarManagerComponent() {
           </NavLink>
 
           <NavLink
-            to="/schedule"
+            to="/manager/schedule"
             onClick={() => handleNavigate()}
             className={({ isActive }) =>
               "flex gap-3 items-center px-6 py-2.5 text-gray-600 hover:bg-orange-100 hover:text-orange-600 group transition " +
@@ -55,7 +56,7 @@ function SideBarManagerComponent() {
           </NavLink>
 
           <NavLink
-            to="/statistic"
+            to="/manager/statistic"
             onClick={() => handleNavigate()}
             className={({ isActive }) =>
               "flex gap-3 items-center px-6 py-2.5 text-gray-600 hover:bg-orange-100 hover:text-orange-600 group transition " +
@@ -75,7 +76,7 @@ function SideBarManagerComponent() {
           </h3>
 
           <NavLink
-            to="/group-pitch"
+            to="/manager/group-pitch"
             onClick={() => handleNavigate()}
             className={({ isActive }) =>
               "flex gap-3 items-center px-6 py-2.5 text-gray-600 hover:bg-orange-100 hover:text-orange-600 group transition " +
@@ -89,7 +90,7 @@ function SideBarManagerComponent() {
           </NavLink>
 
           <Link
-            to="http://localhost:5173/"
+            to="/"
             className="flex gap-3 items-center px-6 py-2.5 text-gray-600 hover:text-orange-600 hover:bg-orange-100 group transition"
           >
             <FaUsersRectangle />

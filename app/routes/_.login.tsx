@@ -1,7 +1,7 @@
 import React, { ChangeEvent, useState } from "react";
 
-import RegisterGif from "/signup.gif";
-import AvatarImage from "/avatar.svg";
+import RegisterGif from "/images/signup.gif";
+import AvatarImage from "/images/avatar.svg";
 import { Form, Link, useActionData, useLoaderData } from "@remix-run/react";
 import {
   ActionFunctionArgs,

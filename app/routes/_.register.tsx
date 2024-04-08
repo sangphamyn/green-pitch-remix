@@ -1,6 +1,6 @@
 import React, { ChangeEvent, useState } from "react";
-import RegisterGif from "/signup.gif";
-import AvatarImage from "/avatar.svg";
+import RegisterGif from "/images/signup.gif";
+import AvatarImage from "/images/avatar.svg";
 import { Form, Link, useActionData } from "@remix-run/react";
 import { FaPhoneAlt } from "react-icons/fa";
 import {
@@ -8,11 +8,12 @@ import {
   LoaderFunction,
   LoaderFunctionArgs,
   json,
+  redirect,
 } from "@remix-run/node";
 import { getSession, commitSession } from "~/session.server";
 import { CreateUser } from "~/user.enum";
 import { createUser } from "prisma/user";
-import now from "./helper";
+import now from "../helper";
 import { PrismaClient } from "@prisma/client";
 const db = new PrismaClient();
 export async function loader({ request }: LoaderFunctionArgs) {
@@ -74,6 +75,17 @@ export async function action({ request }: ActionFunctionArgs) {
     createdAt: new Date(),
   };
   const newUser = await createUser(data);
+  let session = await getSession(request.headers.get("cookie"));
+  session.set("userId", newUser.id.toString());
+  session.set("name", newUser.name.toString());
+  session.set("phone", newUser.phone.toString());
+  session.set("email", newUser.email.toString());
+  session.set("avatar", newUser.avatar);
+  session.set("role", newUser.role);
+
+  return redirect("/", {
+    headers: { "set-cookie": await commitSession(session) },
+  });
   return data;
 }
 

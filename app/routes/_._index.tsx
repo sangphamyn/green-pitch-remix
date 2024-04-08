@@ -1,5 +1,5 @@
 import { LoaderFunction } from "@remix-run/node";
-import { useLoaderData } from "@remix-run/react";
+import { Outlet, useLoaderData } from "@remix-run/react";
 import { FaArrowRightLong } from "react-icons/fa6";
 import { IoMdFootball } from "react-icons/io";
 import { getSession } from "~/session.server";
