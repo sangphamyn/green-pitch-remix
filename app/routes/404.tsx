@@ -5,5 +5,10 @@ export const meta: MetaFunction = () => {
 };
 
 export default function NotFoundPage() {
-  return <main>Khong co trang nay 404</main>;
+  return (
+    <div className="p-5 text-center">
+      <div className="text-[100px]">404</div>
+      <div className="text-2xl">Trang không tồn tại</div>
+    </div>
+  );
 }

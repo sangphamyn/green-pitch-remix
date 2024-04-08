@@ -8,8 +8,3 @@ export let loader: LoaderFunction = async ({ request }) => {
     headers: { "set-cookie": await destroySession(session) },
   });
 };
-
-export async function action({ request }: ActionFunctionArgs) {
-  console.log("sang action logout");
-  return "sab";
-}
