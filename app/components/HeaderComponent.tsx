@@ -1,7 +1,19 @@
-import { Link } from "@remix-run/react";
+import { Link, useLoaderData } from "@remix-run/react";
 import logo from "/logo.svg";
+import {
+  ActionFunctionArgs,
+  LoaderFunction,
+  redirectDocument,
+} from "@remix-run/node";
+import { destroySession, getSession } from "~/session.server";
+import { loader } from "~/routes/$";
 
 const HeaderComponent = () => {
+  // const handleLogout = props.action;
+  const data: { user: { [key: string]: string } } =
+    useLoaderData<typeof loader>();
+  let user = data.user;
+  let isLogin = Object.keys(user).length > 0;
   return (
     <div className="bg-[#13357b] ">
       <div className="navbar container mx-auto text-white">
@@ -87,12 +99,45 @@ const HeaderComponent = () => {
             >
               Dành cho chủ sân
             </Link>
-            <Link
-              to="/login"
-              className="btn btn-outline border-white text-white"
-            >
-              Đăng ký/Đăng nhập
-            </Link>
+            {isLogin ? (
+              <div className="dropdown dropdown-end">
+                <div
+                  tabIndex={0}
+                  role="button"
+                  className="btn btn-ghost btn-circle flex w-auto px-2"
+                >
+                  <div className="w-10 rounded-full">
+                    <img
+                      className="rounded-full"
+                      alt="Tailwind CSS Navbar component"
+                      src="https://daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg"
+                    />
+                  </div>
+                  <div className="text-start">
+                    <div className="mb-1">{user?.name}</div>
+                    <div className="font-normal">{user?.phone}</div>
+                  </div>
+                </div>
+                <ul
+                  tabIndex={0}
+                  className="z-[1] p-2 shadow menu menu-sm dropdown-content bg-base-100 text-black rounded-box w-52"
+                >
+                  <li>
+                    <a className="justify-between">Thông tin cá nhân</a>
+                  </li>
+                  <li>
+                    <Link to="/logout">Đăng xuất</Link>
+                  </li>
+                </ul>
+              </div>
+            ) : (
+              <Link
+                to="/login"
+                className="btn btn-outline border-white text-white"
+              >
+                Đăng ký/Đăng nhập
+              </Link>
+            )}
           </div>
         </div>
       </div>

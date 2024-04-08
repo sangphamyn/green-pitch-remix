@@ -1,4 +1,4 @@
-import { Link, Outlet } from "@remix-run/react";
+import { Link, Links, Outlet } from "@remix-run/react";
 import React from "react";
 import { FiPlusCircle } from "react-icons/fi";
 import { MdOutlineStadium } from "react-icons/md";
@@ -43,8 +43,8 @@ function group_pitch() {
         </h1>
         <div className="grid grid-cols-2 gap-10 mt-5">
           {pitches.map((pitch, index) => (
-            <div
-              // onClick={() => handleNavigate("/group-pitch/detail")}
+            <Link
+              to={"/group-pitch/" + index}
               key={index}
               className="border rounded p-4 flex gap-5 hover:shadow transition hover:text-primary cursor-pointer"
             >
@@ -82,7 +82,7 @@ function group_pitch() {
                 </p>
               </div>{" "}
               {/* Thêm thông tin khác của sân bóng nếu cần */}
-            </div>
+            </Link>
           ))}
         </div>
       </div>
