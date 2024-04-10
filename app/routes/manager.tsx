@@ -14,7 +14,7 @@ function manager() {
   return (
     <div className="flex">
       <SideBarManagerComponent />
-      <div className="w-full">
+      <div className="w-full bg-slate-100">
         <HeaderManagerComponent />
         <Outlet />
       </div>

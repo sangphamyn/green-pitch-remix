@@ -1,5 +1,5 @@
 import { PrismaClient } from "@prisma/client";
-import { CreateUser } from "~/user.enum";
+import { CreateUser } from "~/enum/user.enum";
 const db = new PrismaClient();
 
 export const createUser = async (user: CreateUser) => {

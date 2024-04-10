@@ -4,8 +4,8 @@ import { IoIosFootball } from "react-icons/io";
 
 function index() {
   return (
-    <div className="w-full px-24">
-      <div className="container flex flex-col mx-auto bg-white">
+    <div className="w-full px-24 bg-white">
+      <div className="container flex flex-col mx-auto">
         <div className="grid w-full grid-cols-1 my-auto mt-12 mb-8 md:grid-cols-2 xl:gap-14 md:gap-5">
           <div className="flex flex-col justify-center col-span-1 text-center lg:text-start">
             <div className="flex items-center justify-center mb-4 lg:justify-normal">

@@ -1,5 +1,5 @@
 import { Link, useLoaderData } from "@remix-run/react";
-import { loader } from "~/routes/$";
+import { loader } from "~/routes/_.$";
 
 function HeaderManagerComponent() {
   const data: { user: { [key: string]: string } } =

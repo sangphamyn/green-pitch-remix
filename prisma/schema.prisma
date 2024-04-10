@@ -26,3 +26,8 @@ model User {
   deleted   DateTime?
   @@map("users") // Định nghĩa tên bảng là "users"
 }
+model Service {
+  id      Int      @id @default(autoincrement())
+  name    String
+  @@map("services") // Định nghĩa tên bảng là "users"
+}
