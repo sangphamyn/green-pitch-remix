@@ -8,12 +8,16 @@ interface Props {
   minuteStart: number;
   hourEnd: number;
   minuteEnd: number;
+  name: string;
+  removeAction: ()=>void;
 }
 const TimeComponent: React.FC<Props> = ({
   hourStart,
   minuteStart,
   hourEnd,
   minuteEnd,
+  name,
+  removeAction
 }) => {
   return (
     <div className="flex">
@@ -23,6 +27,7 @@ const TimeComponent: React.FC<Props> = ({
           <select
             className="pl-2 pr-1 py-2 outline-none appearance-none bg-transparent cursor-pointer hover:text-green-700 transition"
             value={hourStart}
+            name={name}
           >
             <option value="0">00</option>
             <option value="1">01</option>
@@ -53,6 +58,7 @@ const TimeComponent: React.FC<Props> = ({
           <select
             className="pl-1 pr-2 py-2 outline-none appearance-none bg-transparent cursor-pointer hover:text-green-700 transition"
             value={minuteStart}
+            name={name}
           >
             <option value="0">00</option>
             <option value="15">15</option>
@@ -65,6 +71,7 @@ const TimeComponent: React.FC<Props> = ({
           <select
             className="pl-2 pr-1 py-2 outline-none appearance-none bg-transparent cursor-pointer hover:text-green-700 transition"
             value={hourEnd}
+            name={name}
           >
             <option value="0">00</option>
             <option value="1">01</option>
@@ -95,6 +102,7 @@ const TimeComponent: React.FC<Props> = ({
           <select
             className="pl-1 pr-2 py-2 outline-none appearance-none bg-transparent cursor-pointer hover:text-green-700 transition"
             value={minuteEnd}
+            name={name}
           >
             <option value="0">00</option>
             <option value="15">15</option>
@@ -108,7 +116,7 @@ const TimeComponent: React.FC<Props> = ({
         placeholder="Giá"
         className="input input-bordered input-primary w-full"
       />
-      <button className="p-3 hover:text-error transition">
+      <button className="p-3 hover:text-error transition" onClick={removeAction}>
         <GoTrash />
       </button>
     </div>

@@ -23,7 +23,6 @@ export let loader: LoaderFunction = async ({ request }) => {
 export async function action({ request }: ActionFunctionArgs) {
   let formData = await request.formData();
   const intent = formData.get("intent");
-  console.log(intent);
   if (intent != "submit") return null;
 
   // console.log(Object.fromEntries(formData.entries()));
@@ -41,6 +40,7 @@ export async function action({ request }: ActionFunctionArgs) {
   console.log("pitchType       ", formData.getAll("pitchType"));
   console.log("pitchQuantity   ", formData.getAll("pitchQuantity"));
   console.log("pitchDesc       ", formData.getAll("pitchDesc"));
+  console.log("time            ", formData.getAll("time"));
   return null;
 }
 function groupPitchAdd() {
@@ -292,6 +292,7 @@ function groupPitchAdd() {
       `https://api.mysupership.vn/v1/partner/areas/commune?district=${e.target.value}`
     );
     const resjson = await res.json();
+    console.log(e.target.value);
     setWards(resjson.results);
   };
 
@@ -305,9 +306,9 @@ function groupPitchAdd() {
     setActiveTab1(false);
     setActiveTab2(true);
   };
-  const [selectedServices, setSelectedServices] = useState([]);
+  const [selectedServices, setSelectedServices] = useState<{[key:number]: {status:boolean}}>();
   const serviceList = data.services;
-  const [fieldTypes, setFieldTypes] = useState([
+  const [fieldTypes, setFieldTypes] = useState<[{pitchType: number, pitchQuantity: number, pitchDesc: string,timeSlots: Array<number>}]>([
     {
       pitchType: 11,
       pitchQuantity: 1,
@@ -327,7 +328,7 @@ function groupPitchAdd() {
     ]);
   };
   const handleCheckboxChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const serviceId = e.target.id;
+    const serviceId = e.target.id.toString().replace('service_','');
     const isChecked = e.target.checked;
     // const price =
     //   e.target?.parentElement?.querySelector("input[type=number]")?.value;
@@ -340,6 +341,37 @@ function groupPitchAdd() {
       [serviceId]: { status: isChecked },
     }));
     console.log(selectedServices);
+  };
+  const addTimeSlot = (index: number) => {
+    const newFieldTypes = [...fieldTypes];
+    var a = 5;
+    if (newFieldTypes[index].timeSlots.length)
+      a = parseInt(
+        newFieldTypes[index].timeSlots[
+          newFieldTypes[index].timeSlots.length - 1
+        ].hourEnd
+      );
+    var b = 0;
+    if (newFieldTypes[index].timeSlots.length)
+      b = parseInt(
+        newFieldTypes[index].timeSlots[
+          newFieldTypes[index].timeSlots.length - 1
+        ].minuteEnd
+      );
+    newFieldTypes[index].timeSlots.push({
+      hourStart: a,
+      minuteStart: b,
+      hourEnd: (a + 2) % 24,
+      minuteEnd: b,
+      price: "",
+    });
+    setFieldTypes(newFieldTypes);
+    console.log(newFieldTypes);
+  };
+  const removeTimeSlot = (fieldIndex:number, slotIndex:number) => {
+    const newFieldTypes = [...fieldTypes];
+    newFieldTypes[fieldIndex].timeSlots.splice(slotIndex, 1);
+    setFieldTypes(newFieldTypes);
   };
   return (
     <div className="container mx-auto my-12 max-w-[1000px]">
@@ -402,7 +434,7 @@ function groupPitchAdd() {
                 {districts.map(
                   (item: { name: string; code: string }, index: number) => {
                     return (
-                      <option key={index} defaultValue={item?.code}>
+                      <option key={index} value={item?.code}>
                         {item?.name}
                       </option>
                     );
@@ -485,7 +517,7 @@ function groupPitchAdd() {
                     />
                     <span className="label-text w-28">{service.name}</span>
                     {selectedServices &&
-                    selectedServices["service_" + service.id]?.status ? (
+                    selectedServices[service.id]?.status ? (
                       <div className="div">
                         <input
                           type="number"
@@ -576,26 +608,27 @@ function groupPitchAdd() {
                     ></textarea>
                   </label>
                 </div>
-                <div className="grid grid-cols-2 gap-x-6 gap-y-3">
-                  {/* <TimeComponent
-                    hourStart={5}
-                    minuteStart={0}
-                    hourEnd={6}
-                    minuteEnd={30}
+                <div className="grid grid-cols-2 gap-x-6 gap-y-3 mb-4">
+                  {field.timeSlots.map((slot:{hourStart:number, minuteStart:number, hourEnd: number, minuteEnd: number}, slotIndex: number) => (
+                    <TimeComponent
+                    hourStart={slot.hourStart}
+                    minuteStart={slot.minuteStart}
+                    hourEnd={slot.hourEnd}
+                    minuteEnd={slot.minuteEnd}
+                    name="time"
+                    removeAction={() => removeTimeSlot(index, slotIndex)}
                   />
-                  <TimeComponent
-                    hourStart={5}
-                    minuteStart={0}
-                    hourEnd={6}
-                    minuteEnd={30}
-                  />
-                  <TimeComponent
-                    hourStart={5}
-                    minuteStart={0}
-                    hourEnd={6}
-                    minuteEnd={30}
-                  /> */}
+                  ))}
                 </div>
+                <button
+              className="flex gap-3 items-center bg-green-500 px-5 py-2 rounded text-white"
+              onClick={() => addTimeSlot(index)}
+              value="nothing"
+              name="intent"
+            >
+              Thêm khoảng thời gian
+              <GoPlusCircle />
+            </button>
               </div>
             ))}
             <button
