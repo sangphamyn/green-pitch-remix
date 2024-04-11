@@ -1,19 +1,16 @@
 import React, { ChangeEvent, useState } from "react";
 import RegisterGif from "/images/signup.gif";
-import AvatarImage from "/images/avatar.svg";
 import { Form, Link, useActionData } from "@remix-run/react";
 import { FaPhoneAlt } from "react-icons/fa";
 import {
   ActionFunctionArgs,
-  LoaderFunction,
   LoaderFunctionArgs,
   json,
   redirect,
 } from "@remix-run/node";
 import { getSession, commitSession } from "~/session.server";
-import { CreateUser } from "~/user.enum";
+import { CreateUser } from "~/enum/user.enum";
 import { createUser } from "prisma/user";
-import now from "../helper";
 import { PrismaClient } from "@prisma/client";
 const db = new PrismaClient();
 export async function loader({ request }: LoaderFunctionArgs) {
@@ -122,8 +119,10 @@ function register() {
         </p>
         <div className="form-control w-full max-w-xs mb-4">
           <label
-            className={`input input-bordered flex items-center gap-2 ${
-              actionData?.message?.name ? "input-error" : "input-primary"
+            className={`input input-bordered flex items-center gap-2 focus-within:outline-none ${
+              actionData?.message?.name
+                ? "input-error"
+                : "focus-within:border-primary"
             }`}
           >
             <svg
@@ -155,8 +154,10 @@ function register() {
         </div>
         <div className="form-control w-full max-w-xs mb-4">
           <label
-            className={`input input-bordered flex items-center gap-2 ${
-              actionData?.message?.email ? "input-error" : "input-primary"
+            className={`input input-bordered flex items-center gap-2 focus-within:outline-none ${
+              actionData?.message?.email
+                ? "input-error"
+                : "focus-within:border-primary"
             }`}
           >
             <svg
@@ -189,8 +190,10 @@ function register() {
         </div>
         <div className="form-control w-full max-w-xs mb-4">
           <label
-            className={`input input-bordered flex items-center gap-2 ${
-              actionData?.message?.phone ? "input-error" : "input-primary"
+            className={`input input-bordered flex items-center gap-2 focus-within:outline-none ${
+              actionData?.message?.phone
+                ? "input-error"
+                : "focus-within:border-primary"
             }`}
           >
             <FaPhoneAlt className="w-4 h-4 opacity-70" />
@@ -215,8 +218,10 @@ function register() {
         </div>
         <div className="form-control w-full max-w-xs mb-4">
           <label
-            className={`input input-bordered flex items-center gap-2 ${
-              actionData?.message?.password ? "input-error" : "input-primary"
+            className={`input input-bordered flex items-center gap-2 focus-within:outline-none ${
+              actionData?.message?.password
+                ? "input-error"
+                : "focus-within:border-primary"
             }`}
           >
             <svg
@@ -252,10 +257,10 @@ function register() {
         </div>
         <div className="form-control w-full max-w-xs mb-4">
           <label
-            className={`input input-bordered flex items-center gap-2 ${
+            className={`input input-bordered flex items-center gap-2 focus-within:outline-none ${
               actionData?.message?.confirmPassword
                 ? "input-error"
-                : "input-primary"
+                : "focus-within:border-primary"
             }`}
           >
             <svg

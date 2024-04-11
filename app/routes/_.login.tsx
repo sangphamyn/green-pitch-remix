@@ -2,7 +2,7 @@ import React, { ChangeEvent, useState } from "react";
 
 import RegisterGif from "/images/signup.gif";
 import AvatarImage from "/images/avatar.svg";
-import { Form, Link, useActionData, useLoaderData } from "@remix-run/react";
+import { Form, Link, useActionData } from "@remix-run/react";
 import {
   ActionFunctionArgs,
   LoaderFunction,
@@ -103,8 +103,10 @@ function login() {
         </p>
         <div className="form-control w-full max-w-xs mb-4">
           <label
-            className={`input input-bordered flex items-center gap-2 ${
-              actionData?.message?.username ? "input-error" : "input-primary"
+            className={`input input-bordered flex items-center gap-2 focus-within:outline-none ${
+              actionData?.message?.username
+                ? "input-error"
+                : "focus-within:border-primary"
             }`}
           >
             <svg
@@ -136,8 +138,10 @@ function login() {
         </div>
         <div className="form-control w-full max-w-xs mb-4">
           <label
-            className={`input input-bordered flex items-center gap-2 ${
-              actionData?.message?.password ? "input-error" : "input-primary"
+            className={`input input-bordered flex items-center gap-2 focus-within:outline-none ${
+              actionData?.message?.password
+                ? "input-error"
+                : "focus-within:border-primary"
             }`}
           >
             <svg

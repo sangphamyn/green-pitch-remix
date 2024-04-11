@@ -9,7 +9,7 @@ interface Props {
   hourEnd: number;
   minuteEnd: number;
   name: string;
-  removeAction: ()=>void;
+  removeAction: () => void;
 }
 const TimeComponent: React.FC<Props> = ({
   hourStart,
@@ -17,7 +17,7 @@ const TimeComponent: React.FC<Props> = ({
   hourEnd,
   minuteEnd,
   name,
-  removeAction
+  removeAction,
 }) => {
   return (
     <div className="flex">
@@ -114,9 +114,12 @@ const TimeComponent: React.FC<Props> = ({
       <input
         type="number"
         placeholder="Giá"
-        className="input input-bordered input-primary w-full"
+        className="input input-bordered focus:border-primary focus-within:outline-none w-full"
       />
-      <button className="p-3 hover:text-error transition" onClick={removeAction}>
+      <button
+        className="p-3 hover:text-error transition"
+        onClick={removeAction}
+      >
         <GoTrash />
       </button>
     </div>

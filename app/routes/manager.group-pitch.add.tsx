@@ -1,19 +1,14 @@
 import { ActionFunctionArgs, LoaderFunction, json } from "@remix-run/node";
 import {
   Form,
-  useFetcher,
   useLoaderData,
-  useNavigation,
 } from "@remix-run/react";
 import { getAllService } from "prisma/pitch";
 import React, { ChangeEvent, useState } from "react";
 import { CiCircleList } from "react-icons/ci";
-import { FaRegClock, FaRightLong } from "react-icons/fa6";
 import { GoPlusCircle } from "react-icons/go";
 import { LiaEditSolid } from "react-icons/lia";
-import { MdOutlineClose } from "react-icons/md";
-import InputComponent from "~/components/InputComponent";
-import TimeComponent from "~/components/TimeComponent";
+import TimeComponent from "~/components/TimeComponent1";
 import { getSession } from "~/session.server";
 
 export let loader: LoaderFunction = async ({ request }) => {
@@ -40,7 +35,7 @@ export async function action({ request }: ActionFunctionArgs) {
   console.log("pitchType       ", formData.getAll("pitchType"));
   console.log("pitchQuantity   ", formData.getAll("pitchQuantity"));
   console.log("pitchDesc       ", formData.getAll("pitchDesc"));
-  console.log("time            ", formData.getAll("time"));
+  console.log("sang            ", formData.getAll("sang"));
   return null;
 }
 function groupPitchAdd() {
@@ -296,8 +291,8 @@ function groupPitchAdd() {
     setWards(resjson.results);
   };
 
-  const [activeTab1, setActiveTab1] = useState(false);
-  const [activeTab2, setActiveTab2] = useState(true);
+  const [activeTab1, setActiveTab1] = useState(0);
+  const [activeTab2, setActiveTab2] = useState(1);
   const changeTab1 = () => {
     setActiveTab1(true);
     setActiveTab2(false);
@@ -306,9 +301,20 @@ function groupPitchAdd() {
     setActiveTab1(false);
     setActiveTab2(true);
   };
-  const [selectedServices, setSelectedServices] = useState<{[key:number]: {status:boolean}}>();
+  const [selectedServices, setSelectedServices] = useState<{
+    [key: number]: { status: boolean };
+  }>();
   const serviceList = data.services;
-  const [fieldTypes, setFieldTypes] = useState<[{pitchType: number, pitchQuantity: number, pitchDesc: string,timeSlots: Array<number>}]>([
+  const [fieldTypes, setFieldTypes] = useState<
+    [
+      {
+        pitchType: number;
+        pitchQuantity: number;
+        pitchDesc: string;
+        timeSlots: Array<number>;
+      }
+    ]
+  >([
     {
       pitchType: 11,
       pitchQuantity: 1,
@@ -328,7 +334,7 @@ function groupPitchAdd() {
     ]);
   };
   const handleCheckboxChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const serviceId = e.target.id.toString().replace('service_','');
+    const serviceId = e.target.id.toString().replace("service_", "");
     const isChecked = e.target.checked;
     // const price =
     //   e.target?.parentElement?.querySelector("input[type=number]")?.value;
@@ -368,7 +374,7 @@ function groupPitchAdd() {
     setFieldTypes(newFieldTypes);
     console.log(newFieldTypes);
   };
-  const removeTimeSlot = (fieldIndex:number, slotIndex:number) => {
+  const removeTimeSlot = (fieldIndex: number, slotIndex: number) => {
     const newFieldTypes = [...fieldTypes];
     newFieldTypes[fieldIndex].timeSlots.splice(slotIndex, 1);
     setFieldTypes(newFieldTypes);
@@ -416,7 +422,7 @@ function groupPitchAdd() {
               name="groupPitchName"
               placeholder="Nhập tên cụm sân"
               defaultValue="Sân thanh niên"
-              className="input input-bordered input-primary w-full rounded"
+              className="input input-bordered w-full rounded focus:border-primary focus-within:outline-none"
             />
           </label>
           <div className="flex gap-4">
@@ -427,7 +433,7 @@ function groupPitchAdd() {
                 </span>
               </div>
               <select
-                className="select select-bordered select-primary rounded"
+                className="select select-bordered focus:border-primary focus-within:outline-none rounded"
                 onChange={handleChangeDistric}
                 name="district"
               >
@@ -447,7 +453,7 @@ function groupPitchAdd() {
                 <span className="label-text font-semibold">Phường/Xã</span>
               </div>
               <select
-                className="select select-bordered select-primary rounded"
+                className="select select-bordered focus:border-primary focus-within:outline-none rounded"
                 name="ward"
               >
                 {wards.map(
@@ -470,7 +476,7 @@ function groupPitchAdd() {
               <input
                 type="text"
                 placeholder="Nhập địa chỉ chi tiết, ngõ, đường, mô tả,..."
-                className="input input-bordered input-primary w-full rounded"
+                className="input input-bordered focus:border-primary focus-within:outline-none w-full rounded"
                 name="address_detail"
                 defaultValue="Đê nông lâm đi vào 100m"
               />
@@ -483,7 +489,7 @@ function groupPitchAdd() {
             <input
               type="text"
               placeholder="Nhập link google map"
-              className="input input-bordered input-primary w-full rounded"
+              className="input input-bordered focus:border-primary focus-within:outline-none w-full rounded"
               name="address_map"
               defaultValue="Map link"
             />
@@ -493,7 +499,7 @@ function groupPitchAdd() {
               <span className="label-text font-semibold">Mô tả</span>
             </div>
             <textarea
-              className="textarea textarea-bordered h-24 textarea-primary rounded"
+              className="textarea textarea-bordered h-24 focus:border-primary focus-within:outline-none rounded"
               placeholder="Các thông tin cơ bản"
               defaultValue="Sân đẹp mới xây dựng"
               name="groupPitchDesc"
@@ -513,7 +519,7 @@ function groupPitchAdd() {
                       id={"service_" + service.id}
                       defaultValue={service.id}
                       onChange={handleCheckboxChange}
-                      className="checkbox checkbox-primary rounded"
+                      className="checkbox rounded"
                     />
                     <span className="label-text w-28">{service.name}</span>
                     {selectedServices &&
@@ -526,7 +532,7 @@ function groupPitchAdd() {
                           // onChange={handleServicePriceChange}
                           placeholder="Giá"
                           name="servicePrices"
-                          className="input-xs input input-bordered rounded"
+                          className="input-xs input input-bordered rounded focus:border-primary focus-within:outline-none"
                         />
                       </div>
                     ) : (
@@ -569,7 +575,7 @@ function groupPitchAdd() {
                       placeholder="Nhập tên sân"
                       name="pitchName"
                       id="pitchName"
-                      className="input input-bordered input-primary w-full rounded"
+                      className="input input-bordered focus:border-primary focus-within:outline-none w-full rounded"
                     />
                   </label>
                   <label className="form-control">
@@ -577,7 +583,7 @@ function groupPitchAdd() {
                       <span className="label-text font-semibold">Loại sân</span>
                     </div>
                     <select
-                      className="select select-bordered select-primary rounded"
+                      className="select select-bordered focus:border-primary focus-within:outline-none rounded"
                       name="pitchType"
                       defaultValue={field.pitchType}
                     >
@@ -594,7 +600,7 @@ function groupPitchAdd() {
                       type="number"
                       placeholder="Số sân"
                       name="pitchQuantity"
-                      className="input input-bordered input-primary w-full rounded"
+                      className="input input-bordered focus:border-primary focus-within:outline-none w-full rounded"
                     />
                   </label>
                   <label className="form-control w-full">
@@ -602,33 +608,43 @@ function groupPitchAdd() {
                       <span className="label-text font-semibold">Mô tả</span>
                     </div>
                     <textarea
-                      className="textarea textarea-bordered textarea-primary h-1 rounded"
+                      className="textarea textarea-bordered focus:border-primary focus-within:outline-none h-1 rounded"
                       placeholder="Các thông tin cơ bản"
                       name="pitchDesc"
                     ></textarea>
                   </label>
                 </div>
                 <div className="grid grid-cols-2 gap-x-6 gap-y-3 mb-4">
-                  {field.timeSlots.map((slot:{hourStart:number, minuteStart:number, hourEnd: number, minuteEnd: number}, slotIndex: number) => (
-                    <TimeComponent
-                    hourStart={slot.hourStart}
-                    minuteStart={slot.minuteStart}
-                    hourEnd={slot.hourEnd}
-                    minuteEnd={slot.minuteEnd}
-                    name="time"
-                    removeAction={() => removeTimeSlot(index, slotIndex)}
-                  />
-                  ))}
+                  {field.timeSlots.map(
+                    (
+                      slot: {
+                        hourStart: number;
+                        minuteStart: number;
+                        hourEnd: number;
+                        minuteEnd: number;
+                      },
+                      slotIndex: number
+                    ) => (
+                      <TimeComponent
+                        hourStart={slot.hourStart}
+                        minuteStart={slot.minuteStart}
+                        hourEnd={slot.hourEnd}
+                        minuteEnd={slot.minuteEnd}
+                        name="time"
+                        removeAction={() => removeTimeSlot(index, slotIndex)}
+                      />
+                    )
+                  )}
                 </div>
                 <button
-              className="flex gap-3 items-center bg-green-500 px-5 py-2 rounded text-white"
-              onClick={() => addTimeSlot(index)}
-              value="nothing"
-              name="intent"
-            >
-              Thêm khoảng thời gian
-              <GoPlusCircle />
-            </button>
+                  className="flex gap-3 items-center bg-green-500 px-5 py-2 rounded text-white"
+                  onClick={() => addTimeSlot(index)}
+                  value="nothing"
+                  name="intent"
+                >
+                  Thêm khoảng thời gian
+                  <GoPlusCircle />
+                </button>
               </div>
             ))}
             <button

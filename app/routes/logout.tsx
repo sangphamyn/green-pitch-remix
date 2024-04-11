@@ -1,4 +1,4 @@
-import { ActionFunctionArgs, LoaderFunction, redirect } from "@remix-run/node";
+import { LoaderFunction, redirect } from "@remix-run/node";
 import React from "react";
 import { destroySession, getSession } from "~/session.server";
 

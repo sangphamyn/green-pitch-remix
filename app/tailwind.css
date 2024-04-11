@@ -11,3 +11,17 @@
   height: 1px;
   background: #000;
 }
+.sang-scrollbar::-webkit-scrollbar {
+  width: 3px;
+}
+.sang-scrollbar::-webkit-scrollbar-track {
+  background: #fff;
+  border-radius: 5px;
+}
+.sang-scrollbar::-webkit-scrollbar-thumb {
+  background: #5a5a5a;
+  border-radius: 5px;
+}
+.sang-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}

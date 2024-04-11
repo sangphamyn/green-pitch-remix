@@ -1,4 +1,4 @@
-import { Link, Links, Outlet } from "@remix-run/react";
+import { Link, Outlet } from "@remix-run/react";
 import React from "react";
 import { FiPlusCircle } from "react-icons/fi";
 import { MdOutlineStadium } from "react-icons/md";

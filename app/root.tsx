@@ -4,22 +4,13 @@ import {
   Outlet,
   Scripts,
   ScrollRestoration,
-  redirectDocument,
-  useFetcher,
-  useLoaderData,
 } from "@remix-run/react";
 
 import type {
-  ActionFunctionArgs,
   LinksFunction,
-  LoaderFunction,
 } from "@remix-run/node";
 import stylesheet from "~/tailwind.css?url";
-import HeaderComponent from "./components/HeaderComponent";
 import FooterComponent from "./components/FooterComponent";
-import SideBarManagerComponent from "./components/SideBarManagerComponent";
-import HeaderManagerComponent from "./components/HeaderManagerComponent";
-import { destroySession, getSession } from "./session.server";
 
 export const links: LinksFunction = () => [
   { rel: "stylesheet", href: stylesheet },

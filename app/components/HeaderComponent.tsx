@@ -86,7 +86,10 @@ const HeaderComponent = () => {
         </div>
         <div className="navbar-end">
           <div className="flex items-center gap-4">
-            <Link to="/manager" className="btn bg-white text-black">
+            <Link
+              to="/manager"
+              className="btn btn-sm h-10 border-white text-white btn-outline rounded"
+            >
               Dành cho chủ sân
             </Link>
             {isLogin ? (
@@ -121,10 +124,7 @@ const HeaderComponent = () => {
                 </ul>
               </div>
             ) : (
-              <Link
-                to="/login"
-                className="btn btn-outline border-white text-white"
-              >
+              <Link to="/login" className="btn bg-white h-10 btn-sm rounded">
                 Đăng ký/Đăng nhập
               </Link>
             )}

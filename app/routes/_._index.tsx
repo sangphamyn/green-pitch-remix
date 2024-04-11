@@ -1,8 +1,5 @@
 import { LoaderFunction } from "@remix-run/node";
-import { Outlet, useLoaderData } from "@remix-run/react";
-import { FaArrowRightLong } from "react-icons/fa6";
-import { IoMdFootball } from "react-icons/io";
-import { getSession } from "~/session.server";
+import { useLoaderData } from "@remix-run/react";
 
 export let loader: LoaderFunction = async ({ request }) => {
   const subdomain = request.headers.get("host")?.split(".")[0];
