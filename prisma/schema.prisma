@@ -24,10 +24,40 @@ model User {
   createdAt DateTime?
   updatedAt DateTime?
   deleted   DateTime?
-  @@map("users") // Định nghĩa tên bảng là "users"
+
+  groupPitches GroupPitch[]
+  @@map("users")
 }
 model Service {
   id      Int      @id @default(autoincrement())
   name    String
-  @@map("services") // Định nghĩa tên bảng là "users"
+
+  groupPitches GroupPitch[] @relation("grouppitch_service")
+  groupPitches1 grouppitch_service[]
+  @@map("services")
+}
+model GroupPitch {
+  id      Int      @id @default(autoincrement())
+  name    String
+  id_district Int?
+  id_ward Int?
+  address_detail String?
+  map String?
+  description String?
+  ownerId   Int?
+
+  owner     User?    @relation(fields: [ownerId], references: [id])
+  services     Service[]  @relation("grouppitch_service")
+  servicesInGroupPitch grouppitch_service[]
+  @@map("grouppitch")
+}
+
+model grouppitch_service {
+  id      Int      @id @default(autoincrement())
+  groupPitchId  Int
+  serviceId     Int
+  price Float?
+
+  groupPitch    GroupPitch? @relation(fields: [groupPitchId], references: [id])
+  service       Service?    @relation(fields: [serviceId], references: [id])
 }

@@ -1,14 +1,12 @@
 import { ActionFunctionArgs, LoaderFunction, json } from "@remix-run/node";
-import {
-  Form,
-  useLoaderData,
-} from "@remix-run/react";
-import { getAllService } from "prisma/pitch";
+import { Form, useActionData, useLoaderData } from "@remix-run/react";
+import { createPitch, getAllService } from "prisma/pitch";
 import React, { ChangeEvent, useState } from "react";
 import { CiCircleList } from "react-icons/ci";
 import { GoPlusCircle } from "react-icons/go";
 import { LiaEditSolid } from "react-icons/lia";
 import TimeComponent from "~/components/TimeComponent1";
+import { CreateGroupPitch } from "~/enum/pitch.enum";
 import { getSession } from "~/session.server";
 
 export let loader: LoaderFunction = async ({ request }) => {
@@ -22,24 +20,59 @@ export async function action({ request }: ActionFunctionArgs) {
 
   // console.log(Object.fromEntries(formData.entries()));
   let session = await getSession(request.headers.get("cookie"));
-  console.log("groupPitchName  ", formData.get("groupPitchName"));
-  console.log("district        ", formData.get("district"));
-  console.log("ward            ", formData.get("ward"));
-  console.log("address_detail  ", formData.get("address_detail"));
-  console.log("address_map     ", formData.get("address_map"));
-  console.log("groupPitchDesc  ", formData.get("groupPitchDesc"));
-  console.log("services        ", formData.getAll("groupPitchServices"));
-  console.log("servicePrices   ", formData.getAll("servicePrices"));
-  console.log("author          ", session.get("userId"));
-  console.log("pitchName       ", formData.getAll("pitchName"));
-  console.log("pitchType       ", formData.getAll("pitchType"));
-  console.log("pitchQuantity   ", formData.getAll("pitchQuantity"));
-  console.log("pitchDesc       ", formData.getAll("pitchDesc"));
-  console.log("sang            ", formData.getAll("sang"));
+  const groupPitchName = formData.get("groupPitchName");
+  const district = formData.get("district");
+  const ward = formData.get("ward");
+  const address_detail = formData.get("address_detail");
+  const address_map = formData.get("address_map");
+  const groupPitchDesc = formData.get("groupPitchDesc");
+  const services = formData.get("groupPitchServices");
+  const servicePrices = formData.get("servicePrices");
+  const owner = session.get("userId");
+
+  let message: { [key: string]: string } = {};
+  if (!groupPitchName) message["groupPitchName"] = "Cần điền tên";
+  if (Object.keys(message).length > 0) {
+    return json({
+      status: "error",
+      message: message,
+    });
+  }
+  // console.log("groupPitchName  ", groupPitchName);
+  // console.log("district        ", formData.get("district"));
+  // console.log("ward            ", formData.get("ward"));
+  // console.log("address_detail  ", formData.get("address_detail"));
+  // console.log("address_map     ", formData.get("address_map"));
+  // console.log("groupPitchDesc  ", formData.get("groupPitchDesc"));
+  // console.log("services        ", formData.getAll("groupPitchServices"));
+  // console.log("servicePrices   ", formData.getAll("servicePrices"));
+  // console.log("author          ", session.get("userId"));
+  // console.log("pitchName       ", formData.getAll("pitchName"));
+  // console.log("pitchType       ", formData.getAll("pitchType"));
+  // console.log("pitchQuantity   ", formData.getAll("pitchQuantity"));
+  // console.log("pitchDesc       ", formData.getAll("pitchDesc"));
+  // console.log("timeSlot            ", formData.getAll("timeSlot"));
+  let data: CreateGroupPitch | undefined;
+  if (district !== null && ward !== null && owner !== undefined) {
+    data = {
+      name: groupPitchName as string,
+      id_district: parseInt(district.toString()),
+      id_ward: parseInt(ward.toString()),
+      address_detail: address_detail as string,
+      map: address_map as string,
+      description: groupPitchDesc as string,
+      ownerId: parseInt(owner.toString()),
+    };
+  }
+  if (data !== undefined) {
+    const groupPitch = await createPitch(data);
+    console.log(groupPitch);
+  }
   return null;
 }
 function groupPitchAdd() {
   const data = useLoaderData<typeof loader>();
+  let actionData = useActionData<{ message: Record<string, any> }>();
   const districts = [
     {
       code: "164",
@@ -287,19 +320,18 @@ function groupPitchAdd() {
       `https://api.mysupership.vn/v1/partner/areas/commune?district=${e.target.value}`
     );
     const resjson = await res.json();
-    console.log(e.target.value);
     setWards(resjson.results);
   };
 
-  const [activeTab1, setActiveTab1] = useState(0);
-  const [activeTab2, setActiveTab2] = useState(1);
+  const [activeTab1, setActiveTab1] = useState(1);
+  const [activeTab2, setActiveTab2] = useState(0);
   const changeTab1 = () => {
-    setActiveTab1(true);
-    setActiveTab2(false);
+    setActiveTab1(1);
+    setActiveTab2(0);
   };
   const changeTab2 = () => {
-    setActiveTab1(false);
-    setActiveTab2(true);
+    setActiveTab1(0);
+    setActiveTab2(1);
   };
   const [selectedServices, setSelectedServices] = useState<{
     [key: number]: { status: boolean };
@@ -346,7 +378,6 @@ function groupPitchAdd() {
       ...prevState,
       [serviceId]: { status: isChecked },
     }));
-    console.log(selectedServices);
   };
   const addTimeSlot = (index: number) => {
     const newFieldTypes = [...fieldTypes];
@@ -372,7 +403,6 @@ function groupPitchAdd() {
       price: "",
     });
     setFieldTypes(newFieldTypes);
-    console.log(newFieldTypes);
   };
   const removeTimeSlot = (fieldIndex: number, slotIndex: number) => {
     const newFieldTypes = [...fieldTypes];
@@ -422,9 +452,22 @@ function groupPitchAdd() {
               name="groupPitchName"
               placeholder="Nhập tên cụm sân"
               defaultValue="Sân thanh niên"
-              className="input input-bordered w-full rounded focus:border-primary focus-within:outline-none"
+              className={`input input-bordered flex items-center gap-2 focus-within:outline-none ${
+                actionData?.message?.groupPitchName
+                  ? "input-error"
+                  : "focus-within:border-primary"
+              }`}
             />
           </label>
+          {actionData?.message?.groupPitchName ? (
+            <div className="label pt-1 pb-0">
+              <span className="label-text-alt text-error">
+                {actionData.message.groupPitchName}
+              </span>
+            </div>
+          ) : (
+            <></>
+          )}
           <div className="flex gap-4">
             <label className="form-control">
               <div className="label pb-1">
@@ -459,7 +502,7 @@ function groupPitchAdd() {
                 {wards.map(
                   (item: { name: string; code: string }, index: number) => {
                     return (
-                      <option key={index} defaultValue={item?.code}>
+                      <option key={index} value={item?.code}>
                         {item?.name}
                       </option>
                     );
@@ -546,7 +589,7 @@ function groupPitchAdd() {
           <div className="flex items-center justify-center mt-8">
             <button
               className="btn btn-primary px-10 rounded-full w-full"
-              // onClick={changeTab2}
+              onClick={changeTab2}
             >
               Thêm danh sách sân và giá
             </button>

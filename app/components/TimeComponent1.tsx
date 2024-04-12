@@ -23,6 +23,10 @@ const TimeComponent: React.FC<Props> = ({
   const [spanText2, setSpanText2] = useState<string>("00");
   const inputRefs1 = useRef<HTMLInputElement>(null);
   const inputRefs2 = useRef<HTMLInputElement>(null);
+  const [spanText3, setSpanText3] = useState<string>("05");
+  const [spanText4, setSpanText4] = useState<string>("00");
+  const inputRefs3 = useRef<HTMLInputElement>(null);
+  const inputRefs4 = useRef<HTMLInputElement>(null);
   const handleSelectTime1 = (
     e: React.MouseEvent<HTMLDivElement, MouseEvent>
   ) => {
@@ -37,24 +41,47 @@ const TimeComponent: React.FC<Props> = ({
       inputRefs2.current.value = e.currentTarget.textContent || "";
     setSpanText2(e.currentTarget.textContent || "");
   };
+  const handleSelectTime3 = (
+    e: React.MouseEvent<HTMLDivElement, MouseEvent>
+  ) => {
+    if (inputRefs3.current)
+      inputRefs3.current.value = e.currentTarget.textContent || "";
+    setSpanText3(e.currentTarget.textContent || "");
+  };
+  const handleSelectTime4 = (
+    e: React.MouseEvent<HTMLDivElement, MouseEvent>
+  ) => {
+    if (inputRefs4.current)
+      inputRefs4.current.value = e.currentTarget.textContent || "";
+    setSpanText4(e.currentTarget.textContent || "");
+  };
+
   return (
     <div className="flex">
       <div className="flex items-center flex-shrink-0 bg-slate-200 w-fit rounded px-3 mr-3">
         <div className="flex items-center relative">
           <LuClock className="flex-shrink-0" />
-          <div className="relative">
-            <div className="btn bg-transparent border-none hover:bg-transparent shadow-none px-3 hover:text-primary transition gap-1">
+          <div className="dropdown">
+            <div
+              tabIndex={0}
+              role="button"
+              className="btn bg-transparent border-none hover:bg-transparent shadow-none px-3 hover:text-primary transition gap-1"
+            >
               <span ref={inputRefs1}>{spanText1}</span> :{" "}
-              <span>{spanText2}</span>
+              <span ref={inputRefs2}>{spanText2}</span>
             </div>
-            <div className="flex absolute bg-white py-3 shadow-2xl border">
-              <div className="max-h-[200px] overflow-y-auto overflow-x-hidden sang-scrollbar border-r">
+            <ul
+              tabIndex={0}
+              className="dropdown-content z-[1] menu flex-row flex-nowrap p-2 shadow-xl bg-base-100 max-h-[200px] rounded"
+            >
+              <div className="overflow-y-auto overflow-x-hidden sang-scrollbar border-r">
                 <input
                   type="number"
-                  className="input input-bordered input-xs w-full"
-                  name="sang"
+                  className="input input-bordered input-xs w-full hidden"
+                  name="timeSlot"
                   ref={inputRefs1}
                 />
+                <div className="text-center font-semibold">Giờ</div>
                 <div
                   onClick={handleSelectTime1}
                   className="cursor-pointer px-5 hover:text-primary"
@@ -203,10 +230,11 @@ const TimeComponent: React.FC<Props> = ({
               <div>
                 <input
                   type="number"
-                  className="input input-bordered input-xs w-full"
+                  className="input input-bordered input-xs w-full hidden"
                   ref={inputRefs2}
-                  name="sang"
+                  name="timeSlot"
                 />
+                <div className="text-center font-semibold">Phút</div>
                 <div
                   onClick={handleSelectTime2}
                   className="cursor-pointer px-5 hover:text-primary"
@@ -232,14 +260,210 @@ const TimeComponent: React.FC<Props> = ({
                   45
                 </div>
               </div>
-            </div>
+            </ul>
           </div>
         </div>
         <FaLongArrowAltRight />
-        <div className="flex items-center">
-          <div className="btn bg-transparent border-none hover:bg-transparent shadow-none px-3 hover:text-primary transition">
-            05 : 00
+        <div className="dropdown">
+          <div
+            tabIndex={0}
+            role="button"
+            className="btn bg-transparent border-none hover:bg-transparent shadow-none px-3 hover:text-primary transition gap-1"
+          >
+            <span ref={inputRefs3}>{spanText3}</span> :{" "}
+            <span ref={inputRefs4}>{spanText4}</span>
           </div>
+          <ul
+            tabIndex={0}
+            className="dropdown-content z-[1] menu flex-row flex-nowrap p-2 shadow-xl bg-base-100 max-h-[200px] rounded"
+          >
+            <div className="overflow-y-auto overflow-x-hidden sang-scrollbar border-r">
+              <input
+                type="number"
+                className="input input-bordered input-xs w-full hidden"
+                name="timeSlot"
+                ref={inputRefs3}
+              />
+              <div className="text-center font-semibold">Giờ</div>
+              <div
+                onClick={handleSelectTime3}
+                className="cursor-pointer px-5 hover:text-primary"
+              >
+                00
+              </div>
+              <div
+                onClick={handleSelectTime3}
+                className="cursor-pointer px-5 hover:text-primary"
+              >
+                01
+              </div>
+              <div
+                onClick={handleSelectTime3}
+                className="cursor-pointer px-5 hover:text-primary"
+              >
+                02
+              </div>
+              <div
+                onClick={handleSelectTime3}
+                className="cursor-pointer px-5 hover:text-primary"
+              >
+                03
+              </div>
+              <div
+                onClick={handleSelectTime3}
+                className="cursor-pointer px-5 hover:text-primary"
+              >
+                04
+              </div>
+              <div
+                onClick={handleSelectTime3}
+                className="cursor-pointer px-5 hover:text-primary"
+              >
+                05
+              </div>
+              <div
+                onClick={handleSelectTime3}
+                className="cursor-pointer px-5 hover:text-primary"
+              >
+                06
+              </div>
+              <div
+                onClick={handleSelectTime3}
+                className="cursor-pointer px-5 hover:text-primary"
+              >
+                07
+              </div>
+              <div
+                onClick={handleSelectTime3}
+                className="cursor-pointer px-5 hover:text-primary"
+              >
+                08
+              </div>
+              <div
+                onClick={handleSelectTime3}
+                className="cursor-pointer px-5 hover:text-primary"
+              >
+                09
+              </div>
+              <div
+                onClick={handleSelectTime3}
+                className="cursor-pointer px-5 hover:text-primary"
+              >
+                10
+              </div>
+              <div
+                onClick={handleSelectTime3}
+                className="cursor-pointer px-5 hover:text-primary"
+              >
+                11
+              </div>
+              <div
+                onClick={handleSelectTime3}
+                className="cursor-pointer px-5 hover:text-primary"
+              >
+                12
+              </div>
+              <div
+                onClick={handleSelectTime3}
+                className="cursor-pointer px-5 hover:text-primary"
+              >
+                13
+              </div>
+              <div
+                onClick={handleSelectTime3}
+                className="cursor-pointer px-5 hover:text-primary"
+              >
+                14
+              </div>
+              <div
+                onClick={handleSelectTime3}
+                className="cursor-pointer px-5 hover:text-primary"
+              >
+                15
+              </div>
+              <div
+                onClick={handleSelectTime3}
+                className="cursor-pointer px-5 hover:text-primary"
+              >
+                16
+              </div>
+              <div
+                onClick={handleSelectTime3}
+                className="cursor-pointer px-5 hover:text-primary"
+              >
+                17
+              </div>
+              <div
+                onClick={handleSelectTime3}
+                className="cursor-pointer px-5 hover:text-primary"
+              >
+                18
+              </div>
+              <div
+                onClick={handleSelectTime3}
+                className="cursor-pointer px-5 hover:text-primary"
+              >
+                19
+              </div>
+              <div
+                onClick={handleSelectTime3}
+                className="cursor-pointer px-5 hover:text-primary"
+              >
+                20
+              </div>
+              <div
+                onClick={handleSelectTime3}
+                className="cursor-pointer px-5 hover:text-primary"
+              >
+                21
+              </div>
+              <div
+                onClick={handleSelectTime3}
+                className="cursor-pointer px-5 hover:text-primary"
+              >
+                22
+              </div>
+              <div
+                onClick={handleSelectTime3}
+                className="cursor-pointer px-5 hover:text-primary"
+              >
+                23
+              </div>
+            </div>
+            <div>
+              <input
+                type="number"
+                className="input input-bordered input-xs w-full hidden"
+                ref={inputRefs4}
+                name="timeSlot"
+              />
+              <div className="text-center font-semibold">Phút</div>
+              <div
+                onClick={handleSelectTime4}
+                className="cursor-pointer px-5 hover:text-primary"
+              >
+                00
+              </div>
+              <div
+                onClick={handleSelectTime4}
+                className="cursor-pointer px-5 hover:text-primary"
+              >
+                15
+              </div>
+              <div
+                onClick={handleSelectTime4}
+                className="cursor-pointer px-5 hover:text-primary"
+              >
+                30
+              </div>
+              <div
+                onClick={handleSelectTime4}
+                className="cursor-pointer px-5 hover:text-primary"
+              >
+                45
+              </div>
+            </div>
+          </ul>
         </div>
       </div>
       <input
