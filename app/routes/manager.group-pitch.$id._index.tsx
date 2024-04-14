@@ -1,4 +1,6 @@
-import { Link } from "@remix-run/react";
+import { LoaderFunction } from "@remix-run/node";
+import { Link, useActionData, useLoaderData } from "@remix-run/react";
+import { getGroupPitchById } from "prisma/pitch";
 import React from "react";
 import { CiEdit } from "react-icons/ci";
 import { FaRegClock } from "react-icons/fa6";
@@ -6,22 +8,32 @@ import { IoIosWifi } from "react-icons/io";
 import { IoCarOutline, IoShirtOutline } from "react-icons/io5";
 import { LuGlassWater } from "react-icons/lu";
 import { PiMapPinLight, PiMoneyLight } from "react-icons/pi";
-
+import { getDistrictById, getWardById } from "~/helper";
+export let loader: LoaderFunction = async ({ params }) => {
+  const pitch = await getGroupPitchById(params.id);
+  return pitch;
+};
 function group_pitch_detail() {
+  const data = useLoaderData<typeof loader>();
+  console.log(data);
   return (
     <div>
       <div className="join join-vertical lg:join-horizontal">
-        <Link to={`/manager/group-pitch/1/edit`} className="btn btn-primary">
+        <Link
+          to={`/manager/group-pitch/${data.id}/edit`}
+          className="btn btn-primary"
+        >
           <CiEdit />
           Sửa
         </Link>
       </div>
       <h1 className="mb-12 text-2xl font-extrabold text-center leading-none tracking-tight text-gray-900 md:text-3xl lg:text-4xl dark:text-white">
-        Sân Thanh Niên
+        {data.name}
       </h1>
       <p className="text-sm text-gray-600 mb-1 flex gap-1 justify-center">
-        <PiMapPinLight className="shrink-0 text-lg" /> Đường Bắc Sơn, Hoàng Văn
-        Thụ, Thành phố Thái Nguyên, Thái Nguyên
+        <PiMapPinLight className="shrink-0 text-lg" /> {data.address_detail},{" "}
+        {getWardById(data.id_ward).name},{" "}
+        {getDistrictById(data.id_district).name}
       </p>
       <div className="grid grid-cols-3 px-20 py-5 gap-6">
         <div>

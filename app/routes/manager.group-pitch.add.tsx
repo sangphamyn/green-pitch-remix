@@ -1,9 +1,14 @@
-import { ActionFunctionArgs, LoaderFunction, json } from "@remix-run/node";
+import {
+  ActionFunctionArgs,
+  LoaderFunction,
+  json,
+  redirect,
+} from "@remix-run/node";
 import { Form, useActionData, useLoaderData } from "@remix-run/react";
 import { createPitch, getAllService } from "prisma/pitch";
 import React, { ChangeEvent, useState } from "react";
 import { CiCircleList } from "react-icons/ci";
-import { GoPlusCircle } from "react-icons/go";
+import { GoPlusCircle, GoTrash } from "react-icons/go";
 import { LiaEditSolid } from "react-icons/lia";
 import TimeComponent from "~/components/TimeComponent1";
 import { CreateGroupPitch } from "~/enum/pitch.enum";
@@ -26,9 +31,11 @@ export async function action({ request }: ActionFunctionArgs) {
   const address_detail = formData.get("address_detail");
   const address_map = formData.get("address_map");
   const groupPitchDesc = formData.get("groupPitchDesc");
-  const services = formData.get("groupPitchServices");
-  const servicePrices = formData.get("servicePrices");
+  const services = formData.getAll("groupPitchServices");
+  const servicePrices = formData.getAll("servicePrices");
   const owner = session.get("userId");
+  const pitchImages = formData.getAll("pitchImages");
+  console.log(pitchImages);
 
   let message: { [key: string]: string } = {};
   if (!groupPitchName) message["groupPitchName"] = "Cần điền tên";
@@ -65,8 +72,10 @@ export async function action({ request }: ActionFunctionArgs) {
     };
   }
   if (data !== undefined) {
-    const groupPitch = await createPitch(data);
-    console.log(groupPitch);
+    const newPitch = await createPitch(data, services, servicePrices);
+    if (newPitch.id) {
+      return redirect("/manager/group-pitch");
+    }
   }
   return null;
 }
@@ -338,14 +347,12 @@ function groupPitchAdd() {
   }>();
   const serviceList = data.services;
   const [fieldTypes, setFieldTypes] = useState<
-    [
-      {
-        pitchType: number;
-        pitchQuantity: number;
-        pitchDesc: string;
-        timeSlots: Array<number>;
-      }
-    ]
+    {
+      pitchType: number;
+      pitchQuantity: number;
+      pitchDesc: string;
+      timeSlots: Array<number>;
+    }[]
   >([
     {
       pitchType: 11,
@@ -409,6 +416,31 @@ function groupPitchAdd() {
     newFieldTypes[fieldIndex].timeSlots.splice(slotIndex, 1);
     setFieldTypes(newFieldTypes);
   };
+  const [previewImages, setPreviewImages] = useState([]);
+  const handleUploadImage = (event: React.ChangeEvent<HTMLInputElement>) => {
+    let files = event.target.files;
+    console.log(files);
+    const images: string[] = [];
+    if (files) {
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        const reader = new FileReader();
+
+        reader.onload = (e) => {
+          if (e.target == null) return;
+          const result = e.target.result;
+          if (typeof result === "string") {
+            // Khi kết quả là một chuỗi, chúng ta thêm nó vào mảng images
+            images.push(result);
+            // Sau đó, cập nhật state previewImages
+            setPreviewImages((prevImages) => [...prevImages, result]);
+          }
+        };
+
+        reader.readAsDataURL(file);
+      }
+    }
+  };
   return (
     <div className="container mx-auto my-12 max-w-[1000px]">
       <h1 className="text-2xl font-semibold mb-4 text-center">Tạo Sân Bóng</h1>
@@ -443,6 +475,54 @@ function groupPitchAdd() {
               : "hidden opacity-0"
           }`}
         >
+          <div className="label pb-1">
+            <span className="label-text font-semibold">Ảnh</span>
+          </div>
+          <div id="previewContainer" className="flex gap-3 mb-3">
+            {previewImages.map((image, index) => (
+              <div className="avatar border relative" key={index}>
+                <div className="w-24 rounded">
+                  <img src={image} />
+                </div>
+                <button
+                  className="p-2 hover:text-error transition absolute top-1 right-1 bg-white shadow-lg rounded-full"
+                  // onClick={removeAction}
+                >
+                  <GoTrash className="text-sm" />
+                </button>
+              </div>
+            ))}
+            <div className="rounded-md border border-grey-500 bg-gray-50 shadow-md w-28">
+              <label
+                htmlFor="upload"
+                className="flex flex-col items-center gap-2 cursor-pointer p-4"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-10 w-10 fill-white stroke-grey-500"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  stroke-width="1"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M9 13h6m-3-3v6m5 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                  />
+                </svg>
+                <span className="text-gray-600 font-medium">Tải ảnh</span>
+              </label>
+              <input
+                id="upload"
+                type="file"
+                className="hidden"
+                onChange={handleUploadImage}
+                name="pitchImages"
+                multiple
+              />
+            </div>
+          </div>
+
           <label className="form-control w-full mb-1">
             <div className="label pb-1">
               <span className="label-text font-semibold">Tên sân</span>

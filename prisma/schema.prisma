@@ -45,6 +45,8 @@ model GroupPitch {
   map String?
   description String?
   ownerId   Int?
+  status Int? @default(1)
+  images String?
 
   owner     User?    @relation(fields: [ownerId], references: [id])
   services     Service[]  @relation("grouppitch_service")

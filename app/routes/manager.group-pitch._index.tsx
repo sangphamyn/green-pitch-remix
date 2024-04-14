@@ -1,8 +1,22 @@
-import { Link, Outlet } from "@remix-run/react";
+import { LoaderFunction, redirect } from "@remix-run/node";
+import { Link, Outlet, useLoaderData } from "@remix-run/react";
+import { getGroupPitchByOwnerId } from "prisma/pitch";
 import React from "react";
 import { FiPlusCircle } from "react-icons/fi";
 import { MdOutlineStadium } from "react-icons/md";
 import { PiMapPinLight } from "react-icons/pi";
+import { getDistrictById, getWardById } from "~/helper";
+import { getSession } from "~/session.server";
+
+export let loader: LoaderFunction = async ({ request }) => {
+  let session = await getSession(request.headers.get("cookie"));
+  if (Object.keys(session.data).length == 0) {
+    return redirect("/login");
+  }
+  const userId = session.data.userId || "";
+  const groupPitchList = await getGroupPitchByOwnerId(userId);
+  return groupPitchList;
+};
 const pitches = [
   {
     name: "Sân CNTT",
@@ -28,6 +42,8 @@ const pitches = [
   // Thêm các sân bóng khác vào đây...
 ];
 function group_pitch() {
+  const data = useLoaderData<typeof loader>();
+  const pitches = data;
   return (
     <div>
       <Outlet />
@@ -44,26 +60,26 @@ function group_pitch() {
         <div className="grid grid-cols-2 gap-10 mt-5">
           {pitches.map((pitch, index) => (
             <Link
-              to={"/manager/group-pitch/" + index}
+              to={"/manager/group-pitch/" + pitch.id}
               key={index}
               className="border rounded p-4 flex gap-5 hover:shadow transition hover:text-primary cursor-pointer"
             >
               <img
-                src={pitch.imageUrl}
+                src="/images/san-co-nhan-tao-7-nguoi-dep.jpg"
                 alt={pitch.name}
                 className="mb-2 rounded w-1/2"
               />
               <div>
                 <div
                   className={`text-sm px-4 w-fit mb-2 py-1 ${
-                    pitch.status == 1
+                    pitch.status == 2
                       ? "bg-green-200 text-green-800"
                       : pitch.status == 0
                       ? "bg-red-200 text-red-800"
                       : "bg-orange-200 text-orange-800"
                   } rounded-full`}
                 >
-                  {pitch.status == 1
+                  {pitch.status == 2
                     ? "Đã duyệt"
                     : pitch.status == 0
                     ? "Từ chối"
@@ -71,14 +87,15 @@ function group_pitch() {
                 </div>
                 <h2 className="text-lg font-semibold mb-1">{pitch.name}</h2>
                 <p className="text-sm text-gray-600 mb-1 flex gap-1">
-                  <PiMapPinLight className="shrink-0 text-lg" /> {pitch.address}
+                  <PiMapPinLight className="shrink-0 text-lg" />{" "}
+                  {getWardById(pitch.id_ward).name},{" "}
+                  {getDistrictById(pitch.id_district).name}
                 </p>
                 <p className="text-sm text-gray-600 mb-1 flex gap-1 items-center">
                   <MdOutlineStadium /> Số sân: {pitch.quantity}
                 </p>
                 <p className="text-sm mt-4 text-gray-600">
-                  🌟 Chào mừng đến với Sân Bóng Nhân Tạo 7 Người của chúng tôi!
-                  🌟 👟 Bạn đang tìm kiếm một nơi để thể hiện...
+                  {pitch.description}
                 </p>
               </div>{" "}
               {/* Thêm thông tin khác của sân bóng nếu cần */}
