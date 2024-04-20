@@ -61,9 +61,17 @@ export const getGroupPitchById = async (id: string) => {
     const groupPitch = await db.groupPitch.findFirst({
       where: {
         id: parseInt(id),
-      },
+      }
     });
-    return groupPitch;
+    const service = await db.grouppitch_service.findMany({
+      where: {
+        groupPitchId: parseInt(id),
+      },
+      include: {
+        service: true
+      }
+    });
+    return {groupPitch, service};
   } catch (error) {
     console.error("Lỗi:", error);
     throw error;

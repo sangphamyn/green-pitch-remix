@@ -26,6 +26,7 @@ model User {
   deleted   DateTime?
 
   groupPitches GroupPitch[]
+  booking booking[]
   @@map("users")
 }
 model Service {
@@ -51,6 +52,7 @@ model GroupPitch {
   owner     User?    @relation(fields: [ownerId], references: [id])
   services     Service[]  @relation("grouppitch_service")
   servicesInGroupPitch grouppitch_service[]
+  pitchTypes pitchtype[]
   @@map("grouppitch")
 }
 
@@ -62,4 +64,47 @@ model grouppitch_service {
 
   groupPitch    GroupPitch? @relation(fields: [groupPitchId], references: [id])
   service       Service?    @relation(fields: [serviceId], references: [id])
+}
+
+model pitchtype {
+  id      Int      @id @default(autoincrement())
+  name    String
+  type    String
+  description String?
+
+  groupPitch    GroupPitch @relation(fields: [id_groupPitch], references: [id])
+  id_groupPitch Int
+
+  pitch pitch[]
+  timeSlot timeSlot[]
+}
+
+model pitch {
+  id      Int      @id @default(autoincrement())
+
+  pitch_pitchType    pitchtype @relation(fields: [id_pitchType], references: [id])
+  id_pitchType Int
+}
+
+model timeSlot {
+  id      Int      @id @default(autoincrement())
+  startTime String
+  endTime String
+  price Float?
+
+  timeSlot_pitchType    pitchtype @relation(fields: [id_pitchType], references: [id])
+  id_pitchType Int
+
+  booking booking[]
+}
+
+model booking {
+  id      Int      @id @default(autoincrement())
+  date String
+
+  booking_timeSlot    timeSlot @relation(fields: [id_timeSlot], references: [id])
+  id_timeSlot Int
+
+  booking_user    User @relation(fields: [id_user], references: [id])
+  id_user Int
 }

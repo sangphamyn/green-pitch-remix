@@ -3,27 +3,46 @@ import {
   LoaderFunction,
   json,
   redirect,
+  unstable_composeUploadHandlers,
+  unstable_createMemoryUploadHandler,
+  unstable_parseMultipartFormData,
+  UploadHandler,
+  UploadHandlerPart,
+  MemoryUploadHandlerFilterArgs,
 } from "@remix-run/node";
 import { Form, useActionData, useLoaderData } from "@remix-run/react";
 import { createPitch, getAllService } from "prisma/pitch";
 import React, { ChangeEvent, useState } from "react";
 import { CiCircleList } from "react-icons/ci";
 import { GoPlusCircle, GoTrash } from "react-icons/go";
+import { IoMdClose } from "react-icons/io";
 import { LiaEditSolid } from "react-icons/lia";
 import TimeComponent from "~/components/TimeComponent1";
 import { CreateGroupPitch } from "~/enum/pitch.enum";
 import { getSession } from "~/session.server";
+import { uploadImage } from "~/utils/utils.server";
 
 export let loader: LoaderFunction = async ({ request }) => {
   const services = await getAllService();
   return { services };
 };
 export async function action({ request }: ActionFunctionArgs) {
-  let formData = await request.formData();
-  const intent = formData.get("intent");
-  if (intent != "submit") return null;
+  const uploadHandler = unstable_composeUploadHandlers(
+    async ({ name, data }) => {
+      if (name !== "pitchImages") {
+        return undefined;
+      }
+      const uploadedImage = await uploadImage(data);
+      return uploadedImage.secure_url;
+    },
+    unstable_createMemoryUploadHandler()
+  );
 
-  // console.log(Object.fromEntries(formData.entries()));
+  const formData = await unstable_parseMultipartFormData(
+    request,
+    uploadHandler
+  );
+  const images = formData.getAll("pitchImages");
   let session = await getSession(request.headers.get("cookie"));
   const groupPitchName = formData.get("groupPitchName");
   const district = formData.get("district");
@@ -35,30 +54,20 @@ export async function action({ request }: ActionFunctionArgs) {
   const servicePrices = formData.getAll("servicePrices");
   const owner = session.get("userId");
   const pitchImages = formData.getAll("pitchImages");
-  console.log(pitchImages);
 
-  let message: { [key: string]: string } = {};
-  if (!groupPitchName) message["groupPitchName"] = "Cần điền tên";
-  if (Object.keys(message).length > 0) {
-    return json({
-      status: "error",
-      message: message,
-    });
-  }
-  // console.log("groupPitchName  ", groupPitchName);
-  // console.log("district        ", formData.get("district"));
-  // console.log("ward            ", formData.get("ward"));
-  // console.log("address_detail  ", formData.get("address_detail"));
-  // console.log("address_map     ", formData.get("address_map"));
-  // console.log("groupPitchDesc  ", formData.get("groupPitchDesc"));
-  // console.log("services        ", formData.getAll("groupPitchServices"));
-  // console.log("servicePrices   ", formData.getAll("servicePrices"));
-  // console.log("author          ", session.get("userId"));
-  // console.log("pitchName       ", formData.getAll("pitchName"));
-  // console.log("pitchType       ", formData.getAll("pitchType"));
-  // console.log("pitchQuantity   ", formData.getAll("pitchQuantity"));
-  // console.log("pitchDesc       ", formData.getAll("pitchDesc"));
-  // console.log("timeSlot            ", formData.getAll("timeSlot"));
+  const pitchName = formData.getAll("pitchName");
+  const pitchType = formData.getAll("pitchType");
+  const pitchQuantity = formData.getAll("pitchQuantity");
+  const pitchDesc = formData.getAll("pitchDesc");
+  const timeSlot = formData.getAll("timeSlot");
+  const timePrice = formData.getAll("timePrice");
+  console.log("pitchName", pitchName);
+  console.log("pitchType", pitchType);
+  console.log("pitchQuantity", pitchQuantity);
+  console.log("pitchDesc", pitchDesc);
+  console.log("timeSlot", timeSlot);
+  console.log("timePrice", timePrice);
+
   let data: CreateGroupPitch | undefined;
   if (district !== null && ward !== null && owner !== undefined) {
     data = {
@@ -69,6 +78,7 @@ export async function action({ request }: ActionFunctionArgs) {
       map: address_map as string,
       description: groupPitchDesc as string,
       ownerId: parseInt(owner.toString()),
+      images: images.toString(),
     };
   }
   if (data !== undefined) {
@@ -416,6 +426,11 @@ function groupPitchAdd() {
     newFieldTypes[fieldIndex].timeSlots.splice(slotIndex, 1);
     setFieldTypes(newFieldTypes);
   };
+  const removeFieldType = (fieldIndex: number) => {
+    const newFieldTypes = [...fieldTypes];
+    newFieldTypes.splice(fieldIndex, 1);
+    setFieldTypes(newFieldTypes);
+  };
   const [previewImages, setPreviewImages] = useState([]);
   const handleUploadImage = (event: React.ChangeEvent<HTMLInputElement>) => {
     let files = event.target.files;
@@ -467,7 +482,7 @@ function groupPitchAdd() {
           <CiCircleList /> Danh sách sân và giá
         </div>
       </div>
-      <Form method="POST">
+      <Form method="POST" encType="multipart/form-data">
         <div
           className={`sang-tab-content border bg-white rounded-b-lg px-14 py-6 transition top-0 left-0 right-0 ${
             activeTab1
@@ -484,12 +499,12 @@ function groupPitchAdd() {
                 <div className="w-24 rounded">
                   <img src={image} />
                 </div>
-                <button
+                <div
                   className="p-2 hover:text-error transition absolute top-1 right-1 bg-white shadow-lg rounded-full"
                   // onClick={removeAction}
                 >
                   <GoTrash className="text-sm" />
-                </button>
+                </div>
               </div>
             ))}
             <div className="rounded-md border border-grey-500 bg-gray-50 shadow-md w-28">
@@ -502,11 +517,11 @@ function groupPitchAdd() {
                   className="h-10 w-10 fill-white stroke-grey-500"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
-                  stroke-width="1"
+                  strokeWidth="1"
                 >
                   <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
                     d="M9 13h6m-3-3v6m5 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
                   />
                 </svg>
@@ -519,6 +534,7 @@ function groupPitchAdd() {
                 onChange={handleUploadImage}
                 name="pitchImages"
                 multiple
+                accept="image/*"
               />
             </div>
           </div>
@@ -667,12 +683,12 @@ function groupPitchAdd() {
             )}
           </div>
           <div className="flex items-center justify-center mt-8">
-            <button
+            <div
               className="btn btn-primary px-10 rounded-full w-full"
               onClick={changeTab2}
             >
               Thêm danh sách sân và giá
-            </button>
+            </div>
           </div>
         </div>
         <div
@@ -759,32 +775,37 @@ function groupPitchAdd() {
                     )
                   )}
                 </div>
-                <button
-                  className="flex gap-3 items-center bg-green-500 px-5 py-2 rounded text-white"
+                <div
+                  className="btn inline-flex gap-3 items-center bg-green-500 hover:bg-green-600 px-5 py-2 rounded text-white"
                   onClick={() => addTimeSlot(index)}
                   value="nothing"
                   name="intent"
                 >
                   Thêm khoảng thời gian
                   <GoPlusCircle />
-                </button>
+                </div>
+                <div
+                  className="p-3 hover:text-error transition absolute top-1 right-1 cursor-pointer"
+                  onClick={() => removeFieldType(index)}
+                >
+                  <IoMdClose />
+                </div>
               </div>
             ))}
-            <button
-              className="flex gap-3 items-center bg-green-500 px-5 py-2 rounded text-white"
+            <div
+              className="btn inline-flex gap-3 items-center bg-green-500 hover:bg-green-600 px-5 py-2 rounded text-white"
               onClick={addFieldType}
               value="nothing"
               name="intent"
             >
               Thêm Loại Sân
               <GoPlusCircle />
-            </button>
+            </div>
           </div>
           <div className="flex items-center justify-center mt-8">
             <button
               className="btn btn-primary px-10 rounded-full w-full"
               value="submit"
-              name="intent"
             >
               Tạo
             </button>

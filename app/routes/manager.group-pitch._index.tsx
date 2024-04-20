@@ -57,7 +57,7 @@ function group_pitch() {
         <h1 className="mb-12 text-2xl font-extrabold text-center leading-none tracking-tight text-gray-900 md:text-3xl lg:text-4xl dark:text-white">
           Danh sách các cụm sân
         </h1>
-        <div className="grid grid-cols-2 gap-10 mt-5">
+        {Object.keys(pitches).length == 0 ? <div>Rong</div> : <div className="grid grid-cols-2 gap-10 mt-5">
           {pitches.map((pitch, index) => (
             <Link
               to={"/manager/group-pitch/" + pitch.id}
@@ -65,7 +65,11 @@ function group_pitch() {
               className="border rounded p-4 flex gap-5 hover:shadow transition hover:text-primary cursor-pointer"
             >
               <img
-                src="/images/san-co-nhan-tao-7-nguoi-dep.jpg"
+                src={
+                  pitch.images
+                    ? pitch.images.split(",")[0]
+                    : "/images/san-co-nhan-tao-7-nguoi-dep.jpg"
+                }
                 alt={pitch.name}
                 className="mb-2 rounded w-1/2"
               />
@@ -101,7 +105,8 @@ function group_pitch() {
               {/* Thêm thông tin khác của sân bóng nếu cần */}
             </Link>
           ))}
-        </div>
+        </div>}
+        
       </div>
     </div>
   );

@@ -469,14 +469,15 @@ const TimeComponent: React.FC<Props> = ({
       <input
         type="number"
         placeholder="Giá"
+        name="timePrice"
         className="input input-bordered focus:border-primary focus-within:outline-none w-full"
       />
-      <button
-        className="p-3 hover:text-error transition"
+      <div
+        className="p-3 hover:text-error transition cursor-pointer"
         onClick={removeAction}
       >
         <GoTrash />
-      </button>
+      </div>
     </div>
   );
 };

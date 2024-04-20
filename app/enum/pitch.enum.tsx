@@ -14,4 +14,5 @@ export type CreateGroupPitch = {
   map: string;
   description: string;
   ownerId: number;
+  images: string;
 };

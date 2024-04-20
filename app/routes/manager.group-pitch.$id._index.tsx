@@ -5,22 +5,32 @@ import React from "react";
 import { CiEdit } from "react-icons/ci";
 import { FaRegClock } from "react-icons/fa6";
 import { IoIosWifi } from "react-icons/io";
-import { IoCarOutline, IoShirtOutline } from "react-icons/io5";
+import {
+  IoCarOutline,
+  IoFastFoodOutline,
+  IoShirtOutline,
+} from "react-icons/io5";
 import { LuGlassWater } from "react-icons/lu";
 import { PiMapPinLight, PiMoneyLight } from "react-icons/pi";
 import { getDistrictById, getWardById } from "~/helper";
+// import function to register Swiper custom elements
+import { register } from "swiper/element/bundle";
+// register Swiper custom elements
+register();
 export let loader: LoaderFunction = async ({ params }) => {
   const pitch = await getGroupPitchById(params.id);
   return pitch;
 };
 function group_pitch_detail() {
   const data = useLoaderData<typeof loader>();
-  console.log(data);
+  // console.log(data);
+  const pitch = data.groupPitch;
+  const services = data.service;
   return (
     <div>
       <div className="join join-vertical lg:join-horizontal">
         <Link
-          to={`/manager/group-pitch/${data.id}/edit`}
+          to={`/manager/group-pitch/${pitch.id}/edit`}
           className="btn btn-primary"
         >
           <CiEdit />
@@ -28,21 +38,59 @@ function group_pitch_detail() {
         </Link>
       </div>
       <h1 className="mb-12 text-2xl font-extrabold text-center leading-none tracking-tight text-gray-900 md:text-3xl lg:text-4xl dark:text-white">
-        {data.name}
+        {pitch.name}
       </h1>
       <p className="text-sm text-gray-600 mb-1 flex gap-1 justify-center">
-        <PiMapPinLight className="shrink-0 text-lg" /> {data.address_detail},{" "}
-        {getWardById(data.id_ward).name},{" "}
-        {getDistrictById(data.id_district).name}
+        <PiMapPinLight className="shrink-0 text-lg" /> {pitch.address_detail},{" "}
+        {getWardById(pitch.id_ward).name},{" "}
+        {getDistrictById(pitch.id_district).name}
       </p>
       <div className="grid grid-cols-3 px-20 py-5 gap-6">
-        <div>
-          <img
-            className="w-full h-full object-cover rounded-lg"
-            src="/images/san-co-nhan-tao-7-nguoi-dep.jpg"
-            alt=""
-          />
-        </div>
+        {pitch.images ? (
+          <>
+            <div>
+              <swiper-container
+                // style="--swiper-navigation-color: #fff; --swiper-pagination-color: #fff"
+                class="mySwiper"
+                thumbs-swiper=".mySwiper2"
+                space-between="10"
+                navigation="true"
+              >
+                {pitch.images.split(",").map((img: string, index: number) => {
+                  return (
+                    <swiper-slide>
+                      <img src={img} />
+                    </swiper-slide>
+                  );
+                })}
+              </swiper-container>
+
+              <swiper-container
+                class="mySwiper2"
+                space-between="10"
+                slides-per-view="4"
+                free-mode="true"
+                watch-slides-progress="true"
+              >
+                {pitch.images.split(",").map((img: string, index: number) => {
+                  return (
+                    <swiper-slide>
+                      <img src={img} />
+                    </swiper-slide>
+                  );
+                })}
+              </swiper-container>
+            </div>
+          </>
+        ) : (
+          <div>
+            <img
+              className="w-full h-full object-cover rounded-lg"
+              src="/images/san-co-nhan-tao-7-nguoi-dep.jpg"
+              alt=""
+            />
+          </div>
+        )}
         <div className="bg-gray-200 p-4 rounded-lg">
           <h3 className="font-semibold text-xl mb-4">Thông tin sân</h3>
           <div className="flex justify-between mb-1">
@@ -60,30 +108,34 @@ function group_pitch_detail() {
           <div className="bg-white p-4 rounded mt-4">
             <h3 className="font-semibold text-md mb-4">Dịch vụ</h3>
             <div className="grid grid-cols-2">
-              <div className="flex gap-2 items-center text-sm mb-2">
-                <IoIosWifi /> Wifi
-                <div className="text-xs px-3 flex gap-1 items-center w-fit mb-2 py-[2px] bg-green-200 text-green-800 rounded-full">
-                  Free
-                </div>
-              </div>
-              <div className="flex gap-2 items-center text-sm mb-2">
-                <IoCarOutline /> Bãi đỗ xe ô tô
-                <div className="text-xs px-3 flex gap-1 items-center w-fit mb-2 py-[2px] bg-green-200 text-green-800 rounded-full">
-                  Free
-                </div>
-              </div>
-              <div className="flex gap-2 items-center text-sm mb-2">
-                <LuGlassWater /> Nước đá
-                <div className="text-xs px-3 flex gap-1 items-center w-fit mb-2 py-[2px] bg-green-200 text-green-800 rounded-full">
-                  Free
-                </div>
-              </div>
-              <div className="flex gap-2 items-center text-sm mb-2">
-                <IoShirtOutline /> Áo pitch
-                <div className="text-xs px-3 flex gap-1 items-center w-fit mb-2 py-[2px] bg-red-200 text-red-800 rounded-full">
-                  30.000 đ
-                </div>
-              </div>
+              {services.map((service) => {
+                return (
+                  <div className="flex gap-2 items-center text-sm mb-2">
+                    {(() => {
+                      switch (service.serviceId) {
+                        case 1:
+                          return <LuGlassWater />;
+                        case 2:
+                          return <IoIosWifi />;
+                        case 3:
+                          return <IoShirtOutline />;
+                        case 4:
+                          return <IoCarOutline />;
+                        case 5:
+                          return <IoFastFoodOutline />;
+                      }
+                    })()}{" "}
+                    {service.service.name}
+                    {service.price != null ? (
+                      <div className="text-xs px-3 flex gap-1 items-center w-fit mb-2 py-[2px] bg-green-200 text-green-800 rounded-full">
+                        {service.price == "0" ? "Free" : service.price + " đ"}
+                      </div>
+                    ) : (
+                      <></>
+                    )}
+                  </div>
+                );
+              })}
             </div>
           </div>
         </div>
