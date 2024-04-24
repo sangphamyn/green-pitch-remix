@@ -1,5 +1,5 @@
 import { PrismaClient } from "@prisma/client";
-import { GetAllServices } from "~/enum/pitch.enum";
+import { CreatePitchType, GetAllServices } from "~/enum/pitch.enum";
 import { CreateGroupPitch } from "~/enum/pitch.enum";
 const db = new PrismaClient();
 
@@ -61,23 +61,23 @@ export const getGroupPitchById = async (id: string) => {
     const groupPitch = await db.groupPitch.findFirst({
       where: {
         id: parseInt(id),
-      }
+      },
     });
     const service = await db.grouppitch_service.findMany({
       where: {
         groupPitchId: parseInt(id),
       },
       include: {
-        service: true
-      }
+        service: true,
+      },
     });
-    return {groupPitch, service};
+    return { groupPitch, service };
   } catch (error) {
     console.error("Lỗi:", error);
     throw error;
   }
 };
-export const createPitch = async (
+export const createGroupPitch = async (
   grouppitch: CreateGroupPitch,
   serviceList: any,
   priceList: any
@@ -99,6 +99,47 @@ export const createPitch = async (
     return pitch;
   } catch (error) {
     console.error("Lỗi:", error);
+    throw error;
+  }
+};
+export const createPitchType = async (
+  pitchTypeData: CreatePitchType,
+  quantity: number
+) => {
+  try {
+    const name = pitchTypeData.name;
+    const pitchType = await db.pitchtype.create({ data: pitchTypeData });
+    for (let i = 1; i <= quantity; i++) {
+      let pitch = await db.pitch.create({
+        data: { id_pitchType: pitchType.id, name: name + " " + i },
+      });
+    }
+    return pitchType;
+  } catch (error) {
+    console.error("Lỗi db:", error);
+    throw error;
+  }
+};
+export const createTimeSlot = async (
+  id_pitchType: number,
+  startHour: number,
+  startMinute: number,
+  endHour: number,
+  endMinute: number,
+  price: number
+) => {
+  try {
+    const timeSlot = await db.timeSlot.create({
+      data: {
+        id_pitchType: id_pitchType,
+        startTime: startHour + ":" + startMinute,
+        endTime: endHour + ":" + endMinute,
+        price: price,
+      },
+    });
+    return timeSlot;
+  } catch (error) {
+    console.error("Lỗi db:", error);
     throw error;
   }
 };

@@ -58,7 +58,7 @@ function group_pitch_detail() {
               >
                 {pitch.images.split(",").map((img: string, index: number) => {
                   return (
-                    <swiper-slide>
+                    <swiper-slide key={index}>
                       <img src={img} />
                     </swiper-slide>
                   );
@@ -140,7 +140,7 @@ function group_pitch_detail() {
           </div>
         </div>
         <iframe
-          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3709.833800499693!2d105.80688402598018!3d21.59240961817967!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31352715963c0539%3A0x70920be053375217!2zU8OibiB0aOG7gyB0aGFvIGvDvSB0w7pjIHjDoSwgUXV54bq_dCBUaOG6r25nLCBUaMOgbmggcGjhu5EgVGjDoWkgTmd1ecOqbiwgVGjDoWkgTmd1ecOqbiwgVmnhu4d0IE5hbQ!5e0!3m2!1svi!2s!4v1711425735941!5m2!1svi!2s"
+          src={pitch.map}
           width="600"
           height="300"
           //   allowfullscreen=""

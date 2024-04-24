@@ -11,7 +11,13 @@ import {
   MemoryUploadHandlerFilterArgs,
 } from "@remix-run/node";
 import { Form, useActionData, useLoaderData } from "@remix-run/react";
-import { createPitch, getAllService } from "prisma/pitch";
+import {
+  createGroupPitch,
+  createPitch,
+  createPitchType,
+  createTimeSlot,
+  getAllService,
+} from "prisma/pitch";
 import React, { ChangeEvent, useState } from "react";
 import { CiCircleList } from "react-icons/ci";
 import { GoPlusCircle, GoTrash } from "react-icons/go";
@@ -27,6 +33,31 @@ export let loader: LoaderFunction = async ({ request }) => {
   return { services };
 };
 export async function action({ request }: ActionFunctionArgs) {
+  const copy = request.clone().formData();
+  const img = (await copy).get("pitchImages");
+  let message: { [key: string]: string } = {};
+  const groupPitchName = (await copy).get("groupPitchName");
+  if (!groupPitchName) message["groupPitchName"] = "Cần điền tên cụm sân";
+  if (img.size == 0) message["pitchImages"] = "Cần ảnh sân";
+
+  const pitchName = (await copy).getAll("pitchName");
+  if (pitchName.includes("")) message["pitchName"] = "Thiếu tên sân";
+  const pitchType = (await copy).getAll("pitchType");
+  const pitchQuantity = (await copy).getAll("pitchQuantity");
+  if (pitchQuantity.includes(""))
+    message["pitchQuantity"] = "Thiếu số lượng sân";
+  const pitchDesc = (await copy).getAll("pitchDesc");
+  const timeSlot = (await copy).getAll("timeSlot");
+  const numTimeSlot = (await copy).getAll("numTimeSlot");
+  if (timeSlot.includes("")) message["timeSlot"] = "Thiếu thời gian";
+  const timePrice = (await copy).getAll("timePrice");
+  if (timePrice.includes("")) message["timePrice"] = "Thiếu giá sân";
+  if (Object.keys(message).length > 0) {
+    return json({
+      status: "error",
+      message: message,
+    });
+  }
   const uploadHandler = unstable_composeUploadHandlers(
     async ({ name, data }) => {
       if (name !== "pitchImages") {
@@ -44,30 +75,38 @@ export async function action({ request }: ActionFunctionArgs) {
   );
   const images = formData.getAll("pitchImages");
   let session = await getSession(request.headers.get("cookie"));
-  const groupPitchName = formData.get("groupPitchName");
   const district = formData.get("district");
   const ward = formData.get("ward");
   const address_detail = formData.get("address_detail");
-  const address_map = formData.get("address_map");
+  const address_map = formData.get("address_map") || "";
+  const src_regex = /src="([^"]+)"/;
+  const src = src_regex.exec(address_map.toString());
   const groupPitchDesc = formData.get("groupPitchDesc");
   const services = formData.getAll("groupPitchServices");
   const servicePrices = formData.getAll("servicePrices");
   const owner = session.get("userId");
   const pitchImages = formData.getAll("pitchImages");
 
-  const pitchName = formData.getAll("pitchName");
-  const pitchType = formData.getAll("pitchType");
-  const pitchQuantity = formData.getAll("pitchQuantity");
-  const pitchDesc = formData.getAll("pitchDesc");
-  const timeSlot = formData.getAll("timeSlot");
-  const timePrice = formData.getAll("timePrice");
-  console.log("pitchName", pitchName);
-  console.log("pitchType", pitchType);
-  console.log("pitchQuantity", pitchQuantity);
-  console.log("pitchDesc", pitchDesc);
+  // let check = true;
+  // console.log("pitchName", pitchName);
+  // if (pitchName.includes("")) check = false;
+  // console.log("pitchType", pitchType);
+  // if (pitchType.includes("")) check = false;
+  // console.log("pitchQuantity", pitchQuantity);
+  // if (pitchQuantity.includes("")) check = false;
+  // console.log("pitchDesc", pitchDesc);
   console.log("timeSlot", timeSlot);
+  // if (timeSlot.includes("")) check = false;
   console.log("timePrice", timePrice);
+  // if (timePrice.includes("")) check = false;
 
+  // if (!check) {
+  //   message["pitch"] = "Thiếu thông tin sân";
+  //   return json({
+  //     status: "error",
+  //     message: message,
+  //   });
+  // }
   let data: CreateGroupPitch | undefined;
   if (district !== null && ward !== null && owner !== undefined) {
     data = {
@@ -75,23 +114,58 @@ export async function action({ request }: ActionFunctionArgs) {
       id_district: parseInt(district.toString()),
       id_ward: parseInt(ward.toString()),
       address_detail: address_detail as string,
-      map: address_map as string,
+      map: src[1] as string,
       description: groupPitchDesc as string,
       ownerId: parseInt(owner.toString()),
       images: images.toString(),
     };
   }
   if (data !== undefined) {
-    const newPitch = await createPitch(data, services, servicePrices);
-    if (newPitch.id) {
+    const newGroupPitch = await createGroupPitch(data, services, servicePrices);
+    if (newGroupPitch.id) {
+      const numOfPitchType = pitchName.length;
+      let num = 0;
+      for (let i = 0; i < numOfPitchType; i++) {
+        let dataPitchType = {
+          name: pitchName[i].toString(),
+          type: pitchType[i].toString(),
+          id_groupPitch: newGroupPitch.id,
+          description: pitchDesc[i].toString(),
+        };
+        let newPitchType = await createPitchType(
+          dataPitchType,
+          parseInt(pitchQuantity[i].toString())
+        );
+        for (let j = 0; j < parseInt(numTimeSlot[i].toString()); j++) {
+          await createTimeSlot(
+            newPitchType.id,
+            timeSlot[(num + j) * 4 + 0],
+            timeSlot[(num + j) * 4 + 1],
+            timeSlot[(num + j) * 4 + 2],
+            timeSlot[(num + j) * 4 + 3],
+            parseFloat(timePrice[num + j].toString())
+          );
+        }
+        num += parseInt(numTimeSlot[i].toString());
+      }
       return redirect("/manager/group-pitch");
     }
   }
-  return null;
+  return "success";
 }
 function groupPitchAdd() {
   const data = useLoaderData<typeof loader>();
   let actionData = useActionData<{ message: Record<string, any> }>();
+  const [activeTab1, setActiveTab1] = useState(1);
+  const [activeTab2, setActiveTab2] = useState(0);
+  const changeTab1 = () => {
+    setActiveTab1(1);
+    setActiveTab2(0);
+  };
+  const changeTab2 = () => {
+    setActiveTab1(0);
+    setActiveTab2(1);
+  };
   const districts = [
     {
       code: "164",
@@ -342,32 +416,24 @@ function groupPitchAdd() {
     setWards(resjson.results);
   };
 
-  const [activeTab1, setActiveTab1] = useState(1);
-  const [activeTab2, setActiveTab2] = useState(0);
-  const changeTab1 = () => {
-    setActiveTab1(1);
-    setActiveTab2(0);
-  };
-  const changeTab2 = () => {
-    setActiveTab1(0);
-    setActiveTab2(1);
-  };
   const [selectedServices, setSelectedServices] = useState<{
     [key: number]: { status: boolean };
   }>();
   const serviceList = data.services;
   const [fieldTypes, setFieldTypes] = useState<
     {
-      pitchType: number;
+      pitchName: string;
+      pitchType: string;
       pitchQuantity: number;
       pitchDesc: string;
       timeSlots: Array<number>;
     }[]
   >([
     {
-      pitchType: 11,
+      pitchName: "Sangg",
+      pitchType: "Sân 5",
       pitchQuantity: 1,
-      pitchDesc: "",
+      pitchDesc: "Sanggg tả",
       timeSlots: [],
     },
   ]);
@@ -375,9 +441,10 @@ function groupPitchAdd() {
     setFieldTypes([
       ...fieldTypes,
       {
-        pitchType: 7,
+        pitchName: "Sơnn",
+        pitchType: "Sân 7",
         pitchQuantity: 3,
-        pitchDesc: "",
+        pitchDesc: "Sơn tả",
         timeSlots: [],
       },
     ]);
@@ -399,12 +466,13 @@ function groupPitchAdd() {
   const addTimeSlot = (index: number) => {
     const newFieldTypes = [...fieldTypes];
     var a = 5;
-    if (newFieldTypes[index].timeSlots.length)
+    if (newFieldTypes[index].timeSlots.length) {
       a = parseInt(
         newFieldTypes[index].timeSlots[
           newFieldTypes[index].timeSlots.length - 1
         ].hourEnd
       );
+    }
     var b = 0;
     if (newFieldTypes[index].timeSlots.length)
       b = parseInt(
@@ -507,7 +575,11 @@ function groupPitchAdd() {
                 </div>
               </div>
             ))}
-            <div className="rounded-md border border-grey-500 bg-gray-50 shadow-md w-28">
+            <div
+              className={`rounded-md border border-grey-500 bg-gray-50 shadow-md w-28 ${
+                actionData?.message?.pitchImages ? "border-error" : ""
+              }`}
+            >
               <label
                 htmlFor="upload"
                 className="flex flex-col items-center gap-2 cursor-pointer p-4"
@@ -538,6 +610,15 @@ function groupPitchAdd() {
               />
             </div>
           </div>
+          {actionData?.message?.pitchImages ? (
+            <div className="label pt-1 pb-0">
+              <span className="label-text-alt text-error">
+                {actionData.message.pitchImages}
+              </span>
+            </div>
+          ) : (
+            <></>
+          )}
 
           <label className="form-control w-full mb-1">
             <div className="label pb-1">
@@ -630,7 +711,7 @@ function groupPitchAdd() {
               placeholder="Nhập link google map"
               className="input input-bordered focus:border-primary focus-within:outline-none w-full rounded"
               name="address_map"
-              defaultValue="Map link"
+              defaultValue={`<iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1013.8447124367042!2d105.80668550550209!3d21.587581516477904!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3135273f6e374001%3A0xef97508b50a1bb96!2zU8OibiBiw7NuZyBDw7RuZyBuZ2jhu4cgdGjDtG5nIHRpbiwgTmfDtSAxODAgWjExNSwgUXV54bq_dCBUaOG6r25nLCBUaMOgbmggcGjhu5EgVGjDoWkgTmd1ecOqbiwgVGjDoWkgTmd1ecOqbiwgVmnhu4d0IE5hbQ!5e1!3m2!1svi!2s!4v1713778930015!5m2!1svi!2s" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>`}
             />
           </label>
           <label className="form-control">
@@ -704,6 +785,12 @@ function groupPitchAdd() {
                 key={index}
                 className="mb-2 border px-10 py-8 rounded relative"
               >
+                <input
+                  name="numTimeSlot"
+                  id="numTimeSlot"
+                  value={field.timeSlots.length}
+                  className="hidden"
+                />
                 <div className="flex justify-between gap-4 mb-2">
                   <label className="form-control mb-1 w-full">
                     <div className="label pb-1">
@@ -714,6 +801,7 @@ function groupPitchAdd() {
                       placeholder="Nhập tên sân"
                       name="pitchName"
                       id="pitchName"
+                      defaultValue={field.pitchName}
                       className="input input-bordered focus:border-primary focus-within:outline-none w-full rounded"
                     />
                   </label>
@@ -739,6 +827,7 @@ function groupPitchAdd() {
                       type="number"
                       placeholder="Số sân"
                       name="pitchQuantity"
+                      defaultValue={field.pitchQuantity}
                       className="input input-bordered focus:border-primary focus-within:outline-none w-full rounded"
                     />
                   </label>
@@ -750,6 +839,7 @@ function groupPitchAdd() {
                       className="textarea textarea-bordered focus:border-primary focus-within:outline-none h-1 rounded"
                       placeholder="Các thông tin cơ bản"
                       name="pitchDesc"
+                      defaultValue={field.pitchDesc}
                     ></textarea>
                   </label>
                 </div>
@@ -778,8 +868,6 @@ function groupPitchAdd() {
                 <div
                   className="btn inline-flex gap-3 items-center bg-green-500 hover:bg-green-600 px-5 py-2 rounded text-white"
                   onClick={() => addTimeSlot(index)}
-                  value="nothing"
-                  name="intent"
                 >
                   Thêm khoảng thời gian
                   <GoPlusCircle />
@@ -795,8 +883,6 @@ function groupPitchAdd() {
             <div
               className="btn inline-flex gap-3 items-center bg-green-500 hover:bg-green-600 px-5 py-2 rounded text-white"
               onClick={addFieldType}
-              value="nothing"
-              name="intent"
             >
               Thêm Loại Sân
               <GoPlusCircle />
@@ -810,6 +896,60 @@ function groupPitchAdd() {
               Tạo
             </button>
           </div>
+          {actionData?.message?.pitchImages ? (
+            <div className="label pt-1 pb-0">
+              <span className="label-text-alt text-error">
+                {actionData.message.pitchImages}
+              </span>
+            </div>
+          ) : (
+            <></>
+          )}
+          {actionData?.message?.groupPitchName ? (
+            <div className="label pt-1 pb-0">
+              <span className="label-text-alt text-error">
+                {actionData.message.groupPitchName}
+              </span>
+            </div>
+          ) : (
+            <></>
+          )}
+          {actionData?.message?.pitchName ? (
+            <div className="label pt-1 pb-0">
+              <span className="label-text-alt text-error">
+                {actionData.message.pitchName}
+              </span>
+            </div>
+          ) : (
+            <></>
+          )}
+          {actionData?.message?.pitchQuantity ? (
+            <div className="label pt-1 pb-0">
+              <span className="label-text-alt text-error">
+                {actionData.message.pitchQuantity}
+              </span>
+            </div>
+          ) : (
+            <></>
+          )}
+          {actionData?.message?.timeSlot ? (
+            <div className="label pt-1 pb-0">
+              <span className="label-text-alt text-error">
+                {actionData.message.timeSlot}
+              </span>
+            </div>
+          ) : (
+            <></>
+          )}
+          {actionData?.message?.timePrice ? (
+            <div className="label pt-1 pb-0">
+              <span className="label-text-alt text-error">
+                {actionData.message.timePrice}
+              </span>
+            </div>
+          ) : (
+            <></>
+          )}
         </div>
       </Form>
     </div>

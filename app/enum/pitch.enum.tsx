@@ -16,3 +16,9 @@ export type CreateGroupPitch = {
   ownerId: number;
   images: string;
 };
+export type CreatePitchType = {
+  name: string;
+  type: string;
+  id_groupPitch: number;
+  description: string;
+};

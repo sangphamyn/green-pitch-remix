@@ -42,12 +42,12 @@ model GroupPitch {
   name    String
   id_district Int?
   id_ward Int?
-  address_detail String?
-  map String?
+  address_detail String? @db.Text
+  map String? @db.Text
   description String?
   ownerId   Int?
   status Int? @default(1)
-  images String?
+  images String? @db.Text
 
   owner     User?    @relation(fields: [ownerId], references: [id])
   services     Service[]  @relation("grouppitch_service")
@@ -81,6 +81,7 @@ model pitchtype {
 
 model pitch {
   id      Int      @id @default(autoincrement())
+  name String? @db.Text
 
   pitch_pitchType    pitchtype @relation(fields: [id_pitchType], references: [id])
   id_pitchType Int

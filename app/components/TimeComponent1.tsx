@@ -19,12 +19,12 @@ const TimeComponent: React.FC<Props> = ({
   name,
   removeAction,
 }) => {
-  const [spanText1, setSpanText1] = useState<string>("05");
-  const [spanText2, setSpanText2] = useState<string>("00");
+  const [spanText1, setSpanText1] = useState<number>(hourStart);
+  const [spanText2, setSpanText2] = useState<number>(minuteStart);
   const inputRefs1 = useRef<HTMLInputElement>(null);
   const inputRefs2 = useRef<HTMLInputElement>(null);
-  const [spanText3, setSpanText3] = useState<string>("05");
-  const [spanText4, setSpanText4] = useState<string>("00");
+  const [spanText3, setSpanText3] = useState<number>(hourEnd);
+  const [spanText4, setSpanText4] = useState<number>(minuteEnd);
   const inputRefs3 = useRef<HTMLInputElement>(null);
   const inputRefs4 = useRef<HTMLInputElement>(null);
   const handleSelectTime1 = (
@@ -67,8 +67,13 @@ const TimeComponent: React.FC<Props> = ({
               role="button"
               className="btn bg-transparent border-none hover:bg-transparent shadow-none px-3 hover:text-primary transition gap-1"
             >
-              <span ref={inputRefs1}>{spanText1}</span> :{" "}
-              <span ref={inputRefs2}>{spanText2}</span>
+              <span ref={inputRefs1}>
+                {spanText1 < 10 ? "0" + spanText1 : spanText1}
+              </span>{" "}
+              :{" "}
+              <span ref={inputRefs2}>
+                {spanText2 < 10 ? "0" + spanText2 : spanText2}
+              </span>
             </div>
             <ul
               tabIndex={0}
@@ -79,6 +84,7 @@ const TimeComponent: React.FC<Props> = ({
                   type="number"
                   className="input input-bordered input-xs w-full hidden"
                   name="timeSlot"
+                  defaultValue={hourStart}
                   ref={inputRefs1}
                 />
                 <div className="text-center font-semibold">Giờ</div>
@@ -232,6 +238,7 @@ const TimeComponent: React.FC<Props> = ({
                   type="number"
                   className="input input-bordered input-xs w-full hidden"
                   ref={inputRefs2}
+                  defaultValue={minuteStart}
                   name="timeSlot"
                 />
                 <div className="text-center font-semibold">Phút</div>
@@ -270,8 +277,13 @@ const TimeComponent: React.FC<Props> = ({
             role="button"
             className="btn bg-transparent border-none hover:bg-transparent shadow-none px-3 hover:text-primary transition gap-1"
           >
-            <span ref={inputRefs3}>{spanText3}</span> :{" "}
-            <span ref={inputRefs4}>{spanText4}</span>
+            <span ref={inputRefs3}>
+              {spanText3 < 10 ? "0" + spanText3 : spanText3}
+            </span>{" "}
+            :{" "}
+            <span ref={inputRefs4}>
+              {spanText4 < 10 ? "0" + spanText4 : spanText4}
+            </span>
           </div>
           <ul
             tabIndex={0}
@@ -282,6 +294,7 @@ const TimeComponent: React.FC<Props> = ({
                 type="number"
                 className="input input-bordered input-xs w-full hidden"
                 name="timeSlot"
+                defaultValue={hourEnd}
                 ref={inputRefs3}
               />
               <div className="text-center font-semibold">Giờ</div>
@@ -435,6 +448,7 @@ const TimeComponent: React.FC<Props> = ({
                 type="number"
                 className="input input-bordered input-xs w-full hidden"
                 ref={inputRefs4}
+                defaultValue={minuteEnd}
                 name="timeSlot"
               />
               <div className="text-center font-semibold">Phút</div>
