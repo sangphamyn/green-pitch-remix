@@ -1,6 +1,9 @@
 import { LoaderFunction } from "@remix-run/node";
 import { Link, useActionData, useLoaderData } from "@remix-run/react";
-import { getGroupPitchById } from "prisma/pitch";
+import {
+  getGroupPitchById,
+  getPitchTypeListByGroupPitchId,
+} from "prisma/pitch";
 import React from "react";
 import { CiEdit } from "react-icons/ci";
 import { FaRegClock } from "react-icons/fa6";
@@ -19,13 +22,46 @@ import { register } from "swiper/element/bundle";
 register();
 export let loader: LoaderFunction = async ({ params }) => {
   const pitch = await getGroupPitchById(params.id);
-  return pitch;
+  const pitchType = await getPitchTypeListByGroupPitchId(params.id);
+  return { pitch, pitchType };
 };
 function group_pitch_detail() {
   const data = useLoaderData<typeof loader>();
-  // console.log(data);
-  const pitch = data.groupPitch;
-  const services = data.service;
+  console.log(data.pitchType);
+  const pitch = data.pitch.groupPitch;
+  const services = data.pitch.service;
+  const pitchTypeList = data.pitchType;
+  let numOfPitch = 0;
+  let minTime = 1000;
+  let maxTime = 0;
+  let minPrice = 100000000;
+  let maxPrice = 0;
+  pitchTypeList.map((item) => {
+    numOfPitch += item.pitch.length;
+    item.timeSlot.map((time) => {
+      if (timeToMinutes(time.startTime) < minTime)
+        minTime = timeToMinutes(time.startTime);
+      if (timeToMinutes(time.endTime) > maxTime)
+        maxTime = timeToMinutes(time.endTime);
+
+      let hour =
+        (timeToMinutes(time.endTime) - timeToMinutes(time.startTime)) / 60;
+      let priceOnHour = time.price / hour;
+      if (priceOnHour < minPrice) minPrice = priceOnHour;
+      if (priceOnHour > maxPrice) maxPrice = priceOnHour;
+    });
+  });
+  function timeToMinutes(timeStr) {
+    const [hours, minutes] = timeStr.split(":").map(Number);
+    return hours * 60 + minutes;
+  }
+  function minutesToTime(minutes) {
+    const hours = Math.floor(minutes / 60);
+    const mins = minutes % 60;
+    return `${hours.toString().padStart(2, "0")}:${mins
+      .toString()
+      .padStart(2, "0")}`;
+  }
   return (
     <div>
       <div className="join join-vertical lg:join-horizontal">
@@ -95,15 +131,19 @@ function group_pitch_detail() {
           <h3 className="font-semibold text-xl mb-4">Thông tin sân</h3>
           <div className="flex justify-between mb-1">
             <p>Giờ mở cửa</p>
-            <p className="font-semibold">6h-23h</p>
+            <p className="font-semibold">
+              {minutesToTime(minTime)} - {minutesToTime(maxTime)}
+            </p>
           </div>
           <div className="flex justify-between mb-1">
             <p>Số sân thi đấu: </p>
-            <p className="font-semibold">4 Sân</p>
+            <p className="font-semibold">{numOfPitch} Sân</p>
           </div>
           <div className="flex justify-between mb-1">
-            <p>Giá sân: </p>
-            <p className="font-semibold">400.000 đ</p>
+            <p>Giá sân trung bình: </p>
+            <p className="font-semibold">
+              {Math.round(minPrice)}đ - {Math.round(maxPrice)}đ/h
+            </p>
           </div>
           <div className="bg-white p-4 rounded mt-4">
             <h3 className="font-semibold text-md mb-4">Dịch vụ</h3>
@@ -127,7 +167,13 @@ function group_pitch_detail() {
                     })()}{" "}
                     {service.service.name}
                     {service.price != null ? (
-                      <div className="text-xs px-3 flex gap-1 items-center w-fit mb-2 py-[2px] bg-green-200 text-green-800 rounded-full">
+                      <div
+                        className={`text-xs px-3 flex gap-1 items-center w-fit mb-2 py-[2px]  rounded-full ${
+                          service.price == "0"
+                            ? "text-green-800 bg-green-200"
+                            : "text-orange-800 bg-orange-200"
+                        }`}
+                      >
                         {service.price == "0" ? "Free" : service.price + " đ"}
                       </div>
                     ) : (
@@ -214,171 +260,32 @@ function group_pitch_detail() {
     </div> */}
         <div>
           <div>
-            <div className="flex gap-4">
-              <div className="shrink-0">Sân Loại A (4 sân)</div>
-              <div className="flex flex-wrap gap-2">
-                <div className="border rounded-md px-3 py-2 text-sm">
-                  <div className="flex items-center justify-center gap-2">
-                    <FaRegClock />
-                    05:00 - 06:30
+            {pitchTypeList.map((item) => {
+              return (
+                <div className="flex gap-4 mb-3">
+                  <div className="shrink-0">
+                    {item.name} - {item.type} - {item.description} (
+                    {item.pitch.length} sân)
                   </div>
-                  <div className="flex items-center justify-center gap-2">
-                    <PiMoneyLight />
-                    480.000đ
-                  </div>
-                </div>
-                <div className="border rounded-md px-3 py-2 text-sm">
-                  <div className="flex items-center justify-center gap-2">
-                    <FaRegClock />
-                    05:00 - 06:30
-                  </div>
-                  <div className="flex items-center justify-center gap-2">
-                    <PiMoneyLight />
-                    480.000đ
-                  </div>
-                </div>
-                <div className="border rounded-md px-3 py-2 text-sm">
-                  <div className="flex items-center justify-center gap-2">
-                    <FaRegClock />
-                    05:00 - 06:30
-                  </div>
-                  <div className="flex items-center justify-center gap-2">
-                    <PiMoneyLight />
-                    480.000đ
+                  <div className="flex flex-wrap gap-2">
+                    {item.timeSlot.map((time) => {
+                      return (
+                        <div className="border rounded-md px-3 py-2 text-sm">
+                          <div className="flex items-center justify-center gap-2">
+                            <FaRegClock />
+                            {time.startTime} - {time.endTime}
+                          </div>
+                          <div className="flex items-center justify-center gap-2">
+                            <PiMoneyLight />
+                            {time.price}đ
+                          </div>
+                        </div>
+                      );
+                    })}
                   </div>
                 </div>
-                <div className="border rounded-md px-3 py-2 text-sm">
-                  <div className="flex items-center justify-center gap-2">
-                    <FaRegClock />
-                    05:00 - 06:30
-                  </div>
-                  <div className="flex items-center justify-center gap-2">
-                    <PiMoneyLight />
-                    480.000đ
-                  </div>
-                </div>
-                <div className="border rounded-md px-3 py-2 text-sm">
-                  <div className="flex items-center justify-center gap-2">
-                    <FaRegClock />
-                    05:00 - 06:30
-                  </div>
-                  <div className="flex items-center justify-center gap-2">
-                    <PiMoneyLight />
-                    480.000đ
-                  </div>
-                </div>
-                <div className="border rounded-md px-3 py-2 text-sm">
-                  <div className="flex items-center justify-center gap-2">
-                    <FaRegClock />
-                    05:00 - 06:30
-                  </div>
-                  <div className="flex items-center justify-center gap-2">
-                    <PiMoneyLight />
-                    480.000đ
-                  </div>
-                </div>
-                <div className="border rounded-md px-3 py-2 text-sm">
-                  <div className="flex items-center justify-center gap-2">
-                    <FaRegClock />
-                    05:00 - 06:30
-                  </div>
-                  <div className="flex items-center justify-center gap-2">
-                    <PiMoneyLight />
-                    480.000đ
-                  </div>
-                </div>
-                <div className="border rounded-md px-3 py-2 text-sm">
-                  <div className="flex items-center justify-center gap-2">
-                    <FaRegClock />
-                    05:00 - 06:30
-                  </div>
-                  <div className="flex items-center justify-center gap-2">
-                    <PiMoneyLight />
-                    480.000đ
-                  </div>
-                </div>
-                <div className="border rounded-md px-3 py-2 text-sm">
-                  <div className="flex items-center justify-center gap-2">
-                    <FaRegClock />
-                    05:00 - 06:30
-                  </div>
-                  <div className="flex items-center justify-center gap-2">
-                    <PiMoneyLight />
-                    480.000đ
-                  </div>
-                </div>
-                <div className="border rounded-md px-3 py-2 text-sm">
-                  <div className="flex items-center justify-center gap-2">
-                    <FaRegClock />
-                    05:00 - 06:30
-                  </div>
-                  <div className="flex items-center justify-center gap-2">
-                    <PiMoneyLight />
-                    480.000đ
-                  </div>
-                </div>
-                <div className="border rounded-md px-3 py-2 text-sm">
-                  <div className="flex items-center justify-center gap-2">
-                    <FaRegClock />
-                    05:00 - 06:30
-                  </div>
-                  <div className="flex items-center justify-center gap-2">
-                    <PiMoneyLight />
-                    480.000đ
-                  </div>
-                </div>
-                <div className="border rounded-md px-3 py-2 text-sm">
-                  <div className="flex items-center justify-center gap-2">
-                    <FaRegClock />
-                    05:00 - 06:30
-                  </div>
-                  <div className="flex items-center justify-center gap-2">
-                    <PiMoneyLight />
-                    480.000đ
-                  </div>
-                </div>
-                <div className="border rounded-md px-3 py-2 text-sm">
-                  <div className="flex items-center justify-center gap-2">
-                    <FaRegClock />
-                    05:00 - 06:30
-                  </div>
-                  <div className="flex items-center justify-center gap-2">
-                    <PiMoneyLight />
-                    480.000đ
-                  </div>
-                </div>
-                <div className="border rounded-md px-3 py-2 text-sm">
-                  <div className="flex items-center justify-center gap-2">
-                    <FaRegClock />
-                    05:00 - 06:30
-                  </div>
-                  <div className="flex items-center justify-center gap-2">
-                    <PiMoneyLight />
-                    480.000đ
-                  </div>
-                </div>
-                <div className="border rounded-md px-3 py-2 text-sm">
-                  <div className="flex items-center justify-center gap-2">
-                    <FaRegClock />
-                    05:00 - 06:30
-                  </div>
-                  <div className="flex items-center justify-center gap-2">
-                    <PiMoneyLight />
-                    480.000đ
-                  </div>
-                </div>
-                <div className="border rounded-md px-3 py-2 text-sm">
-                  <div className="flex items-center justify-center gap-2">
-                    <FaRegClock />
-                    05:00 - 06:30
-                  </div>
-                  <div className="flex items-center justify-center gap-2">
-                    <PiMoneyLight />
-                    480.000đ
-                  </div>
-                </div>
-              </div>
-            </div>
+              );
+            })}
           </div>
         </div>
       </div>

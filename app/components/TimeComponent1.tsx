@@ -32,28 +32,28 @@ const TimeComponent: React.FC<Props> = ({
   ) => {
     if (inputRefs1.current)
       inputRefs1.current.value = e.currentTarget.textContent || "";
-    setSpanText1(e.currentTarget.textContent || "");
+    setSpanText1(parseInt(e.currentTarget.textContent));
   };
   const handleSelectTime2 = (
     e: React.MouseEvent<HTMLDivElement, MouseEvent>
   ) => {
     if (inputRefs2.current)
       inputRefs2.current.value = e.currentTarget.textContent || "";
-    setSpanText2(e.currentTarget.textContent || "");
+    setSpanText2(parseInt(e.currentTarget.textContent));
   };
   const handleSelectTime3 = (
     e: React.MouseEvent<HTMLDivElement, MouseEvent>
   ) => {
     if (inputRefs3.current)
       inputRefs3.current.value = e.currentTarget.textContent || "";
-    setSpanText3(e.currentTarget.textContent || "");
+    setSpanText3(parseInt(e.currentTarget.textContent));
   };
   const handleSelectTime4 = (
     e: React.MouseEvent<HTMLDivElement, MouseEvent>
   ) => {
     if (inputRefs4.current)
       inputRefs4.current.value = e.currentTarget.textContent || "";
-    setSpanText4(e.currentTarget.textContent || "");
+    setSpanText4(parseInt(e.currentTarget.textContent));
   };
 
   return (

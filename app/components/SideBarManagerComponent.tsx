@@ -1,12 +1,16 @@
 import React from "react";
 import logo from "/images/logo.svg";
-import { Link, NavLink } from "@remix-run/react";
+import { Link, NavLink, useLoaderData } from "@remix-run/react";
 import { AiOutlineHome } from "react-icons/ai";
 import { IoAnalytics, IoCalendarOutline } from "react-icons/io5";
 import { MdOutlineStadium } from "react-icons/md";
 import { FaUsersRectangle } from "react-icons/fa6";
+import { loader } from "~/routes/_.$";
 
 function SideBarManagerComponent() {
+  const data: { user: { [key: string]: string } } =
+    useLoaderData<typeof loader>();
+  const idFirst = data.idFirst;
   const handleNavigate = () => {};
   return (
     <div>
@@ -42,7 +46,7 @@ function SideBarManagerComponent() {
           </NavLink>
 
           <NavLink
-            to="/manager/schedule"
+            to={`/manager/schedule/` + idFirst}
             onClick={() => handleNavigate()}
             className={({ isActive }) =>
               "flex gap-3 items-center px-6 py-2.5 text-gray-600 hover:bg-orange-100 hover:text-orange-600 group transition " +

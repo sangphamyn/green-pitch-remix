@@ -44,6 +44,13 @@ const pitches = [
 function group_pitch() {
   const data = useLoaderData<typeof loader>();
   const pitches = data;
+  pitches.map((pitch) => {
+    let quantity = 0;
+    pitch.pitchTypes.map((type) => {
+      quantity += type.pitch.length;
+    });
+    pitch.quantity = quantity;
+  });
   return (
     <div>
       <Outlet />
@@ -57,56 +64,59 @@ function group_pitch() {
         <h1 className="mb-12 text-2xl font-extrabold text-center leading-none tracking-tight text-gray-900 md:text-3xl lg:text-4xl dark:text-white">
           Danh sách các cụm sân
         </h1>
-        {Object.keys(pitches).length == 0 ? <div>Rong</div> : <div className="grid grid-cols-2 gap-10 mt-5">
-          {pitches.map((pitch, index) => (
-            <Link
-              to={"/manager/group-pitch/" + pitch.id}
-              key={index}
-              className="border rounded p-4 flex gap-5 hover:shadow transition hover:text-primary cursor-pointer"
-            >
-              <img
-                src={
-                  pitch.images
-                    ? pitch.images.split(",")[0]
-                    : "/images/san-co-nhan-tao-7-nguoi-dep.jpg"
-                }
-                alt={pitch.name}
-                className="mb-2 rounded w-1/2"
-              />
-              <div>
-                <div
-                  className={`text-sm px-4 w-fit mb-2 py-1 ${
-                    pitch.status == 2
-                      ? "bg-green-200 text-green-800"
+        {Object.keys(pitches).length == 0 ? (
+          <div>Rong</div>
+        ) : (
+          <div className="grid grid-cols-2 gap-10 mt-5">
+            {pitches.map((pitch, index) => (
+              <Link
+                to={"/manager/group-pitch/" + pitch.id}
+                key={index}
+                className="border rounded p-4 flex gap-5 hover:shadow transition hover:text-primary cursor-pointer"
+              >
+                <img
+                  src={
+                    pitch.images
+                      ? pitch.images.split(",")[0]
+                      : "/images/san-co-nhan-tao-7-nguoi-dep.jpg"
+                  }
+                  alt={pitch.name}
+                  className="mb-2 rounded w-1/2 h-[250px] object-cover"
+                />
+                <div>
+                  <div
+                    className={`text-sm px-4 w-fit mb-2 py-1 ${
+                      pitch.status == 2
+                        ? "bg-green-200 text-green-800"
+                        : pitch.status == 0
+                        ? "bg-red-200 text-red-800"
+                        : "bg-orange-200 text-orange-800"
+                    } rounded-full`}
+                  >
+                    {pitch.status == 2
+                      ? "Đã duyệt"
                       : pitch.status == 0
-                      ? "bg-red-200 text-red-800"
-                      : "bg-orange-200 text-orange-800"
-                  } rounded-full`}
-                >
-                  {pitch.status == 2
-                    ? "Đã duyệt"
-                    : pitch.status == 0
-                    ? "Từ chối"
-                    : "Chưa duyệt"}
-                </div>
-                <h2 className="text-lg font-semibold mb-1">{pitch.name}</h2>
-                <p className="text-sm text-gray-600 mb-1 flex gap-1">
-                  <PiMapPinLight className="shrink-0 text-lg" />{" "}
-                  {getWardById(pitch.id_ward).name},{" "}
-                  {getDistrictById(pitch.id_district).name}
-                </p>
-                <p className="text-sm text-gray-600 mb-1 flex gap-1 items-center">
-                  <MdOutlineStadium /> Số sân: {pitch.quantity}
-                </p>
-                <p className="text-sm mt-4 text-gray-600">
-                  {pitch.description}
-                </p>
-              </div>{" "}
-              {/* Thêm thông tin khác của sân bóng nếu cần */}
-            </Link>
-          ))}
-        </div>}
-        
+                      ? "Từ chối"
+                      : "Chưa duyệt"}
+                  </div>
+                  <h2 className="text-lg font-semibold mb-1">{pitch.name}</h2>
+                  <p className="text-sm text-gray-600 mb-1 flex gap-1">
+                    <PiMapPinLight className="shrink-0 text-lg" />{" "}
+                    {getWardById(pitch.id_ward).name},{" "}
+                    {getDistrictById(pitch.id_district).name}
+                  </p>
+                  <p className="text-sm text-gray-600 mb-1 flex gap-1 items-center">
+                    <MdOutlineStadium /> Số sân: {pitch.quantity}
+                  </p>
+                  <p className="text-sm mt-4 text-gray-600">
+                    {pitch.description}
+                  </p>
+                </div>{" "}
+                {/* Thêm thông tin khác của sân bóng nếu cần */}
+              </Link>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );

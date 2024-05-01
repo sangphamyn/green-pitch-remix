@@ -30,6 +30,13 @@ export const getGroupPitchByOwnerId = async (ownerId: string) => {
       where: {
         owner: { id: parseInt(ownerId) },
       },
+      include: {
+        pitchTypes: {
+          include: {
+            pitch: true,
+          },
+        },
+      },
     });
     for (const groupPitch of groupPitchs) {
       const services = await db.grouppitch_service.findMany({
@@ -140,6 +147,23 @@ export const createTimeSlot = async (
     return timeSlot;
   } catch (error) {
     console.error("Lỗi db:", error);
+    throw error;
+  }
+};
+export const getPitchTypeListByGroupPitchId = async (id: string) => {
+  try {
+    const pitchTypeList = await db.pitchtype.findMany({
+      where: {
+        id_groupPitch: parseInt(id),
+      },
+      include: {
+        timeSlot: true,
+        pitch: true,
+      },
+    });
+    return pitchTypeList;
+  } catch (error) {
+    console.error("Lỗi:", error);
     throw error;
   }
 };

@@ -5,24 +5,33 @@ function HeaderManagerComponent() {
   const data: { user: { [key: string]: string } } =
     useLoaderData<typeof loader>();
   let user = data.user;
+  let groupPitch = data.groupPitchs;
   let isLogin = Object.keys(user).length > 0;
+  let paramsId = data.paramsId;
+  let name = "";
+  groupPitch.map((item) => {
+    if (item.id == paramsId) {
+      name = item.name;
+    }
+  });
   return (
     <div className="navbar bg-orange-400">
       <div className="flex-1">
         <div className="dropdown">
           <div tabIndex={0} role="button" className="btn m-1">
-            Sân CNTT
+            {name}
           </div>
           <ul
             tabIndex={0}
             className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52"
           >
-            <li>
-              <a>Sân Thanh Niên</a>
-            </li>
-            <li>
-              <a>Sân Công Nghiệp</a>
-            </li>
+            {groupPitch.map((item) => {
+              return (
+                <li>
+                  <a>{item.name}</a>
+                </li>
+              );
+            })}
           </ul>
         </div>
       </div>

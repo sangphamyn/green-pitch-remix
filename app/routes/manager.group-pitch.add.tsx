@@ -95,9 +95,9 @@ export async function action({ request }: ActionFunctionArgs) {
   // console.log("pitchQuantity", pitchQuantity);
   // if (pitchQuantity.includes("")) check = false;
   // console.log("pitchDesc", pitchDesc);
-  console.log("timeSlot", timeSlot);
+  // console.log("timeSlot", timeSlot);
   // if (timeSlot.includes("")) check = false;
-  console.log("timePrice", timePrice);
+  // console.log("timePrice", timePrice);
   // if (timePrice.includes("")) check = false;
 
   // if (!check) {
@@ -502,7 +502,7 @@ function groupPitchAdd() {
   const [previewImages, setPreviewImages] = useState([]);
   const handleUploadImage = (event: React.ChangeEvent<HTMLInputElement>) => {
     let files = event.target.files;
-    console.log(files);
+    // console.log(files);
     const images: string[] = [];
     if (files) {
       for (let i = 0; i < files.length; i++) {
