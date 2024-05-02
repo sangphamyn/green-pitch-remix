@@ -85,6 +85,8 @@ model pitch {
 
   pitch_pitchType    pitchtype @relation(fields: [id_pitchType], references: [id])
   id_pitchType Int
+
+  booking booking[]
 }
 
 model timeSlot {
@@ -108,4 +110,7 @@ model booking {
 
   booking_user    User @relation(fields: [id_user], references: [id])
   id_user Int
+
+  booking_pitch pitch @relation(fields: [id_pitch], references: [id])
+  id_pitch Int
 }

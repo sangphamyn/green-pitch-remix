@@ -16,7 +16,9 @@ export function now() {
   const formattedDateTime = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
   return formattedDateTime;
 }
-
+export function formatCurrency(number:number) {
+  return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(number);
+}
 export function getDistrictById(id: string) {
   const districts = [
     {

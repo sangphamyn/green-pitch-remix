@@ -63,6 +63,26 @@ export const getGroupPitchByOwnerId = async (ownerId: string) => {
     throw error;
   }
 };
+export const getGroupPitchList = async () => {
+  try {
+    const groupPitchList = await db.groupPitch.findMany({
+      where: {
+        status: 2,
+      },
+      include: {
+        pitchTypes: {
+          include: {
+            pitch: true,
+          },
+        },
+      },
+    });
+    return groupPitchList;
+  } catch (error) {
+    console.error("Lỗi:", error);
+    throw error;
+  }
+};
 export const getGroupPitchById = async (id: string) => {
   try {
     const groupPitch = await db.groupPitch.findFirst({
@@ -162,6 +182,57 @@ export const getPitchTypeListByGroupPitchId = async (id: string) => {
       },
     });
     return pitchTypeList;
+  } catch (error) {
+    console.error("Lỗi:", error);
+    throw error;
+  }
+};
+export const getPitchListByPitchTypeId = async (id: string) => {
+  try {
+    const pitchList = await db.pitch.findMany({
+      where: {
+        id_pitchType: parseInt(id),
+      },
+    });
+    return pitchList;
+  } catch (error) {
+    console.error("Lỗi:", error);
+    throw error;
+  }
+};
+export const getBookingListByDateTimeSlotId = async (
+  date: string,
+  id: string
+) => {
+  try {
+    const bookingList = await db.booking.findMany({
+      where: {
+        date: date,
+        id_timeSlot: parseInt(id),
+      },
+    });
+    return bookingList;
+  } catch (error) {
+    console.error("Lỗi:", error);
+    throw error;
+  }
+};
+export const bookingabc = async (
+  date: string,
+  id_timeSlot: string,
+  id_user: string,
+  id_pitch: string
+) => {
+  try {
+    const booking = await db.booking.create({
+      data: {
+        date: date,
+        id_timeSlot: parseInt(id_timeSlot),
+        id_user: parseInt(id_user),
+        id_pitch: parseInt(id_pitch),
+      },
+    });
+    return booking;
   } catch (error) {
     console.error("Lỗi:", error);
     throw error;
