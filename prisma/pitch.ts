@@ -177,7 +177,11 @@ export const getPitchTypeListByGroupPitchId = async (id: string) => {
         id_groupPitch: parseInt(id),
       },
       include: {
-        timeSlot: true,
+        timeSlot: {
+          include: {
+            booking: true,
+          },
+        },
         pitch: true,
       },
     });

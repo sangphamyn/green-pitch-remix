@@ -4,7 +4,13 @@ import {
   json,
   redirect,
 } from "@remix-run/node";
-import { Form, Link, useActionData, useLoaderData } from "@remix-run/react";
+import {
+  Form,
+  Link,
+  useActionData,
+  useLoaderData,
+  useSubmit,
+} from "@remix-run/react";
 import {
   booking,
   bookingabc,
@@ -47,6 +53,16 @@ export let loader: LoaderFunction = async ({ request, params }) => {
 };
 export async function action({ request, params }: ActionFunctionArgs) {
   let formData = await request.formData();
+
+  const intent = formData.get("intent");
+  if (intent == "dateChange") {
+    const dateSearch = formData.get("dateSearch");
+    const parts = dateSearch.split("-");
+    const formattedDate = `${parts[2]}-${parts[1]}-${parts[0]}`;
+    const pitch = await getGroupPitchById(params.id);
+    const pitchType = await getPitchTypeListByGroupPitchId(params.id);
+    return { pitch, pitchType };
+  }
   const date = formData.get("date");
   const timeId = formData.get("id_timeSlot");
   const user = formData.get("user");
@@ -88,10 +104,17 @@ export async function action({ request, params }: ActionFunctionArgs) {
 function group_pitch_detail() {
   const data = useLoaderData<typeof loader>();
   let actionData = useActionData();
+  let pitchTypeList;
+  if (actionData?.pitchType) {
+    pitchTypeList = actionData.pitchType;
+  } else {
+    pitchTypeList = data.pitchType;
+  }
+  // let pitchTypeList1 = actionData?.pitchType;
+  // pitchTypeList = data.pitchType;
   const user = data.user;
   const pitch = data.pitch.groupPitch;
   const services = data.pitch.service;
-  const pitchTypeList = data.pitchType;
   let numOfPitch = 0;
   let minTime = 1000;
   let maxTime = 0;
@@ -139,8 +162,17 @@ function group_pitch_detail() {
   }).format(currentDate);
   const [value, onChange] = useState<Value>(new Date());
   const handleChange = (e) => {
-    onChange(e);
+    if (e == null) onChange(new Date());
+    else onChange(e);
   };
+  function dateFormat(date) {
+    let day1 = date.getDate();
+    let month1 = date.getMonth() + 1;
+    let year1 = date.getFullYear();
+    return `${day1 < 10 ? `0${day1}` : day1}/${
+      month1 < 10 ? `0${month1}` : month1
+    }/${year1}`;
+  }
   const [time, setTime] = useState<string>();
   const [timeId, setTimeId] = useState<string>();
   const [price, setPrice] = useState<string>();
@@ -153,7 +185,9 @@ function group_pitch_detail() {
     setType(e.target.querySelector(".sang-type").textContent);
     setPitchTypeId(e.target.getAttribute("pitchType_id"));
     document.getElementById("my_modal_2").showModal();
+    document.querySelector(".sang-status")?.classList.add("hidden");
   };
+
   return (
     <div className="px-40">
       <h1 className="mb-12 mt-5 text-2xl font-extrabold text-center leading-none tracking-tight text-gray-900 md:text-3xl lg:text-4xl dark:text-white">
@@ -294,11 +328,16 @@ function group_pitch_detail() {
                 </time>
                 <p className="text-sm text-[#6B7280] mt-1">{dayOfWeek}</p>
               </div>
-              <div className="flex gap-4 items-center">
-                <DatePicker onChange={handleChange} value={value} />
-              </div>
+              <Form method="POST" className="flex gap-4 items-center">
+                <DatePicker
+                  onChange={handleChange}
+                  value={value}
+                  name="dateSearch"
+                  clearIcon={false}
+                />
+              </Form>
             </div>
-            {pitchTypeList.map((item) => {
+            {pitchTypeList?.map((item) => {
               return (
                 <div className="flex gap-4 mb-3">
                   <div className="w-1/5">
@@ -307,9 +346,16 @@ function group_pitch_detail() {
                   </div>
                   <div className="flex flex-wrap gap-2">
                     {item.timeSlot.map((time, index) => {
+                      const bookings = time.booking.filter(
+                        (booking) => booking.date === dateFormat(value)
+                      );
                       return (
                         <div
-                          className="border border-[#93B4FD] bg-[#DBE6FE] rounded-md px-3 py-2 text-sm cursor-pointer hover:bg-white transition"
+                          className={`border rounded-md px-3 py-2 text-sm cursor-pointer transition ${
+                            bookings.length == item.pitch.length
+                              ? "border-[#fd9393] bg-[#fedbdb] cursor-not-allowed pointer-events-none"
+                              : "border-[#93B4FD] bg-[#DBE6FE] hover:bg-white"
+                          }`}
                           onClick={handleBooking}
                           timeSlot_id={time.id}
                           pitchType_id={item.id}
@@ -328,6 +374,9 @@ function group_pitch_detail() {
                             <span className="sang-price">
                               {formatCurrency(time.price)}
                             </span>
+                          </div>
+                          <div className="flex items-center justify-center gap-2 pointer-events-none">
+                            {bookings.length} / {item.pitch.length}
                           </div>
                         </div>
                       );
@@ -414,25 +463,33 @@ function group_pitch_detail() {
                   Đặt sân
                 </button>
                 <div
-                  className={`t-4 sang-status ${
+                  role="alert"
+                  className={`mt-4 alert sang-status ${
+                    actionData ? "" : "hidden"
+                  } ${
                     actionData?.status == "success"
-                      ? "text-success"
-                      : "text-error"
+                      ? "alert-success"
+                      : "alert-error"
                   }`}
                 >
-                  {actionData?.message}
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="stroke-current shrink-0 h-6 w-6"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
+                    />
+                  </svg>
+                  <span>{actionData?.message}</span>
                 </div>
                 {/* </div> */}
               </Form>
-              <form
-                method="dialog"
-                onClick={() => {
-                  document
-                    .querySelector(".sang-status")
-                    ?.classList.add("hidden");
-                }}
-                className="modal-backdrop"
-              >
+              <form method="dialog" className="modal-backdrop">
                 <button>close</button>
               </form>
             </dialog>
