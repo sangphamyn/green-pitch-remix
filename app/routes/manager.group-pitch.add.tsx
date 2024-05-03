@@ -79,8 +79,6 @@ export async function action({ request }: ActionFunctionArgs) {
   const ward = formData.get("ward");
   const address_detail = formData.get("address_detail");
   const address_map = formData.get("address_map") || "";
-  const src_regex = /src="([^"]+)"/;
-  const src = src_regex.exec(address_map.toString());
   const groupPitchDesc = formData.get("groupPitchDesc");
   const services = formData.getAll("groupPitchServices");
   const servicePrices = formData.getAll("servicePrices");
@@ -114,7 +112,7 @@ export async function action({ request }: ActionFunctionArgs) {
       id_district: parseInt(district.toString()),
       id_ward: parseInt(ward.toString()),
       address_detail: address_detail as string,
-      map: src[1] as string,
+      map: address_map as string,
       description: groupPitchDesc as string,
       ownerId: parseInt(owner.toString()),
       images: images.toString(),

@@ -74,8 +74,8 @@ export async function action({ request }: ActionFunctionArgs) {
 function login() {
   let actionData = useActionData<{ message: Record<string, any> }>();
   const [formData, setFormData] = useState({
-    username: "sang@gmail.com",
-    password: "111111",
+    // username: "sang@gmail.com",
+    // password: "111111",
   });
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value }: { name: string; value: string } =

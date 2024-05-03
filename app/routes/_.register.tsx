@@ -88,11 +88,11 @@ export async function action({ request }: ActionFunctionArgs) {
 
 function register() {
   const [formData, setFormData] = useState({
-    fullname: "Phạm Văn",
-    email: "sang@gmail.com",
-    phone: "0852256360",
-    password: "111111",
-    confirmPassword: "111111",
+    // fullname: "Phạm Văn",
+    // email: "sang@gmail.com",
+    // phone: "0852256360",
+    // password: "111111",
+    // confirmPassword: "111111",
   });
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;

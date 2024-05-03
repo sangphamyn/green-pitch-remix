@@ -44,7 +44,7 @@ model GroupPitch {
   id_ward Int?
   address_detail String? @db.Text
   map String? @db.Text
-  description String?
+  description String? @db.Text
   ownerId   Int?
   status Int? @default(1)
   images String? @db.Text

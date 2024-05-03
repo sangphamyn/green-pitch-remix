@@ -5,7 +5,7 @@ import { FiPlusCircle } from "react-icons/fi";
 import { MdOutlineStadium } from "react-icons/md";
 import { PiMapPinLight } from "react-icons/pi";
 import { getDistrictById, getWardById } from "~/helper";
-
+import { TbFileSad } from "react-icons/tb";
 export let loader: LoaderFunction = async ({ request }) => {
   const groupPitchList = await getGroupPitchList();
   return groupPitchList;
@@ -28,7 +28,10 @@ export default function Index() {
           Danh sách các sân
         </h1>
         {Object.keys(pitches).length == 0 ? (
-          <div>Rong</div>
+          <div className="text-center flex justify-center items-center flex-col h-96">
+            <TbFileSad className="w-20 h-20 mb-4" />
+            <p className="text-2xl">Hiện chưa có sân nào</p>
+          </div>
         ) : (
           <div className="grid grid-cols-2 gap-10 mt-5">
             {pitches.map((pitch, index) => (
@@ -69,4 +72,3 @@ export default function Index() {
     </div>
   );
 }
-

@@ -19,10 +19,10 @@ import {
   getPitchListByPitchTypeId,
   getPitchTypeListByGroupPitchId,
 } from "prisma/pitch";
-import React from "react";
+import React, { useEffect } from "react";
 import { CiEdit } from "react-icons/ci";
 import { FaAngleLeft, FaAngleRight, FaRegClock } from "react-icons/fa6";
-import { IoIosWifi } from "react-icons/io";
+import { IoIosFootball, IoIosWifi } from "react-icons/io";
 import {
   IoCarOutline,
   IoFastFoodOutline,
@@ -41,6 +41,8 @@ import "react-date-picker/dist/DatePicker.css";
 import "react-calendar/dist/Calendar.css";
 import { getSession } from "~/session.server";
 import { PrismaClient } from "@prisma/client";
+import { LiaShoePrintsSolid } from "react-icons/lia";
+import { MdOutlineRoomService } from "react-icons/md";
 type ValuePiece = Date | null;
 
 const db = new PrismaClient();
@@ -178,7 +180,19 @@ function group_pitch_detail() {
     document.getElementById("my_modal_2").showModal();
     document.querySelector(".sang-status")?.classList.add("hidden");
   };
+  const [srcValue, setSrcValue] = useState("");
+  useEffect(() => {
+    const div = document.createElement("div");
+    div.style.display = "none";
+    div.innerHTML = pitch.map;
 
+    // Lấy thẻ iframe từ thẻ div
+    const iframeElement = div.querySelector("iframe");
+
+    // Lấy giá trị của thuộc tính src từ thẻ iframe
+    const srcValue = iframeElement.getAttribute("src");
+    setSrcValue(srcValue);
+  });
   return (
     <div className="px-40">
       <h1 className="mb-12 mt-5 text-2xl font-extrabold text-center leading-none tracking-tight text-gray-900 md:text-3xl lg:text-4xl dark:text-white">
@@ -266,15 +280,21 @@ function group_pitch_detail() {
                     {(() => {
                       switch (service.serviceId) {
                         case 1:
-                          return <LuGlassWater />;
-                        case 2:
                           return <IoIosWifi />;
+                        case 2:
+                          return <LuGlassWater />;
                         case 3:
                           return <IoShirtOutline />;
                         case 4:
                           return <IoCarOutline />;
                         case 5:
                           return <IoFastFoodOutline />;
+                        case 6:
+                          return <LiaShoePrintsSolid />;
+                        case 7:
+                          return <IoIosFootball />;
+                        default:
+                          return <MdOutlineRoomService />;
                       }
                     })()}{" "}
                     {service.service.name}
@@ -298,7 +318,7 @@ function group_pitch_detail() {
           </div>
         </div>
         <iframe
-          src={pitch.map}
+          src={srcValue}
           width="600"
           height="300"
           //   allowfullscreen=""
@@ -331,47 +351,57 @@ function group_pitch_detail() {
             {pitchTypeList?.map((item) => {
               return (
                 <div className="flex gap-4 mb-3">
-                  <div className="w-1/5">
+                  <div className="w-1/5 flex-shrink-0">
                     {item.name} - {item.type} - {item.description} (
                     {item.pitch.length} sân)
                   </div>
-                  <div className="flex flex-wrap gap-2">
-                    {item.timeSlot.map((time, index) => {
-                      const bookings = time.booking?.filter(
-                        (booking) => booking.date === dateFormat(value)
-                      );
-                      return (
-                        <div
-                          className={`border rounded-md px-3 py-2 text-sm cursor-pointer transition ${
-                            bookings?.length == item.pitch?.length
-                              ? "border-[#fd9393] bg-[#fedbdb] cursor-not-allowed pointer-events-none"
-                              : "border-[#93B4FD] bg-[#DBE6FE] hover:bg-white"
-                          }`}
-                          onClick={handleBooking}
-                          timeSlot_id={time.id}
-                          pitchType_id={item.id}
-                        >
-                          <div className="flex items-center justify-center gap-2 font-semibold pointer-events-none">
-                            <FaRegClock />
-                            <span className="sang-time">
-                              {time.startTime} - {time.endTime}
-                            </span>
-                            <span className="sang-type hidden">
-                              {item.type}
-                            </span>
-                          </div>
-                          <div className="flex items-center justify-center gap-2 pointer-events-none">
-                            <PiMoneyLight />
-                            <span className="sang-price">
-                              {formatCurrency(time.price)}
-                            </span>
-                          </div>
-                          <div className="flex items-center justify-center gap-2 pointer-events-none">
-                            {bookings?.length} / {item.pitch?.length}
-                          </div>
-                        </div>
-                      );
-                    })}
+                  <div className="w-4/5">
+                    <swiper-container
+                      // style="--swiper-navigation-color: #fff; --swiper-pagination-color: #fff"
+                      class="mySwiper"
+                      space-between="10"
+                      slides-per-view="7"
+                      navigation={true}
+                    >
+                      {item.timeSlot.map((time, index) => {
+                        const bookings = time.booking?.filter(
+                          (booking) => booking.date === dateFormat(value)
+                        );
+                        return (
+                          <swiper-slide key={index}>
+                            <div
+                              className={`border rounded-md px-3 py-2 text-sm cursor-pointer transition ${
+                                bookings?.length == item.pitch?.length
+                                  ? "border-[#fd9393] bg-[#fedbdb] cursor-not-allowed pointer-events-none"
+                                  : "border-[#93B4FD] bg-[#DBE6FE] hover:bg-white"
+                              }`}
+                              onClick={handleBooking}
+                              timeSlot_id={time.id}
+                              pitchType_id={item.id}
+                            >
+                              <div className="flex items-center justify-center gap-2 font-semibold pointer-events-none">
+                                <FaRegClock />
+                                <span className="sang-time">
+                                  {time.startTime} - {time.endTime}
+                                </span>
+                                <span className="sang-type hidden">
+                                  {item.type}
+                                </span>
+                              </div>
+                              <div className="flex items-center justify-center gap-2 pointer-events-none">
+                                <PiMoneyLight />
+                                <span className="sang-price">
+                                  {formatCurrency(time.price)}
+                                </span>
+                              </div>
+                              <div className="flex items-center justify-center gap-2 pointer-events-none">
+                                {bookings?.length} / {item.pitch?.length}
+                              </div>
+                            </div>
+                          </swiper-slide>
+                        );
+                      })}
+                    </swiper-container>
                   </div>
                 </div>
               );

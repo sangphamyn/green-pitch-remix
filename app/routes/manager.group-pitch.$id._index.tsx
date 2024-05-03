@@ -4,10 +4,10 @@ import {
   getGroupPitchById,
   getPitchTypeListByGroupPitchId,
 } from "prisma/pitch";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { CiEdit } from "react-icons/ci";
 import { FaRegClock } from "react-icons/fa6";
-import { IoIosWifi } from "react-icons/io";
+import { IoIosFootball, IoIosWifi } from "react-icons/io";
 import {
   IoCarOutline,
   IoFastFoodOutline,
@@ -18,6 +18,8 @@ import { PiMapPinLight, PiMoneyLight } from "react-icons/pi";
 import { getDistrictById, getWardById } from "~/helper";
 // import function to register Swiper custom elements
 import { register } from "swiper/element/bundle";
+import { LiaShoePrintsSolid } from "react-icons/lia";
+import { MdOutlineRoomService } from "react-icons/md";
 // register Swiper custom elements
 register();
 export let loader: LoaderFunction = async ({ params }) => {
@@ -62,6 +64,19 @@ function group_pitch_detail() {
       .toString()
       .padStart(2, "0")}`;
   }
+  const [srcValue, setSrcValue] = useState("");
+  useEffect(() => {
+    const div = document.createElement("div");
+    div.style.display = "none";
+    div.innerHTML = pitch.map;
+
+    // Lấy thẻ iframe từ thẻ div
+    const iframeElement = div.querySelector("iframe");
+
+    // Lấy giá trị của thuộc tính src từ thẻ iframe
+    const srcValue = iframeElement.getAttribute("src");
+    setSrcValue(srcValue);
+  });
   return (
     <div>
       <div className="join join-vertical lg:join-horizontal">
@@ -95,27 +110,29 @@ function group_pitch_detail() {
                 {pitch.images.split(",").map((img: string, index: number) => {
                   return (
                     <swiper-slide key={index}>
-                      <img src={img} />
+                      <img
+                        src={img}
+                        className="h-[320px] w-full object-cover rounded-md"
+                      />
                     </swiper-slide>
                   );
                 })}
               </swiper-container>
 
-              <swiper-container
+              {/* <swiper-container
                 class="mySwiper2"
-                space-between="10"
-                slides-per-view="4"
+                slides-per-view="3"
                 free-mode="true"
                 watch-slides-progress="true"
               >
                 {pitch.images.split(",").map((img: string, index: number) => {
                   return (
                     <swiper-slide>
-                      <img src={img} />
+                      <img src={img} className="h-[100px] w-full" />
                     </swiper-slide>
                   );
                 })}
-              </swiper-container>
+              </swiper-container> */}
             </div>
           </>
         ) : (
@@ -154,15 +171,21 @@ function group_pitch_detail() {
                     {(() => {
                       switch (service.serviceId) {
                         case 1:
-                          return <LuGlassWater />;
-                        case 2:
                           return <IoIosWifi />;
+                        case 2:
+                          return <LuGlassWater />;
                         case 3:
                           return <IoShirtOutline />;
                         case 4:
                           return <IoCarOutline />;
                         case 5:
                           return <IoFastFoodOutline />;
+                        case 6:
+                          return <LiaShoePrintsSolid />;
+                        case 7:
+                          return <IoIosFootball />;
+                        default:
+                          return <MdOutlineRoomService />;
                       }
                     })()}{" "}
                     {service.service.name}
@@ -186,7 +209,7 @@ function group_pitch_detail() {
           </div>
         </div>
         <iframe
-          src={pitch.map}
+          src={srcValue}
           width="600"
           height="300"
           //   allowfullscreen=""

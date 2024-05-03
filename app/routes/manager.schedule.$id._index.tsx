@@ -20,7 +20,7 @@ export let loader: LoaderFunction = async ({ params, request }) => {
   let session = await getSession(request.headers.get("cookie"));
   if (session.data.userId) {
     groupPitchs = await getGroupPitchByOwnerId(session.data.userId);
-    groupPitchs.map((item) => {
+    groupPitchs?.map((item) => {
       if (item.status == 2)
         // Da duyet
         idFirst = item.id;
@@ -36,18 +36,18 @@ function schedule() {
   let numOfPitch = 0;
   let minTime = 1000;
   let maxTime = 0;
-  pitchType.map((item) => {
+  pitchType?.map((item) => {
     numOfPitch += item.pitch.length;
-    item.timeSlot.map((time) => {
-      if (timeToMinutes(time.startTime) < minTime)
-        minTime = timeToMinutes(time.startTime);
+    item.timeSlot?.map((time) => {
+      if (timeToMinutes(time?.startTime) < minTime)
+        minTime = timeToMinutes(time?.startTime);
       if (timeToMinutes(time.endTime) > maxTime)
         maxTime = timeToMinutes(time.endTime);
     });
   });
   // console.log(minTime / 60, maxTime / 60);
   function timeToMinutes(timeStr) {
-    const [hours, minutes] = timeStr.split(":").map(Number);
+    const [hours, minutes] = timeStr?.split(":")?.map(Number);
     return hours * 60 + minutes;
   }
   function minutesToTime(minutes) {
@@ -179,7 +179,7 @@ function schedule() {
             <div className="w-28 shrink-0 pr-2 border-r border-[#E5E7EB] h-fit">
               <div className="px-4 h-12 font-semibold"></div>
 
-              {hours.map((hour) => {
+              {hours?.map((hour) => {
                 if (hour + 1 > minTime / 60 && hour < minTime / 60)
                   return (
                     <div
@@ -206,7 +206,7 @@ function schedule() {
               })}
             </div>
             <div className=" overflow-auto flex h-fit  sang-drag-container">
-              {pitchType.map((item, index) => {
+              {pitchType?.map((item, index) => {
                 return (
                   <ChildComponent
                     subData={item.pitch}
@@ -226,12 +226,12 @@ function schedule() {
   );
 }
 function convertTimeToDecimal(timeString) {
-  const [hours, minutes] = timeString.split(":").map(Number);
+  const [hours, minutes] = timeString?.split(":")?.map(Number);
   const decimalTime = hours + minutes / 60;
   return decimalTime;
 }
 function ChildComponent({ subData, timeSlot, minTime, maxTime, value }) {
-  const timeFirst = convertTimeToDecimal(timeSlot[0].startTime) - minTime / 60;
+  const timeFirst = convertTimeToDecimal(timeSlot[0]?.startTime) - minTime / 60;
   // console.log(timeFirst);
   function dateFormat(date) {
     let day1 = date.getDate();
@@ -243,7 +243,7 @@ function ChildComponent({ subData, timeSlot, minTime, maxTime, value }) {
   }
   return (
     <>
-      {subData.map((pitch, subIndex) => {
+      {subData?.map((pitch, subIndex) => {
         let bookings = pitch?.booking;
         return (
           <div key={subIndex} className="border-r min-w-40 w-full h-fit">
@@ -258,7 +258,7 @@ function ChildComponent({ subData, timeSlot, minTime, maxTime, value }) {
                 height: `${timeFirst * 64}px`,
               }}
             ></div>
-            {timeSlot.map((item, index, array) => {
+            {timeSlot?.map((item, index, array) => {
               let booking = bookings.filter(
                 (a) => a.id_timeSlot == item.id && a.date == dateFormat(value)
               );
@@ -267,13 +267,13 @@ function ChildComponent({ subData, timeSlot, minTime, maxTime, value }) {
               let timeEmpty = 0;
               if (index < array.length - 1)
                 timeEmpty =
-                  convertTimeToDecimal(nextItem.startTime) -
+                  convertTimeToDecimal(nextItem?.startTime) -
                   convertTimeToDecimal(item.endTime);
               else
                 timeEmpty = maxTime / 60 - convertTimeToDecimal(item.endTime);
               let time =
                 convertTimeToDecimal(item.endTime) -
-                convertTimeToDecimal(item.startTime);
+                convertTimeToDecimal(item?.startTime);
               return (
                 <>
                   <div

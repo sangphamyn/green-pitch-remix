@@ -66,3 +66,7 @@ npm i react-icons
 
 npx prisma @prisma/client esbuild-register ts-node tsconfig-paths
 dotenv
+
+npx prisma migrate dev
+npx prisma db seed
+npx prisma migrate reset
