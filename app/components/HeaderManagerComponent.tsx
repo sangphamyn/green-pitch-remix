@@ -5,36 +5,10 @@ function HeaderManagerComponent() {
   const data: { user: { [key: string]: string } } =
     useLoaderData<typeof loader>();
   let user = data.user;
-  let groupPitch = data.groupPitchs;
   let isLogin = Object.keys(user).length > 0;
-  let paramsId = data.paramsId;
-  let name = "";
-  groupPitch.map((item) => {
-    if (item.id == paramsId) {
-      name = item.name;
-    }
-  });
   return (
-    <div className="navbar bg-orange-400">
-      <div className="flex-1">
-        <div className="dropdown">
-          <div tabIndex={0} role="button" className="btn m-1">
-            {name}
-          </div>
-          <ul
-            tabIndex={0}
-            className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52"
-          >
-            {groupPitch.map((item) => {
-              return (
-                <li>
-                  <a>{item.name}</a>
-                </li>
-              );
-            })}
-          </ul>
-        </div>
-      </div>
+    <div className="navbar bg-orange-400 h-20">
+      <div className="flex-1"></div>
       <div className="flex-none gap-2">
         <div className="form-control">
           <input

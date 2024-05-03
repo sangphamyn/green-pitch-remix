@@ -54,15 +54,6 @@ export let loader: LoaderFunction = async ({ request, params }) => {
 export async function action({ request, params }: ActionFunctionArgs) {
   let formData = await request.formData();
 
-  const intent = formData.get("intent");
-  if (intent == "dateChange") {
-    const dateSearch = formData.get("dateSearch");
-    const parts = dateSearch.split("-");
-    const formattedDate = `${parts[2]}-${parts[1]}-${parts[0]}`;
-    const pitch = await getGroupPitchById(params.id);
-    const pitchType = await getPitchTypeListByGroupPitchId(params.id);
-    return { pitch, pitchType };
-  }
   const date = formData.get("date");
   const timeId = formData.get("id_timeSlot");
   const user = formData.get("user");
@@ -346,13 +337,13 @@ function group_pitch_detail() {
                   </div>
                   <div className="flex flex-wrap gap-2">
                     {item.timeSlot.map((time, index) => {
-                      const bookings = time.booking.filter(
+                      const bookings = time.booking?.filter(
                         (booking) => booking.date === dateFormat(value)
                       );
                       return (
                         <div
                           className={`border rounded-md px-3 py-2 text-sm cursor-pointer transition ${
-                            bookings.length == item.pitch.length
+                            bookings?.length == item.pitch?.length
                               ? "border-[#fd9393] bg-[#fedbdb] cursor-not-allowed pointer-events-none"
                               : "border-[#93B4FD] bg-[#DBE6FE] hover:bg-white"
                           }`}
@@ -376,7 +367,7 @@ function group_pitch_detail() {
                             </span>
                           </div>
                           <div className="flex items-center justify-center gap-2 pointer-events-none">
-                            {bookings.length} / {item.pitch.length}
+                            {bookings?.length} / {item.pitch?.length}
                           </div>
                         </div>
                       );

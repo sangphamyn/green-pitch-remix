@@ -182,7 +182,15 @@ export const getPitchTypeListByGroupPitchId = async (id: string) => {
             booking: true,
           },
         },
-        pitch: true,
+        pitch: {
+          include: {
+            booking: {
+              include: {
+                booking_user: true,
+              },
+            },
+          },
+        },
       },
     });
     return pitchTypeList;

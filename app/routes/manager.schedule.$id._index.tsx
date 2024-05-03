@@ -1,22 +1,37 @@
 import { LoaderFunction } from "@remix-run/node";
-import { useLoaderData } from "@remix-run/react";
+import { Form, Link, useLoaderData } from "@remix-run/react";
 import {
   getGroupPitchById,
+  getGroupPitchByOwnerId,
   getPitchTypeListByGroupPitchId,
 } from "prisma/pitch";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { FaAngleLeft, FaAngleRight } from "react-icons/fa6";
 
-export let loader: LoaderFunction = async ({ params }) => {
-  const pitch = await getGroupPitchById(params.id);
+import DatePicker from "react-date-picker";
+import "react-date-picker/dist/DatePicker.css";
+import "react-calendar/dist/Calendar.css";
+import { getSession } from "~/session.server";
+export let loader: LoaderFunction = async ({ params, request }) => {
   const pitchType = await getPitchTypeListByGroupPitchId(params.id);
-  return { pitch, pitchType };
+  let groupPitchs;
+  let idFirst;
+  const paramsId = params.id;
+  let session = await getSession(request.headers.get("cookie"));
+  if (session.data.userId) {
+    groupPitchs = await getGroupPitchByOwnerId(session.data.userId);
+    groupPitchs.map((item) => {
+      if (item.status == 2)
+        // Da duyet
+        idFirst = item.id;
+    });
+  }
+  return { pitchType, groupPitchs, idFirst, paramsId };
 };
 
 function schedule() {
   const data = useLoaderData<typeof loader>();
   const pitchType = data.pitchType;
-  // console.log(pitchType);
 
   let numOfPitch = 0;
   let minTime = 1000;
@@ -89,8 +104,53 @@ function schedule() {
       container.removeEventListener("mousemove", handleMouseMove);
     };
   }, []);
+  const currentDate = new Date();
+  const day = currentDate.getDate();
+  const month = currentDate.getMonth() + 1;
+  const year = currentDate.getFullYear();
+  const options = {
+    weekday: "long",
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  };
+  const formattedDate = currentDate.toLocaleDateString("vi-VN", options);
+  const dayOfWeek = new Intl.DateTimeFormat("vi-VN", {
+    weekday: "long",
+  }).format(currentDate);
+
+  const [value, onChange] = useState<Value>(new Date());
+  const handleChange = (e) => {
+    if (e == null) onChange(new Date());
+    else onChange(e);
+  };
+  let paramsId = data.paramsId;
+  let name = "";
+  let groupPitch = data.groupPitchs;
+  groupPitch?.map((item) => {
+    if (item.id == paramsId) {
+      name = item.name;
+    }
+  });
   return (
     <div className="w-full mt-5 px-20">
+      <div className="dropdown">
+        <div tabIndex={0} role="button" className="btn btn-primary m-1">
+          {name}
+        </div>
+        <ul
+          tabIndex={0}
+          className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52"
+        >
+          {groupPitch?.map((item) => {
+            return (
+              <li>
+                <Link to={`/manager/schedule/${item.id}`}>{item.name}</Link>
+              </li>
+            );
+          })}
+        </ul>
+      </div>
       <div
         className="rounded-lg border bg-white border-[#E5E7EB] mb-6"
         style={{ height: "calc(100vh - 116px)" }}
@@ -101,30 +161,18 @@ function schedule() {
               dateTime="2022-01-22"
               className="text-[#111827] font-semibold"
             >
-              27 tháng 3, 2024
+              {day} tháng {month}, {year}
             </time>
-            <p className="text-sm text-[#6B7280] mt-1">Thứ tư</p>
+            <p className="text-sm text-[#6B7280] mt-1">{dayOfWeek}</p>
           </div>
-          <div className="flex gap-4 items-center">
-            <div className="flex border rounded-lg shrink-0 border-[#E5E7EB]">
-              <button className="btn btn-outline no-animation border-none rounded-none rounded-tl-lg rounded-bl-lg">
-                <FaAngleLeft />
-              </button>
-              <button className="btn btn-outline no-animation border-none rounded-none">
-                Hôm nay
-              </button>
-              <button className="btn btn-outline no-animation border-none rounded-none rounded-tr-lg rounded-br-lg">
-                <FaAngleRight />
-              </button>
-            </div>
-            <select className="select select-bordered w-full max-w-xs bg-transparent border-[#E5E7EB]">
-              <option>Lịch ngày</option>
-              <option>Lịch tuần</option>
-              <option>Lịch tháng</option>
-            </select>
-            <div className="h-3/5 w-1 bg-[#D1D5DB] mx-3"></div>
-            <button className="btn btn-primary">Thêm lịch đặt</button>
-          </div>
+          <Form method="POST" className="flex gap-4 items-center">
+            <DatePicker
+              onChange={handleChange}
+              value={value}
+              name="dateSearch"
+              clearIcon={false}
+            />
+          </Form>
         </div>
         <div className="flex" style={{ height: "calc(100% - 83px)" }}>
           <div className="w-3/4 flex overflow-auto">
@@ -165,6 +213,7 @@ function schedule() {
                     timeSlot={item.timeSlot}
                     minTime={minTime}
                     maxTime={maxTime}
+                    value={value}
                   />
                 );
               })}
@@ -181,12 +230,21 @@ function convertTimeToDecimal(timeString) {
   const decimalTime = hours + minutes / 60;
   return decimalTime;
 }
-function ChildComponent({ subData, timeSlot, minTime, maxTime }) {
+function ChildComponent({ subData, timeSlot, minTime, maxTime, value }) {
   const timeFirst = convertTimeToDecimal(timeSlot[0].startTime) - minTime / 60;
   // console.log(timeFirst);
+  function dateFormat(date) {
+    let day1 = date.getDate();
+    let month1 = date.getMonth() + 1;
+    let year1 = date.getFullYear();
+    return `${day1 < 10 ? `0${day1}` : day1}/${
+      month1 < 10 ? `0${month1}` : month1
+    }/${year1}`;
+  }
   return (
     <>
       {subData.map((pitch, subIndex) => {
+        let bookings = pitch?.booking;
         return (
           <div key={subIndex} className="border-r min-w-40 w-full h-fit">
             <div className="px-4 h-12 flex items-center justify-center font-semibold sticky top-0  bg-white shadow">
@@ -201,6 +259,9 @@ function ChildComponent({ subData, timeSlot, minTime, maxTime }) {
               }}
             ></div>
             {timeSlot.map((item, index, array) => {
+              let booking = bookings.filter(
+                (a) => a.id_timeSlot == item.id && a.date == dateFormat(value)
+              );
               const nextItem =
                 index < array.length - 1 ? array[index + 1] : null;
               let timeEmpty = 0;
@@ -220,7 +281,13 @@ function ChildComponent({ subData, timeSlot, minTime, maxTime }) {
                     style={{
                       height: `${time * 64}px`,
                     }}
-                  ></div>
+                  >
+                    {booking.length > 0
+                      ? booking[0]?.booking_user?.name +
+                        " - " +
+                        booking[0]?.booking_user?.phone
+                      : ""}
+                  </div>
                   <div
                     className="border-t cursor-pointer hover:bg-[#F9FAFB] transition"
                     style={{

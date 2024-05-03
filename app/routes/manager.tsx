@@ -18,7 +18,7 @@ export let loader: LoaderFunction = async ({ request, params }) => {
         idFirst = item.id;
     });
   }
-  return { user: session.data, groupPitchs, idFirst, paramsId };
+  return { user: session.data, idFirst };
 };
 function manager() {
   return (
