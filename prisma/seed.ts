@@ -88,6 +88,42 @@ async function main() {
         images:
           "https://res.cloudinary.com/db0shgxfi/image/upload/v1714706554/remixImages/hai0jmy8kjygzbyyuomi.jpg,https://res.cloudinary.com/db0shgxfi/image/upload/v1714706557/remixImages/yirrqpwa1wmh5yy8cdpz.jpg,https://res.cloudinary.com/db0shgxfi/image/upload/v1714706559/remixImages/owqspgnqj6wgcatxdkd3.jpg",
       },
+      {
+        name: "Sân X10",
+        id_district: 164,
+        id_ward: 5491,
+        address_detail: "Ngõ 107 đường Phú Thái",
+        map: '<iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3710.257845754099!2d105.81907567607932!3d21.575856080213963!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x313527167700fc71%3A0x7b7220f4a6276d3f!2zU8OibiBCw7NuZyBHaWFvIHRow7RuZyB24bqtbiB04bqjaSBUaMOhaSBOZ3V5w6pu!5e0!3m2!1svi!2s!4v1714706875425!5m2!1svi!2s" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>',
+        description: `The Arena chào đón tất cả các đối tượng khách hàng từ các cá nhân yêu thích thể thao, các đội bóng nhỏ, đến các doanh nghiệp tổ chức sự kiện, các trường học và các tổ chức thể thao cộng đồng.`,
+        ownerId: 1,
+        status: 2,
+        images:
+          "https://res.cloudinary.com/db0shgxfi/image/upload/v1714706557/remixImages/yirrqpwa1wmh5yy8cdpz.jpg,https://res.cloudinary.com/db0shgxfi/image/upload/v1714706554/remixImages/hai0jmy8kjygzbyyuomi.jpg,https://res.cloudinary.com/db0shgxfi/image/upload/v1714706559/remixImages/owqspgnqj6wgcatxdkd3.jpg",
+      },
+      {
+        name: "Sân thanh niên",
+        id_district: 164,
+        id_ward: 5491,
+        address_detail: "Ngõ 107 đường Phú Thái",
+        map: '<iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3710.257845754099!2d105.81907567607932!3d21.575856080213963!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x313527167700fc71%3A0x7b7220f4a6276d3f!2zU8OibiBCw7NuZyBHaWFvIHRow7RuZyB24bqtbiB04bqjaSBUaMOhaSBOZ3V5w6pu!5e0!3m2!1svi!2s!4v1714706875425!5m2!1svi!2s" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>',
+        description: `The Arena chào đón tất cả các đối tượng khách hàng từ các cá nhân yêu thích thể thao, các đội bóng nhỏ, đến các doanh nghiệp tổ chức sự kiện, các trường học và các tổ chức thể thao cộng đồng.`,
+        ownerId: 1,
+        status: 2,
+        images:
+          "https://res.cloudinary.com/db0shgxfi/image/upload/v1714706559/remixImages/owqspgnqj6wgcatxdkd3.jpg,https://res.cloudinary.com/db0shgxfi/image/upload/v1714706554/remixImages/hai0jmy8kjygzbyyuomi.jpg,https://res.cloudinary.com/db0shgxfi/image/upload/v1714706557/remixImages/yirrqpwa1wmh5yy8cdpz.jpg",
+      },
+      {
+        name: "Sân kinh tế",
+        id_district: 164,
+        id_ward: 5491,
+        address_detail: "Ngõ 107 đường Phú Thái",
+        map: '<iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3710.257845754099!2d105.81907567607932!3d21.575856080213963!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x313527167700fc71%3A0x7b7220f4a6276d3f!2zU8OibiBCw7NuZyBHaWFvIHRow7RuZyB24bqtbiB04bqjaSBUaMOhaSBOZ3V5w6pu!5e0!3m2!1svi!2s!4v1714706875425!5m2!1svi!2s" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>',
+        description: `The Arena chào đón tất cả các đối tượng khách hàng từ các cá nhân yêu thích thể thao, các đội bóng nhỏ, đến các doanh nghiệp tổ chức sự kiện, các trường học và các tổ chức thể thao cộng đồng.`,
+        ownerId: 1,
+        status: 2,
+        images:
+          "https://res.cloudinary.com/db0shgxfi/image/upload/v1714706549/remixImages/mmv7sboht5anshlww0jv.jpg,https://res.cloudinary.com/db0shgxfi/image/upload/v1714706554/remixImages/hai0jmy8kjygzbyyuomi.jpg,https://res.cloudinary.com/db0shgxfi/image/upload/v1714706557/remixImages/yirrqpwa1wmh5yy8cdpz.jpg,https://res.cloudinary.com/db0shgxfi/image/upload/v1714706559/remixImages/owqspgnqj6wgcatxdkd3.jpg",
+      },
     ],
   });
   const groupPitch_service = await db.grouppitch_service.createMany({

@@ -1,4 +1,4 @@
-import { Link, useLoaderData } from "@remix-run/react";
+import { Link, NavLink, useLoaderData } from "@remix-run/react";
 import logo from "/images/logo.svg";
 import { loader } from "~/routes/_.$";
 
@@ -30,7 +30,7 @@ const HeaderComponent = () => {
             </div>
             <ul
               tabIndex={0}
-              className="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52"
+              className="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 text-gray-900 rounded-box w-52"
             >
               <li>
                 <a>Danh sách sân</a>
@@ -64,7 +64,10 @@ const HeaderComponent = () => {
         <div className="navbar-center hidden lg:flex">
           <ul className="menu menu-horizontal px-1">
             <li>
-              <Link to='/group-pitch'>Danh sách sân</Link>
+              <NavLink to="/">Trang chủ</NavLink>
+            </li>
+            <li>
+              <NavLink to="/group-pitch">Danh sách sân</NavLink>
             </li>
             <li>
               <details>
@@ -103,7 +106,7 @@ const HeaderComponent = () => {
                     <img
                       className="rounded-full"
                       alt="Tailwind CSS Navbar component"
-                      src="https://daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg"
+                      src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg"
                     />
                   </div>
                   <div className="text-start">

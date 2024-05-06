@@ -306,7 +306,9 @@ function group_pitch_detail() {
                             : "text-orange-800 bg-orange-200"
                         }`}
                       >
-                        {service.price == "0" ? "Free" : service.price + " đ"}
+                        {service.price == "0"
+                          ? "Free"
+                          : formatCurrency(service.price)}
                       </div>
                     ) : (
                       <></>

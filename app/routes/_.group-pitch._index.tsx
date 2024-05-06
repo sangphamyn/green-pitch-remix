@@ -24,50 +24,62 @@ export default function Index() {
     <div>
       <Outlet />
       <div className="w-full container mx-auto mt-5">
-        <h1 className="mb-12 text-2xl font-extrabold text-center leading-none tracking-tight text-gray-900 md:text-3xl lg:text-4xl dark:text-white">
-          Danh sách các sân
-        </h1>
-        {Object.keys(pitches).length == 0 ? (
-          <div className="text-center flex justify-center items-center flex-col h-96">
-            <TbFileSad className="w-20 h-20 mb-4" />
-            <p className="text-2xl">Hiện chưa có sân nào</p>
-          </div>
-        ) : (
-          <div className="grid grid-cols-2 gap-10 mt-5">
-            {pitches.map((pitch, index) => (
-              <Link
-                to={"/group-pitch/" + pitch.id}
-                key={index}
-                className="border rounded p-4 flex gap-5 hover:shadow transition hover:text-primary cursor-pointer"
-              >
-                <img
-                  src={
-                    pitch.images
-                      ? pitch.images.split(",")[0]
-                      : "/images/san-co-nhan-tao-7-nguoi-dep.jpg"
-                  }
-                  alt={pitch.name}
-                  className="mb-2 rounded w-1/2 h-[250px] object-cover"
-                />
-                <div>
-                  <h2 className="text-lg font-semibold mb-1">{pitch.name}</h2>
-                  <p className="text-sm text-gray-600 mb-1 flex gap-1">
-                    <PiMapPinLight className="shrink-0 text-lg" />{" "}
-                    {getWardById(pitch.id_ward).name},{" "}
-                    {getDistrictById(pitch.id_district).name}
-                  </p>
-                  <p className="text-sm text-gray-600 mb-1 flex gap-1 items-center">
-                    <MdOutlineStadium /> Số sân: {pitch.quantity}
-                  </p>
-                  <p className="text-sm mt-4 text-gray-600">
-                    {pitch.description}
-                  </p>
-                </div>{" "}
-                {/* Thêm thông tin khác của sân bóng nếu cần */}
-              </Link>
-            ))}
-          </div>
-        )}
+        <div className="flex">
+          <div className="w-1/5">Filter</div>
+          {Object.keys(pitches).length == 0 ? (
+            <div className="text-center flex justify-center items-center flex-col h-96">
+              <TbFileSad className="w-20 h-20 mb-4" />
+              <p className="text-2xl">Hiện chưa có sân nào</p>
+            </div>
+          ) : (
+            <div className=" w-4/5">
+              <div className=" p-4">
+                <span className="font-semibold">3,269 sân</span> đang hoạt động
+                tại
+                <span className="font-semibold"> Thái Nguyên</span>
+              </div>
+              <div className="grid grid-cols-3">
+                {pitches.map((pitch, index) => (
+                  <Link
+                    to={"/group-pitch/" + pitch.id}
+                    key={index}
+                    className="rounded p-4 gap-5 transition hover:text-primary cursor-pointer sang-grouppitch"
+                  >
+                    <div className="overflow-hidden inline-flex rounded ">
+                      <img
+                        src={
+                          pitch.images
+                            ? pitch.images.split(",")[0]
+                            : "/images/san-co-nhan-tao-7-nguoi-dep.jpg"
+                        }
+                        alt={pitch.name}
+                        className="h-[300px] w-full object-cover transition duration-700"
+                      />
+                    </div>
+                    <div>
+                      <h2 className="text-lg font-semibold mb-1">
+                        {pitch.name}
+                      </h2>
+                      <p className="text-sm text-gray-600 mb-1 flex gap-1">
+                        <PiMapPinLight className="shrink-0 text-lg" />{" "}
+                        {getWardById(pitch.id_ward).name},{" "}
+                        {getDistrictById(pitch.id_district).name}
+                      </p>
+                      <p className="text-sm text-gray-600 mb-1 flex gap-1 items-center">
+                        <MdOutlineStadium className="text-lg" /> Số sân:{" "}
+                        {pitch.quantity}
+                      </p>
+                      {/* <p className="text-sm mt-4 text-gray-600">
+                        {pitch.description}
+                      </p> */}
+                    </div>{" "}
+                    {/* Thêm thông tin khác của sân bóng nếu cần */}
+                  </Link>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
