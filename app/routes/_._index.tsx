@@ -56,45 +56,39 @@ export default function Index() {
       <div className="grid grid-cols-3 gap-10 max-w-[1320px] mx-auto my-5">
         <div className="p-[50px] hover:shadow-lg transition rounded">
           <div className="flex justify-center">
-            <img
-              src="/images/shipping1.svg"
-              alt="image"
-            />
+            <img src="/images/shipping1.svg" alt="image" />
           </div>
           <div className="text-center mt-[30px]">
             <h4 className="text-md font-medium fw-500">Giá tốt</h4>
             <p className=" mt-[10px] text-[#697488]">
-            Sân bóng với giá cả phải chăng, đảm bảo bạn luôn có trải nghiệm thú vị mà không lo về chi phí.
+              Sân bóng với giá cả phải chăng, đảm bảo bạn luôn có trải nghiệm
+              thú vị mà không lo về chi phí.
             </p>
           </div>
         </div>
         <div className="p-[50px] hover:shadow-lg transition rounded">
           <div className="flex justify-center">
-            <img
-              src="/images/shipping2.svg"
-              alt="image"
-            />
+            <img src="/images/shipping2.svg" alt="image" />
           </div>
           <div className="text-center mt-[30px]">
             <h4 className="text-md font-medium fw-500">
               Đặt sân nhanh và dễ dàng
             </h4>
             <p className=" mt-[10px] text-[#697488]">
-            Đặt sân chỉ trong vài bước đơn giản, giúp bạn tiết kiệm thời gian và nâng cao trải nghiệm của mình.
+              Đặt sân chỉ trong vài bước đơn giản, giúp bạn tiết kiệm thời gian
+              và nâng cao trải nghiệm của mình.
             </p>
           </div>
         </div>
         <div className="p-[50px] hover:shadow-lg transition rounded">
           <div className="flex justify-center">
-            <img
-              src="/images/shipping3.svg"
-              alt="image"
-            />
+            <img src="/images/shipping3.svg" alt="image" />
           </div>
           <div className="text-center mt-[30px]">
             <h4 className="text-md font-medium fw-500">Chăm sóc khách hàng</h4>
             <p className=" mt-[10px] text-[#697488]">
-            Chúng tôi luôn ở đây để hỗ trợ bạn, trải nghiệm của bạn luôn được quan tâm và cải thiện.
+              Chúng tôi luôn ở đây để hỗ trợ bạn, trải nghiệm của bạn luôn được
+              quan tâm và cải thiện.
             </p>
           </div>
         </div>

@@ -1,8 +1,8 @@
-import React, { ChangeEvent, useState } from "react";
+import React, { ChangeEvent, useEffect, useState } from "react";
 
 import RegisterGif from "/images/signup.gif";
 import AvatarImage from "/images/avatar.svg";
-import { Form, Link, useActionData } from "@remix-run/react";
+import { Form, Link, useActionData, useLocation } from "@remix-run/react";
 import {
   ActionFunctionArgs,
   LoaderFunction,
@@ -73,11 +73,16 @@ export async function action({ request }: ActionFunctionArgs) {
 }
 function login() {
   let actionData = useActionData<{ message: Record<string, any> }>();
+  useEffect(()=> {
+    setData(actionData)
+  },[actionData])
+  const [data, setData] = useState(actionData)
   const [formData, setFormData] = useState({
-    // username: "sang@gmail.com",
-    // password: "111111",
+    username: "sang@gmail.com",
+    password: "111111",
   });
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setData({});
     const { name, value }: { name: string; value: string } =
       e.target as HTMLInputElement;
     setFormData((prevState) => ({
@@ -104,7 +109,7 @@ function login() {
         <div className="form-control w-full max-w-xs mb-4">
           <label
             className={`input input-bordered flex items-center gap-2 focus-within:outline-none ${
-              actionData?.message?.username
+              data?.message?.username
                 ? "input-error"
                 : "focus-within:border-primary"
             }`}
@@ -126,10 +131,10 @@ function login() {
               onChange={handleChange}
             />
           </label>
-          {actionData?.message?.username ? (
+          {data?.message?.username ? (
             <div className="label pt-1 pb-0">
               <span className="label-text-alt text-error">
-                {actionData.message.username}
+                {data.message.username}
               </span>
             </div>
           ) : (
@@ -139,7 +144,7 @@ function login() {
         <div className="form-control w-full max-w-xs mb-4">
           <label
             className={`input input-bordered flex items-center gap-2 focus-within:outline-none ${
-              actionData?.message?.password
+              data?.message?.password
                 ? "input-error"
                 : "focus-within:border-primary"
             }`}
@@ -165,10 +170,10 @@ function login() {
               onChange={handleChange}
             />
           </label>
-          {actionData?.message?.password ? (
+          {data?.message?.password ? (
             <div className="label pt-1 pb-0">
               <span className="label-text-alt text-error">
-                {actionData.message.password}
+                {data.message.password}
               </span>
             </div>
           ) : (

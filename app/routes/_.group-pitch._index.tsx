@@ -4,8 +4,10 @@ import { getGroupPitchList } from "prisma/pitch";
 import { FiPlusCircle } from "react-icons/fi";
 import { MdOutlineStadium } from "react-icons/md";
 import { PiMapPinLight } from "react-icons/pi";
-import { getDistrictById, getWardById } from "~/helper";
+import { districts, getDistrictById, getWardById } from "~/helper";
 import { TbFileSad } from "react-icons/tb";
+import { useState } from "react";
+import Breadcrumb from "~/components/Breadcrumb";
 export let loader: LoaderFunction = async ({ request }) => {
   const groupPitchList = await getGroupPitchList();
   return groupPitchList;
@@ -13,6 +15,7 @@ export let loader: LoaderFunction = async ({ request }) => {
 export default function Index() {
   const data = useLoaderData<typeof loader>();
   const pitches = data;
+  const [districtFilter, setDistrict] = useState([]);
   pitches.map((pitch) => {
     let quantity = 0;
     pitch.pitchTypes.map((type) => {
@@ -20,12 +23,63 @@ export default function Index() {
     });
     pitch.quantity = quantity;
   });
+  function countObjectsWithValueThree(array: Array<Object>, id: number) {
+    let count = 0;
+    for (const obj of array) {
+      if (obj.id_district === id) {
+        count++;
+      }
+    }
+    return count;
+  }
+  const handleChange = (e) => {
+    if (e.target.checked)
+      setDistrict((prevState) => [...prevState, parseInt(e.target.value)]);
+    else
+      setDistrict((prevState) =>
+        prevState.filter((value) => value !== parseInt(e.target.value))
+      );
+  };
+  const paths = [
+    { title: "Trang chủ", url: "/" },
+    { title: "Danh sách các sân", url: "/group-pitch" },
+  ];
   return (
     <div>
       <Outlet />
+      <Breadcrumb paths={paths} />
       <div className="w-full container mx-auto mt-5">
         <div className="flex">
-          <div className="w-1/5">Filter</div>
+          <div className="w-1/5 p-4">
+            <div>
+              <h5 className="font-semibold text-lg">Khu vực</h5>
+              <div>
+                <div>
+                  {districts.map((item) => {
+                    return (
+                      <label className="label cursor-pointer justify-between">
+                        <div className="flex items-center gap-[10px]">
+                          <input
+                            type="checkbox"
+                            className="checkbox rounded checkbox-xs"
+                            onChange={handleChange}
+                            value={item.code}
+                          />
+                          <span className="label-text">{item.name}</span>
+                        </div>
+                        <div>
+                          {countObjectsWithValueThree(
+                            pitches,
+                            parseInt(item.code)
+                          )}
+                        </div>
+                      </label>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
+          </div>
           {Object.keys(pitches).length == 0 ? (
             <div className="text-center flex justify-center items-center flex-col h-96">
               <TbFileSad className="w-20 h-20 mb-4" />
@@ -34,48 +88,57 @@ export default function Index() {
           ) : (
             <div className=" w-4/5">
               <div className=" p-4">
-                <span className="font-semibold">3,269 sân</span> đang hoạt động
-                tại
+                <span className="font-semibold">
+                  {Object.keys(pitches).length} sân
+                </span>{" "}
+                đang hoạt động tại
                 <span className="font-semibold"> Thái Nguyên</span>
               </div>
               <div className="grid grid-cols-3">
-                {pitches.map((pitch, index) => (
-                  <Link
-                    to={"/group-pitch/" + pitch.id}
-                    key={index}
-                    className="rounded p-4 gap-5 transition hover:text-primary cursor-pointer sang-grouppitch"
-                  >
-                    <div className="overflow-hidden inline-flex rounded ">
-                      <img
-                        src={
-                          pitch.images
-                            ? pitch.images.split(",")[0]
-                            : "/images/san-co-nhan-tao-7-nguoi-dep.jpg"
-                        }
-                        alt={pitch.name}
-                        className="h-[300px] w-full object-cover transition duration-700"
-                      />
-                    </div>
-                    <div>
-                      <h2 className="text-lg font-semibold mb-1">
-                        {pitch.name}
-                      </h2>
-                      <p className="text-sm text-gray-600 mb-1 flex gap-1">
-                        <PiMapPinLight className="shrink-0 text-lg" />{" "}
-                        {getWardById(pitch.id_ward).name},{" "}
-                        {getDistrictById(pitch.id_district).name}
-                      </p>
-                      <p className="text-sm text-gray-600 mb-1 flex gap-1 items-center">
-                        <MdOutlineStadium className="text-lg" /> Số sân:{" "}
-                        {pitch.quantity}
-                      </p>
-                      {/* <p className="text-sm mt-4 text-gray-600">
+                {pitches.map((pitch, index) => {
+                  if (
+                    districtFilter.length > 0 &&
+                    !districtFilter.includes(pitch.id_district)
+                  )
+                    return;
+                  return (
+                    <Link
+                      to={"/group-pitch/" + pitch.id}
+                      key={index}
+                      className="rounded p-4 gap-5 transition hover:text-primary cursor-pointer sang-grouppitch"
+                    >
+                      <div className="overflow-hidden inline-flex rounded ">
+                        <img
+                          src={
+                            pitch.images
+                              ? pitch.images.split(",")[0]
+                              : "/images/san-co-nhan-tao-7-nguoi-dep.jpg"
+                          }
+                          alt={pitch.name}
+                          className="h-[300px] w-full object-cover transition duration-700"
+                        />
+                      </div>
+                      <div>
+                        <h2 className="text-lg font-semibold mb-1">
+                          {pitch.name}
+                        </h2>
+                        <p className="text-sm text-gray-600 mb-1 flex gap-1">
+                          <PiMapPinLight className="shrink-0 text-lg" />{" "}
+                          {getWardById(pitch.id_ward).name},{" "}
+                          {getDistrictById(pitch.id_district).name}
+                        </p>
+                        <p className="text-sm text-gray-600 mb-1 flex gap-1 items-center">
+                          <MdOutlineStadium className="text-lg" /> Số sân:{" "}
+                          {pitch.quantity}
+                        </p>
+                        {/* <p className="text-sm mt-4 text-gray-600">
                         {pitch.description}
                       </p> */}
-                    </div>{" "}
-                    {/* Thêm thông tin khác của sân bóng nếu cần */}
-                  </Link>
-                ))}
+                      </div>{" "}
+                      {/* Thêm thông tin khác của sân bóng nếu cần */}
+                    </Link>
+                  );
+                })}
               </div>
             </div>
           )}

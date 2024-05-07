@@ -14,7 +14,7 @@ function index() {
                 Nâng cấp năng suất sân bóng của bạn
               </h4>
             </div>
-            <h1 className="mb-8 text-4xl font-extrabold leading-tight lg:text-6xl text-dark-grey-900">
+            <h1 className="mb-8 font-extrabold leading-tight text-6xl text-dark-grey-900">
               Quản lý sân bóng với Green Pitch
             </h1>
             <p className="mb-6 text-base font-normal leading-7 lg:w-3/4 text-grey-900">
@@ -175,7 +175,7 @@ function index() {
           </div>
         </div>
       </div>
-      <div className="flex flex-wrap mx-3 my-5">
+      <div className="flex flex-wrap mx-3 mt-5">
         <div className="w-full max-w-full sm:w-3/4 mx-auto text-center">
           <p className="text-sm text-slate-500 py-1">
             An toàn tin cậy, quảng bá hiệu quả và tăng trưởng doanh thu.

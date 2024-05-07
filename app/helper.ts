@@ -22,54 +22,54 @@ export function formatCurrency(number: number) {
     currency: "VND",
   }).format(Math.round(number / 1000) * 1000);
 }
+export const districts = [
+  {
+    code: "164",
+    name: "Thành phố Thái Nguyên",
+    province: "Tỉnh Thái Nguyên",
+  },
+  {
+    code: "171",
+    name: "Huyện Đại Từ",
+    province: "Tỉnh Thái Nguyên",
+  },
+  {
+    code: "167",
+    name: "Huyện Định Hóa",
+    province: "Tỉnh Thái Nguyên",
+  },
+  {
+    code: "169",
+    name: "Huyện Đồng Hỷ",
+    province: "Tỉnh Thái Nguyên",
+  },
+  {
+    code: "173",
+    name: "Huyện Phú Bình",
+    province: "Tỉnh Thái Nguyên",
+  },
+  {
+    code: "168",
+    name: "Huyện Phú Lương",
+    province: "Tỉnh Thái Nguyên",
+  },
+  {
+    code: "170",
+    name: "Huyện Võ Nhai",
+    province: "Tỉnh Thái Nguyên",
+  },
+  {
+    code: "172",
+    name: "Thành phố Phổ Yên",
+    province: "Tỉnh Thái Nguyên",
+  },
+  {
+    code: "165",
+    name: "Thành phố Sông Công",
+    province: "Tỉnh Thái Nguyên",
+  },
+];
 export function getDistrictById(id: string) {
-  const districts = [
-    {
-      code: "164",
-      name: "Thành phố Thái Nguyên",
-      province: "Tỉnh Thái Nguyên",
-    },
-    {
-      code: "171",
-      name: "Huyện Đại Từ",
-      province: "Tỉnh Thái Nguyên",
-    },
-    {
-      code: "167",
-      name: "Huyện Định Hóa",
-      province: "Tỉnh Thái Nguyên",
-    },
-    {
-      code: "169",
-      name: "Huyện Đồng Hỷ",
-      province: "Tỉnh Thái Nguyên",
-    },
-    {
-      code: "173",
-      name: "Huyện Phú Bình",
-      province: "Tỉnh Thái Nguyên",
-    },
-    {
-      code: "168",
-      name: "Huyện Phú Lương",
-      province: "Tỉnh Thái Nguyên",
-    },
-    {
-      code: "170",
-      name: "Huyện Võ Nhai",
-      province: "Tỉnh Thái Nguyên",
-    },
-    {
-      code: "172",
-      name: "Thành phố Phổ Yên",
-      province: "Tỉnh Thái Nguyên",
-    },
-    {
-      code: "165",
-      name: "Thành phố Sông Công",
-      province: "Tỉnh Thái Nguyên",
-    },
-  ];
   return districts.find((dt) => dt.code == id);
 }
 export function getWardById(id: string) {

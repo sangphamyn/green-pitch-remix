@@ -10,13 +10,6 @@ function HeaderManagerComponent() {
     <div className="navbar bg-orange-400 h-20">
       <div className="flex-1"></div>
       <div className="flex-none gap-2">
-        <div className="form-control">
-          <input
-            type="text"
-            placeholder="Search"
-            className="input input-bordered w-24 md:w-auto"
-          />
-        </div>
         {isLogin ? (
           <div className="dropdown dropdown-end">
             <div
