@@ -63,11 +63,25 @@ export const getGroupPitchByOwnerId = async (ownerId: string) => {
     throw error;
   }
 };
-export const getGroupPitchList = async () => {
+export const getGroupPitchList = async (
+  name: string | null,
+  district: string | null,
+  ward: string | null,
+  pitchType: string | null
+) => {
   try {
     const groupPitchList = await db.groupPitch.findMany({
       where: {
-        status: 2,
+        ...(name && { name: { contains: name } }),
+        ...(district && { id_district: parseInt(district) }),
+        ...(ward && { id_ward: parseInt(ward) }),
+        ...(pitchType && {
+          pitchTypes: {
+            some: {
+              type: pitchType,
+            },
+          },
+        }),
       },
       include: {
         pitchTypes: {
@@ -219,7 +233,7 @@ export const getBookingListByDateTimeSlotId = async (
   try {
     const bookingList = await db.booking.findMany({
       where: {
-        date: date,
+        date: new Date(date),
         id_timeSlot: parseInt(id),
       },
     });
@@ -238,13 +252,42 @@ export const bookingabc = async (
   try {
     const booking = await db.booking.create({
       data: {
-        date: date,
+        date: new Date(date),
         id_timeSlot: parseInt(id_timeSlot),
         id_user: parseInt(id_user),
         id_pitch: parseInt(id_pitch),
       },
     });
     return booking;
+  } catch (error) {
+    console.error("Lỗi:", error);
+    throw error;
+  }
+};
+
+export const getBookingList = async (user: string | null) => {
+  try {
+    const bookingList = await db.booking.findMany({
+      where: {
+        ...(user && { id_user: parseInt(user) }),
+      },
+      orderBy: {
+        date: "desc",
+      },
+      include: {
+        booking_pitch: {
+          include: {
+            pitch_pitchType: {
+              include: {
+                groupPitch: true,
+              },
+            },
+          },
+        },
+        booking_timeSlot: true,
+      },
+    });
+    return bookingList;
   } catch (error) {
     console.error("Lỗi:", error);
     throw error;

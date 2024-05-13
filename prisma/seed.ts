@@ -528,49 +528,49 @@ async function main() {
   const bookingList = await db.booking.createMany({
     data: [
       {
-        date: "03/05/2024",
+        date: new Date("2024-05-14"),
         id_timeSlot: 21,
         id_user: 2,
         id_pitch: 5,
       },
       {
-        date: "03/05/2024",
+        date: new Date("2024-05-14"),
         id_timeSlot: 21,
         id_user: 3,
         id_pitch: 5,
       },
       {
-        date: "03/05/2024",
+        date: new Date("2024-05-14"),
         id_timeSlot: 29,
         id_user: 2,
         id_pitch: 7,
       },
       {
-        date: "03/05/2024",
+        date: new Date("2024-05-15"),
         id_timeSlot: 37,
         id_user: 3,
         id_pitch: 8,
       },
       {
-        date: "04/05/2024",
+        date: new Date("2024-05-16"),
         id_timeSlot: 25,
         id_user: 2,
         id_pitch: 6,
       },
       {
-        date: "04/05/2024",
+        date: new Date("2024-06-14"),
         id_timeSlot: 32,
         id_user: 3,
         id_pitch: 7,
       },
       {
-        date: "04/05/2024",
+        date: new Date("2024-06-25"),
         id_timeSlot: 40,
         id_user: 2,
         id_pitch: 8,
       },
       {
-        date: "04/05/2024",
+        date: new Date("2024-06-12"),
         id_timeSlot: 25,
         id_user: 3,
         id_pitch: 5,

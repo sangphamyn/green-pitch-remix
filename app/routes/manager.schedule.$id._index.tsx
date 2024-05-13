@@ -127,7 +127,7 @@ function schedule() {
   let paramsId = data.paramsId;
   let name = "";
   let groupPitch = data.groupPitchs;
-  groupPitch?.map((item) => {
+  groupPitch?.map((item:any) => {
     if (item.id == paramsId) {
       name = item.name;
     }

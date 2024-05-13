@@ -78,6 +78,7 @@ export async function action({ request }: ActionFunctionArgs) {
   session.set("phone", newUser.phone.toString());
   session.set("email", newUser.email.toString());
   session.set("avatar", newUser.avatar);
+  session.set("createdAt", newUser.createdAt?.toString());
   session.set("role", newUser.role);
 
   return redirect("/", {

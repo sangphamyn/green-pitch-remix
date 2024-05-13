@@ -7,12 +7,12 @@ import {
 import {
   Form,
   Link,
+  NavLink,
   useActionData,
   useLoaderData,
   useSubmit,
 } from "@remix-run/react";
 import {
-  booking,
   bookingabc,
   getBookingListByDateTimeSlotId,
   getGroupPitchById,
@@ -105,6 +105,7 @@ function group_pitch_detail() {
   } else {
     pitchTypeList = data.pitchType;
   }
+  console.log(pitchTypeList);
   // let pitchTypeList1 = actionData?.pitchType;
   // pitchTypeList = data.pitchType;
   const user = data.user;
@@ -162,12 +163,13 @@ function group_pitch_detail() {
     weekday: "long",
   }).format(value);
   function dateFormat(date) {
-    let day1 = date.getDate();
-    let month1 = date.getMonth() + 1;
-    let year1 = date.getFullYear();
-    return `${day1 < 10 ? `0${day1}` : day1}/${
-      month1 < 10 ? `0${month1}` : month1
-    }/${year1}`;
+    const dateObject = new Date(date);
+
+    // Trích xuất các thành phần của ngày
+    const year = dateObject.getFullYear();
+    const month = ("0" + (dateObject.getMonth() + 1)).slice(-2); // Lấy tháng và thêm "0" nếu tháng < 10
+    const day = ("0" + dateObject.getDate()).slice(-2); // Lấy ngày và thêm "0" nếu ngày < 10
+    return `${year}-${month}-${day}T00:00:00.000Z`;
   }
   const [time, setTime] = useState<string>();
   const [timeId, setTimeId] = useState<string>();
@@ -180,7 +182,9 @@ function group_pitch_detail() {
     setPrice(e.target.querySelector(".sang-price").textContent);
     setType(e.target.querySelector(".sang-type").textContent);
     setPitchTypeId(e.target.getAttribute("pitchType_id"));
-    document.getElementById("my_modal_2").showModal();
+    if (Object.keys(user).length > 0)
+      document.getElementById("my_modal_2").showModal();
+    else document.getElementById("my_modal_3").showModal();
     document.querySelector(".sang-status")?.classList.add("hidden");
   };
   const [srcValue, setSrcValue] = useState("");
@@ -323,7 +327,9 @@ function group_pitch_detail() {
                           >
                             {item.timeSlot.map((time, index) => {
                               const bookings = time.booking?.filter(
-                                (booking) => booking.date === dateFormat(value)
+                                (booking) => {
+                                  return booking.date == dateFormat(value);
+                                }
                               );
                               return (
                                 <swiper-slide key={index}>
@@ -409,12 +415,20 @@ function group_pitch_detail() {
                         <input
                           type="hidden"
                           name="date"
-                          value={`${value
+                          value={`${value.getFullYear()}-${(
+                            value.getMonth() + 1
+                          )
+                            .toString()
+                            .padStart(2, "0")}-${value
                             .getDate()
                             .toString()
-                            .padStart(2, "0")}/${(value.getMonth() + 1)
-                            .toString()
-                            .padStart(2, "0")}/${value.getFullYear()}`}
+                            .padStart(2, "0")}`}
+                          // value={`${value
+                          //   .getDate()
+                          //   .toString()
+                          //   .padStart(2, "0")}/${(value.getMonth() + 1)
+                          //   .toString()
+                          //   .padStart(2, "0")}/${value.getFullYear()}`}
                         />
                       </p>
                       <p className="py-2">
@@ -481,6 +495,17 @@ function group_pitch_detail() {
                     <form method="dialog" className="modal-backdrop">
                       <button>close</button>
                     </form>
+                  </dialog>
+                  <dialog id="my_modal_3" className="modal">
+                    <Form method="POST" className="mx-auto modal-box">
+                      Cần đăng nhập để đặt sân
+                      <NavLink
+                        to="/login"
+                        className="ml-4 btn btn-sm btn-primary"
+                      >
+                        Đăng nhập ngay
+                      </NavLink>
+                    </Form>
                   </dialog>
                 </div>
               </div>

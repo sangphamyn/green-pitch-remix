@@ -103,7 +103,7 @@ model timeSlot {
 
 model booking {
   id      Int      @id @default(autoincrement())
-  date String
+  date DateTime
 
   booking_timeSlot    timeSlot @relation(fields: [id_timeSlot], references: [id])
   id_timeSlot Int

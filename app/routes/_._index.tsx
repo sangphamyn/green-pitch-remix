@@ -1,6 +1,9 @@
 import { LoaderFunction } from "@remix-run/node";
-import { useLoaderData } from "@remix-run/react";
+import { Form, useLoaderData } from "@remix-run/react";
+import { ChangeEvent, useState } from "react";
+import { CiSearch } from "react-icons/ci";
 import { register } from "swiper/element/bundle";
+import { districts, getDistrictById, wards } from "~/helper";
 
 register();
 export let loader: LoaderFunction = async ({ request }) => {
@@ -9,6 +12,14 @@ export let loader: LoaderFunction = async ({ request }) => {
 };
 export default function Index() {
   const data = useLoaderData<typeof loader>();
+  const [wardsList, setWardsList] = useState(
+    wards.filter((item) => item.district == "Thành phố Thái Nguyên")
+  );
+  const handleChangeDistric = async (e: ChangeEvent<HTMLSelectElement>) => {
+    const dt = getDistrictById(e.target.value);
+    console.log(dt);
+    setWardsList(wards.filter((item) => item.district == dt.name));
+  };
   return (
     <div className="relative">
       <div className="bg-[#13357b] absolute -z-10 pointer-events-none w-full">
@@ -20,13 +31,58 @@ export default function Index() {
       </div>
       <div className="max-w-[1200px] mx-auto pt-40">
         <div className="flex">
-          <div className="w-1/2">
+          <div className="w-1/2 relative">
             <h1 className="text-white text-[60px] font-semibold pt-20">
               <span className="text-[#f8d448]">Tìm sân</span>
               <br />
               Quá dễ dàng nha
             </h1>
             <p className="text-white">Website đặt thuê sân bóng online</p>
+            <Form
+              action="/group-pitch"
+              method="GET"
+              className="p-4 bg-white shadow-lg w-[900px] absolute bottom-[30px] flex justify-between items-center"
+            >
+              <div className="px-6 w-full">
+                <div className="flex gap-4 items-center">
+                  <input
+                    type="text"
+                    placeholder="Nhập tên sân"
+                    className="input input-bordered w-full focus:border-primary focus-within:outline-none rounded"
+                    name="name"
+                  />
+                  <select
+                    className="select select-bordered focus:border-primary focus-within:outline-none rounded"
+                    onChange={handleChangeDistric}
+                    name="district"
+                  >
+                    <option value="">Huyện/Thành phố</option>
+                    {districts.map(
+                      (item: { name: string; code: string }, index: number) => {
+                        return (
+                          <option key={index} value={item?.code}>
+                            {item?.name}
+                          </option>
+                        );
+                      }
+                    )}
+                  </select>
+                  <select
+                    className="select select-bordered focus:border-primary focus-within:outline-none rounded"
+                    name="pitchType"
+                  >
+                    <option value="">Loại sân</option>
+                    <option value="Sân 5">Sân 5</option>
+                    <option value="Sân 7">Sân 7</option>
+                    <option value="Sân 11">Sân 11</option>
+                  </select>
+                </div>
+              </div>
+              <button className="btn px-[35px] rounded-sm font-semibold border-transparent hover:text-white transition bg-[#f8d448] hover:bg-[#051036] py-[12px] h-fit">
+                <CiSearch className="stroke-[1px] w-[24px] h-[24px]" />
+                Tìm kiếm
+              </button>
+            </Form>
           </div>
           <div className="w-1/2 grid grid-rows-2 grid-cols-2 gap-4">
             <div className="row-span-2">

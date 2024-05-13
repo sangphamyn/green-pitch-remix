@@ -1,20 +1,31 @@
 import { LoaderFunction } from "@remix-run/node";
-import { Link, Outlet, useLoaderData } from "@remix-run/react";
+import { Form, Link, Outlet, useLoaderData } from "@remix-run/react";
 import { getGroupPitchList } from "prisma/pitch";
 import { FiPlusCircle } from "react-icons/fi";
 import { MdOutlineStadium } from "react-icons/md";
 import { PiMapPinLight } from "react-icons/pi";
-import { districts, getDistrictById, getWardById } from "~/helper";
+import { districts, getDistrictById, getWardById, wards } from "~/helper";
 import { TbFileSad } from "react-icons/tb";
 import { useState } from "react";
 import Breadcrumb from "~/components/Breadcrumb";
-export let loader: LoaderFunction = async ({ request }) => {
-  const groupPitchList = await getGroupPitchList();
-  return groupPitchList;
+import { CiSearch } from "react-icons/ci";
+export let loader: LoaderFunction = async ({ request, params }) => {
+  let { searchParams } = new URL(request.url);
+  let name = searchParams.get("name");
+  let district = searchParams.get("district");
+  let ward = searchParams.get("ward");
+  let pitchType = searchParams.get("pitchType");
+  const groupPitchList = await getGroupPitchList(
+    name,
+    district,
+    ward,
+    pitchType
+  );
+  return { groupPitchList };
 };
 export default function Index() {
   const data = useLoaderData<typeof loader>();
-  const pitches = data;
+  const pitches = data.groupPitchList;
   const [districtFilter, setDistrict] = useState([]);
   pitches.map((pitch) => {
     let quantity = 0;
@@ -44,10 +55,86 @@ export default function Index() {
     { title: "Trang chủ", url: "/" },
     { title: "Danh sách các sân", url: "/group-pitch" },
   ];
+  const [wardsList, setWardsList] = useState(
+    wards.filter((item) => item.district == "Thành phố Thái Nguyên")
+  );
+  const handleChangeDistric = async (e: ChangeEvent<HTMLSelectElement>) => {
+    const dt = getDistrictById(e.target.value);
+    console.log(dt);
+    setWardsList(wards.filter((item) => item.district == dt.name));
+  };
   return (
     <div>
       <Outlet />
       <Breadcrumb paths={paths} />
+      <div className="py-[40px] bg-[#f5f5f5]">
+        <div className="container mx-auto">
+          <h1 className="text-center text-[30px] mb-4 font-semibold">
+            Tìm Kiếm Sân Bóng Phù Hợp
+          </h1>
+          <div className="px-[180px]">
+            <Form
+              method="GET"
+              className="p-4 bg-white shadow-lg flex justify-between items-center"
+            >
+              <div className="px-6 w-full">
+                <div className="flex gap-4 items-center">
+                  <input
+                    type="text"
+                    placeholder="Nhập tên sân"
+                    className="input input-bordered w-full focus:border-primary focus-within:outline-none rounded"
+                    name="name"
+                  />
+                  <select
+                    className="select select-bordered focus:border-primary focus-within:outline-none rounded"
+                    onChange={handleChangeDistric}
+                    name="district"
+                  >
+                    <option value="">Huyện/Thành phố</option>
+                    {districts.map(
+                      (item: { name: string; code: string }, index: number) => {
+                        return (
+                          <option key={index} value={item?.code}>
+                            {item?.name}
+                          </option>
+                        );
+                      }
+                    )}
+                  </select>
+                  <select
+                    className="select select-bordered focus:border-primary focus-within:outline-none rounded"
+                    name="ward"
+                  >
+                    <option value="">Phường/Xã</option>
+                    {wardsList.map(
+                      (item: { name: string; code: string }, index: number) => {
+                        return (
+                          <option key={index} value={item?.code}>
+                            {item?.name}
+                          </option>
+                        );
+                      }
+                    )}
+                  </select>
+                  <select
+                    className="select select-bordered focus:border-primary focus-within:outline-none rounded"
+                    name="pitchType"
+                  >
+                    <option value="">Loại sân</option>
+                    <option value="Sân 5">Sân 5</option>
+                    <option value="Sân 7">Sân 7</option>
+                    <option value="Sân 11">Sân 11</option>
+                  </select>
+                </div>
+              </div>
+              <button className="btn px-[35px] rounded-sm font-semibold border-transparent hover:text-white transition bg-[#f8d448] hover:bg-[#051036] py-[12px] h-fit">
+                <CiSearch className="stroke-[1px] w-[24px] h-[24px]" />
+                Tìm kiếm
+              </button>
+            </Form>
+          </div>
+        </div>
+      </div>
       <div className="w-full container mx-auto mt-5">
         <div className="flex">
           <div className="w-1/5 p-4">
@@ -81,7 +168,7 @@ export default function Index() {
             </div>
           </div>
           {Object.keys(pitches).length == 0 ? (
-            <div className="text-center flex justify-center items-center flex-col h-96">
+            <div className="text-center flex justify-center items-center flex-col h-96 w-4/5">
               <TbFileSad className="w-20 h-20 mb-4" />
               <p className="text-2xl">Hiện chưa có sân nào</p>
             </div>

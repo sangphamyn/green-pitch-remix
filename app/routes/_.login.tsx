@@ -65,6 +65,7 @@ export async function action({ request }: ActionFunctionArgs) {
   session.set("phone", existUser.phone.toString());
   session.set("email", existUser.email.toString());
   session.set("avatar", existUser.avatar);
+  session.set("createdAt", existUser.createdAt?.toString());
   session.set("role", existUser.role);
 
   return redirect("/", {
@@ -73,16 +74,16 @@ export async function action({ request }: ActionFunctionArgs) {
 }
 function login() {
   let actionData = useActionData<{ message: Record<string, any> }>();
-  useEffect(()=> {
-    setData(actionData)
-  },[actionData])
-  const [data, setData] = useState(actionData)
+  useEffect(() => {
+    setData(actionData);
+  }, [actionData]);
+  const [data, setData] = useState(actionData);
   const [formData, setFormData] = useState({
     username: "sang@gmail.com",
     password: "111111",
   });
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setData({});
+    setData({ message: [] });
     const { name, value }: { name: string; value: string } =
       e.target as HTMLInputElement;
     setFormData((prevState) => ({

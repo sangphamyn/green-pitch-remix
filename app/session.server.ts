@@ -7,6 +7,7 @@ type SessionData = {
   phone: string;
   avatar: string | null;
   role: number;
+  createdAt: string | null;
 };
 
 export const sessionStorage = createCookieSessionStorage<SessionData>({

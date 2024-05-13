@@ -119,7 +119,7 @@ const HeaderComponent = () => {
                   className="z-[1] p-2 shadow menu menu-sm dropdown-content bg-base-100 text-black rounded-box w-52"
                 >
                   <li>
-                    <a className="justify-between">Thông tin cá nhân</a>
+                    <Link to='/profile' className="justify-between">Thông tin cá nhân</Link>
                   </li>
                   <li>
                     <Link to="/logout">Đăng xuất</Link>

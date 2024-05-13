@@ -25,6 +25,7 @@ import { IoMdClose } from "react-icons/io";
 import { LiaEditSolid } from "react-icons/lia";
 import TimeComponent from "~/components/TimeComponent1";
 import { CreateGroupPitch } from "~/enum/pitch.enum";
+import { districts, getDistrictById, wards } from "~/helper";
 import { getSession } from "~/session.server";
 import { uploadImage } from "~/utils/utils.server";
 
@@ -164,254 +165,13 @@ function groupPitchAdd() {
     setActiveTab1(0);
     setActiveTab2(1);
   };
-  const districts = [
-    {
-      code: "164",
-      name: "Thành phố Thái Nguyên",
-      province: "Tỉnh Thái Nguyên",
-    },
-    {
-      code: "171",
-      name: "Huyện Đại Từ",
-      province: "Tỉnh Thái Nguyên",
-    },
-    {
-      code: "167",
-      name: "Huyện Định Hóa",
-      province: "Tỉnh Thái Nguyên",
-    },
-    {
-      code: "169",
-      name: "Huyện Đồng Hỷ",
-      province: "Tỉnh Thái Nguyên",
-    },
-    {
-      code: "173",
-      name: "Huyện Phú Bình",
-      province: "Tỉnh Thái Nguyên",
-    },
-    {
-      code: "168",
-      name: "Huyện Phú Lương",
-      province: "Tỉnh Thái Nguyên",
-    },
-    {
-      code: "170",
-      name: "Huyện Võ Nhai",
-      province: "Tỉnh Thái Nguyên",
-    },
-    {
-      code: "172",
-      name: "Thành phố Phổ Yên",
-      province: "Tỉnh Thái Nguyên",
-    },
-    {
-      code: "165",
-      name: "Thành phố Sông Công",
-      province: "Tỉnh Thái Nguyên",
-    },
-  ];
 
-  const [wards, setWards] = useState([
-    {
-      code: "05467",
-      name: "Phường Cam Giá",
-      district: "Thành phố Thái Nguyên",
-      province: "Tỉnh Thái Nguyên",
-    },
-    {
-      code: "05659",
-      name: "Phường Chùa Hang",
-      district: "Thành phố Thái Nguyên",
-      province: "Tỉnh Thái Nguyên",
-    },
-    {
-      code: "05710",
-      name: "Phường Đồng Bẩm",
-      district: "Thành phố Thái Nguyên",
-      province: "Tỉnh Thái Nguyên",
-    },
-    {
-      code: "05458",
-      name: "Phường Đồng Quang",
-      district: "Thành phố Thái Nguyên",
-      province: "Tỉnh Thái Nguyên",
-    },
-    {
-      code: "05461",
-      name: "Phường Gia Sàng",
-      district: "Thành phố Thái Nguyên",
-      province: "Tỉnh Thái Nguyên",
-    },
-    {
-      code: "05440",
-      name: "Phường Hoàng Văn Thụ",
-      district: "Thành phố Thái Nguyên",
-      province: "Tỉnh Thái Nguyên",
-    },
-    {
-      code: "05473",
-      name: "Phường Hương Sơn",
-      district: "Thành phố Thái Nguyên",
-      province: "Tỉnh Thái Nguyên",
-    },
-    {
-      code: "05449",
-      name: "Phường Phan Đình Phùng",
-      district: "Thành phố Thái Nguyên",
-      province: "Tỉnh Thái Nguyên",
-    },
-    {
-      code: "05470",
-      name: "Phường Phú Xá",
-      district: "Thành phố Thái Nguyên",
-      province: "Tỉnh Thái Nguyên",
-    },
-    {
-      code: "05431",
-      name: "Phường Quán Triều",
-      district: "Thành phố Thái Nguyên",
-      province: "Tỉnh Thái Nguyên",
-    },
-    {
-      code: "05446",
-      name: "Phường Quang Trung",
-      district: "Thành phố Thái Nguyên",
-      province: "Tỉnh Thái Nguyên",
-    },
-    {
-      code: "05434",
-      name: "Phường Quang Vinh",
-      district: "Thành phố Thái Nguyên",
-      province: "Tỉnh Thái Nguyên",
-    },
-    {
-      code: "05464",
-      name: "Phường Tân Lập",
-      district: "Thành phố Thái Nguyên",
-      province: "Tỉnh Thái Nguyên",
-    },
-    {
-      code: "05482",
-      name: "Phường Tân Long",
-      district: "Thành phố Thái Nguyên",
-      province: "Tỉnh Thái Nguyên",
-    },
-    {
-      code: "05479",
-      name: "Phường Tân Thành",
-      district: "Thành phố Thái Nguyên",
-      province: "Tỉnh Thái Nguyên",
-    },
-    {
-      code: "05452",
-      name: "Phường Tân Thịnh",
-      district: "Thành phố Thái Nguyên",
-      province: "Tỉnh Thái Nguyên",
-    },
-    {
-      code: "05455",
-      name: "Phường Thịnh Đán",
-      district: "Thành phố Thái Nguyên",
-      province: "Tỉnh Thái Nguyên",
-    },
-    {
-      code: "05500",
-      name: "Phường Tích Lương",
-      district: "Thành phố Thái Nguyên",
-      province: "Tỉnh Thái Nguyên",
-    },
-    {
-      code: "05476",
-      name: "Phường Trung Thành",
-      district: "Thành phố Thái Nguyên",
-      province: "Tỉnh Thái Nguyên",
-    },
-    {
-      code: "05443",
-      name: "Phường Trưng Vương",
-      district: "Thành phố Thái Nguyên",
-      province: "Tỉnh Thái Nguyên",
-    },
-    {
-      code: "05437",
-      name: "Phường Túc Duyên",
-      district: "Thành phố Thái Nguyên",
-      province: "Tỉnh Thái Nguyên",
-    },
-    {
-      code: "05695",
-      name: "Xã Cao Ngạn",
-      district: "Thành phố Thái Nguyên",
-      province: "Tỉnh Thái Nguyên",
-    },
-    {
-      code: "05914",
-      name: "Xã Đồng Liên",
-      district: "Thành phố Thái Nguyên",
-      province: "Tỉnh Thái Nguyên",
-    },
-    {
-      code: "05713",
-      name: "Xã Huống Thượng",
-      district: "Thành phố Thái Nguyên",
-      province: "Tỉnh Thái Nguyên",
-    },
-    {
-      code: "05701",
-      name: "Xã Linh Sơn",
-      district: "Thành phố Thái Nguyên\t",
-      province: "Tỉnh Thái Nguyên",
-    },
-    {
-      code: "05485",
-      name: "Xã Phúc Hà",
-      district: "Thành phố Thái Nguyên",
-      province: "Tỉnh Thái Nguyên",
-    },
-    {
-      code: "05494",
-      name: "Xã Phúc Trìu",
-      district: "Thành phố Thái Nguyên",
-      province: "Tỉnh Thái Nguyên",
-    },
-    {
-      code: "05488",
-      name: "Xã Phúc Xuân",
-      district: "Thành phố Thái Nguyên",
-      province: "Tỉnh Thái Nguyên",
-    },
-    {
-      code: "05491",
-      name: "Xã Quyết Thắng",
-      district: "Thành phố Thái Nguyên",
-      province: "Tỉnh Thái Nguyên",
-    },
-    {
-      code: "05653",
-      name: "Xã Sơn Cẩm",
-      district: "Thành phố Thái Nguyên",
-      province: "Tỉnh Thái Nguyên",
-    },
-    {
-      code: "05503",
-      name: "Xã Tân Cương",
-      district: "Thành phố Thái Nguyên",
-      province: "Tỉnh Thái Nguyên",
-    },
-    {
-      code: "05497",
-      name: "Xã Thịnh Đức",
-      district: "Thành phố Thái Nguyên",
-      province: "Tỉnh Thái Nguyên",
-    },
-  ]);
+  const [wardsList, setWardsList] = useState(
+    wards.filter((item) => item.district == "Thành phố Thái Nguyên")
+  );
   const handleChangeDistric = async (e: ChangeEvent<HTMLSelectElement>) => {
-    let res = await fetch(
-      `https://api.mysupership.vn/v1/partner/areas/commune?district=${e.target.value}`
-    );
-    const resjson = await res.json();
-    setWards(resjson.results);
+    const dt = getDistrictById(e.target.value);
+    setWardsList(wards.filter((item) => item.district == dt.name));
   };
 
   const [selectedServices, setSelectedServices] = useState<{
@@ -674,7 +434,7 @@ function groupPitchAdd() {
                 className="select select-bordered focus:border-primary focus-within:outline-none rounded"
                 name="ward"
               >
-                {wards.map(
+                {wardsList.map(
                   (item: { name: string; code: string }, index: number) => {
                     return (
                       <option key={index} value={item?.code}>
