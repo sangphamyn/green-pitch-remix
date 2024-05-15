@@ -127,7 +127,7 @@ function schedule() {
   let paramsId = data.paramsId;
   let name = "";
   let groupPitch = data.groupPitchs;
-  groupPitch?.map((item:any) => {
+  groupPitch?.map((item: any) => {
     if (item.id == paramsId) {
       name = item.name;
     }
@@ -234,17 +234,19 @@ function ChildComponent({ subData, timeSlot, minTime, maxTime, value }) {
   const timeFirst = convertTimeToDecimal(timeSlot[0]?.startTime) - minTime / 60;
   // console.log(timeFirst);
   function dateFormat(date) {
-    let day1 = date.getDate();
-    let month1 = date.getMonth() + 1;
-    let year1 = date.getFullYear();
-    return `${day1 < 10 ? `0${day1}` : day1}/${
-      month1 < 10 ? `0${month1}` : month1
-    }/${year1}`;
+    const dateObject = new Date(date);
+
+    // Trích xuất các thành phần của ngày
+    const year = dateObject.getFullYear();
+    const month = ("0" + (dateObject.getMonth() + 1)).slice(-2); // Lấy tháng và thêm "0" nếu tháng < 10
+    const day = ("0" + dateObject.getDate()).slice(-2); // Lấy ngày và thêm "0" nếu ngày < 10
+    return `${year}-${month}-${day}T00:00:00.000Z`;
   }
   return (
     <>
       {subData?.map((pitch, subIndex) => {
         let bookings = pitch?.booking;
+        console.log(bookings);
         return (
           <div key={subIndex} className="border-r min-w-40 w-full h-fit">
             <div className="px-4 h-12 flex items-center justify-center font-semibold sticky top-0  bg-white shadow">
@@ -259,6 +261,7 @@ function ChildComponent({ subData, timeSlot, minTime, maxTime, value }) {
               }}
             ></div>
             {timeSlot?.map((item, index, array) => {
+              // console.log("first", dateFormat(value));
               let booking = bookings.filter(
                 (a) => a.id_timeSlot == item.id && a.date == dateFormat(value)
               );

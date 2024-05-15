@@ -1,9 +1,10 @@
-import { LoaderFunction, redirect } from "@remix-run/node";
-import { useLoaderData } from "@remix-run/react";
-import { getBookingList } from "prisma/pitch";
+import { ActionFunctionArgs, LoaderFunction, redirect } from "@remix-run/node";
+import { Form, useLoaderData } from "@remix-run/react";
+import { cancelBooking, getBookingList } from "prisma/pitch";
 import { CiCalendar } from "react-icons/ci";
 import { FiPhone } from "react-icons/fi";
 import { MdOutlineEmail } from "react-icons/md";
+import CountdownTimer from "~/components/CountDownTimer";
 import { getSession } from "~/session.server";
 
 export let loader: LoaderFunction = async ({ request, params }) => {
@@ -14,11 +15,16 @@ export let loader: LoaderFunction = async ({ request, params }) => {
   }
   return redirect("/login");
 };
+export async function action({ request, params }: ActionFunctionArgs) {
+  let formData = await request.formData();
+  const booking_id = formData.get("booking_id");
+  const booking = await cancelBooking(booking_id);
+  return null;
+}
 export default function profile() {
   const data = useLoaderData<typeof loader>();
   const user = data.user;
   const bookingList = data.bookingList;
-  console.log(bookingList);
   return (
     <div className="container mx-auto mt-5">
       <div className="flex gap-4">
@@ -57,7 +63,8 @@ export default function profile() {
               <thead>
                 <tr>
                   <th>Sân</th>
-                  <th>Thời gian</th>
+                  <th>Thời gian đặt</th>
+                  <th>Thời gian đá</th>
                   <th>Trạng thái</th>
                   <th></th>
                 </tr>
@@ -65,14 +72,42 @@ export default function profile() {
               <tbody>
                 {/* row 1 */}
                 {bookingList.map((booking) => {
+                  let now = new Date();
+                  now.setHours(now.getHours() + 7);
+                  let date = new Date(booking?.date);
+                  const hoursToAdd = parseInt(
+                    booking?.booking_timeSlot.startTime.split(":")[0]
+                  );
+                  const minutesToAdd = parseInt(
+                    booking?.booking_timeSlot.startTime.split(":")[1]
+                  );
+                  date.setHours(date.getHours() + hoursToAdd);
+                  date.setMinutes(date.getMinutes() + minutesToAdd);
+
+                  let endDate = new Date(booking?.date);
+                  const hoursToAdd1 = parseInt(
+                    booking?.booking_timeSlot.endTime.split(":")[0]
+                  );
+                  const minutesToAdd1 = parseInt(
+                    booking?.booking_timeSlot.endTime.split(":")[1]
+                  );
+                  endDate.setHours(date.getHours() + hoursToAdd1);
+                  endDate.setMinutes(date.getMinutes() + minutesToAdd1);
                   return (
                     <tr>
                       <td>
                         <div className="flex items-center gap-3">
                           <div className="avatar">
-                            <div className="mask mask-squircle w-12 h-12">
+                            <div className="mask w-12 h-12">
                               <img
-                                src="https://img.daisyui.com/tailwind-css-component-profile-2@56w.png"
+                                src={
+                                  booking.booking_pitch.pitch_pitchType
+                                    .groupPitch.images
+                                    ? booking.booking_pitch.pitch_pitchType.groupPitch.images.split(
+                                        ","
+                                      )[0]
+                                    : "https://img.daisyui.com/tailwind-css-component-profile-2@56w.png"
+                                }
                                 alt="Avatar Tailwind CSS Component"
                               />
                             </div>
@@ -90,24 +125,49 @@ export default function profile() {
                           </div>
                         </div>
                       </td>
+                      <td>{formatDate1(booking?.createdAt)}</td>
                       <td>
                         {formatDate(booking?.date)}
                         <br />
                         <span className="badge badge-ghost badge-sm">
-                          {booking?.booking_timeSlot.startTime} -
+                          {booking?.booking_timeSlot.startTime} -{" "}
                           {booking?.booking_timeSlot.endTime}
                         </span>
                       </td>
                       <td>
-                        <span className="rounded-full px-[10px] py-[4px] bg-yellow-100 text-yellow-600 font-medium text-sm">
-                          Đang diễn ra
-                        </span>
+                        {booking?.status == 1 ? (
+                          endDate > now ? (
+                            <CountdownTimer
+                              targetDate={date}
+                              endDate={endDate}
+                            />
+                          ) : (
+                            <span className="rounded-full px-[10px] py-[4px] bg-green-100 text-green-600 font-medium text-sm">
+                              Đã xong
+                            </span>
+                          )
+                        ) : (
+                          <span className="rounded-full px-[10px] py-[4px] bg-red-100 text-red-600 font-medium text-sm">
+                            Đã hủy
+                          </span>
+                        )}
                       </td>
-                      <th>
-                        <button className="btn btn-ghost btn-xs">
-                          details
-                        </button>
-                      </th>
+                      {now < date && booking?.status == 1 ? (
+                        <th>
+                          <Form method="POST">
+                            <input
+                              type="hidden"
+                              name="booking_id"
+                              value={booking.id}
+                            />
+                            <button className="btn btn-ghost btn-xs">
+                              Hủy
+                            </button>
+                          </Form>
+                        </th>
+                      ) : (
+                        <></>
+                      )}
                     </tr>
                   );
                 })}
@@ -143,4 +203,53 @@ function formatDate(dateString: String) {
   ];
 
   return `${day} ${monthNames[monthIndex]}, ${year}`;
+}
+function countdown(targetDateStr) {
+  const targetDate = new Date(targetDateStr).getTime();
+
+  const countdownElement = document.getElementById("countdown");
+
+  function updateCountdown() {
+    const now = new Date().getTime();
+    const distance = targetDate - now;
+
+    if (distance < 0) {
+      clearInterval(interval);
+      countdownElement.innerHTML = "EXPIRED";
+      return;
+    }
+
+    const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+    const hours = Math.floor(
+      (distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
+    );
+    const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+    countdownElement.innerHTML =
+      days + "d " + hours + "h " + minutes + "m " + seconds + "s ";
+  }
+
+  // Cập nhật đếm ngược mỗi giây
+  const interval = setInterval(updateCountdown, 1000);
+
+  // Cập nhật ngay lập tức (tránh phải chờ 1 giây đầu tiên)
+  updateCountdown();
+}
+
+// Gọi hàm đếm ngược với datetime mục tiêu
+
+function formatDate1(dateString: String) {
+  const date = new Date(dateString);
+
+  // Lấy các thành phần ngày giờ
+  const hours = date.getUTCHours().toString().padStart(2, "0");
+  const minutes = date.getUTCMinutes().toString().padStart(2, "0");
+  const seconds = date.getUTCSeconds().toString().padStart(2, "0");
+  const day = date.getUTCDate().toString().padStart(2, "0");
+  const month = (date.getUTCMonth() + 1).toString().padStart(2, "0"); // Months are zero-based
+  const year = date.getUTCFullYear();
+
+  // Định dạng các thành phần thành chuỗi mong muốn
+  return `${hours}:${minutes}:${seconds} ${day}/${month}/${year}`;
 }

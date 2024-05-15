@@ -328,7 +328,10 @@ function group_pitch_detail() {
                             {item.timeSlot.map((time, index) => {
                               const bookings = time.booking?.filter(
                                 (booking) => {
-                                  return booking.date == dateFormat(value);
+                                  return (
+                                    booking.date == dateFormat(value) &&
+                                    booking.status == 1
+                                  );
                                 }
                               );
                               return (

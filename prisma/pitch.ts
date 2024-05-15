@@ -250,12 +250,15 @@ export const bookingabc = async (
   id_pitch: string
 ) => {
   try {
+    const now = new Date();
+    now.setHours(now.getHours() + 7);
     const booking = await db.booking.create({
       data: {
         date: new Date(date),
         id_timeSlot: parseInt(id_timeSlot),
         id_user: parseInt(id_user),
         id_pitch: parseInt(id_pitch),
+        createdAt: now,
       },
     });
     return booking;
@@ -271,9 +274,14 @@ export const getBookingList = async (user: string | null) => {
       where: {
         ...(user && { id_user: parseInt(user) }),
       },
-      orderBy: {
-        date: "desc",
-      },
+      orderBy: [
+        { date: "desc" },
+        {
+          booking_timeSlot: {
+            startTime: "desc",
+          },
+        },
+      ],
       include: {
         booking_pitch: {
           include: {
@@ -288,6 +296,23 @@ export const getBookingList = async (user: string | null) => {
       },
     });
     return bookingList;
+  } catch (error) {
+    console.error("Lỗi:", error);
+    throw error;
+  }
+};
+
+export const cancelBooking = async (id: string | null) => {
+  try {
+    const booking = await db.booking.update({
+      where: {
+        id: parseInt(id),
+      },
+      data: {
+        status: 2,
+      },
+    });
+    return booking;
   } catch (error) {
     console.error("Lỗi:", error);
     throw error;

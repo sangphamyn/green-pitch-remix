@@ -104,6 +104,9 @@ model timeSlot {
 model booking {
   id      Int      @id @default(autoincrement())
   date DateTime
+  createdAt DateTime?
+  updatedAt DateTime?
+  status Int @default(1)
 
   booking_timeSlot    timeSlot @relation(fields: [id_timeSlot], references: [id])
   id_timeSlot Int
