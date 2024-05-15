@@ -103,6 +103,13 @@ export const getGroupPitchById = async (id: string) => {
       where: {
         id: parseInt(id),
       },
+      include: {
+        pitchTypes: {
+          include: {
+            pitch: true,
+          },
+        },
+      },
     });
     const service = await db.grouppitch_service.findMany({
       where: {
@@ -137,6 +144,24 @@ export const createGroupPitch = async (
       });
       index++;
     }
+    return pitch;
+  } catch (error) {
+    console.error("Lỗi:", error);
+    throw error;
+  }
+};
+export const updateGroupPitch = async (
+  id: string,
+  grouppitch: CreateGroupPitch
+) => {
+  try {
+    const pitch = await db.groupPitch.update({
+      where: {
+        id: parseInt(id),
+      },
+      data: grouppitch,
+    });
+
     return pitch;
   } catch (error) {
     console.error("Lỗi:", error);

@@ -29,7 +29,6 @@ export let loader: LoaderFunction = async ({ params }) => {
 };
 function group_pitch_detail() {
   const data = useLoaderData<typeof loader>();
-  console.log(data.pitchType);
   const pitch = data.pitch.groupPitch;
   const services = data.pitch.service;
   const pitchTypeList = data.pitchType;
