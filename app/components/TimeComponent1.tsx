@@ -9,6 +9,7 @@ interface Props {
   hourEnd: number;
   minuteEnd: number;
   name: string;
+  price: number;
   removeAction: () => void;
 }
 const TimeComponent: React.FC<Props> = ({
@@ -17,6 +18,7 @@ const TimeComponent: React.FC<Props> = ({
   hourEnd,
   minuteEnd,
   name,
+  price,
   removeAction,
 }) => {
   const [spanText1, setSpanText1] = useState<number>(hourStart);
@@ -484,6 +486,7 @@ const TimeComponent: React.FC<Props> = ({
         type="number"
         placeholder="Giá"
         name="timePrice"
+        defaultValue={price}
         className="input input-bordered focus:border-primary focus-within:outline-none w-full"
       />
       <div

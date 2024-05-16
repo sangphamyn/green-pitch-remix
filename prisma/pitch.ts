@@ -107,6 +107,7 @@ export const getGroupPitchById = async (id: string) => {
         pitchTypes: {
           include: {
             pitch: true,
+            timeSlot: true,
           },
         },
       },
@@ -152,15 +153,33 @@ export const createGroupPitch = async (
 };
 export const updateGroupPitch = async (
   id: string,
-  grouppitch: CreateGroupPitch
+  grouppitch: CreateGroupPitch,
+  serviceList: any,
+  priceList: any
 ) => {
   try {
+    await db.grouppitch_service.deleteMany({
+      where: {
+        groupPitchId: parseInt(id),
+      },
+    });
     const pitch = await db.groupPitch.update({
       where: {
         id: parseInt(id),
       },
       data: grouppitch,
     });
+    let index = 0;
+    for (const serviceId of serviceList) {
+      await db.grouppitch_service.create({
+        data: {
+          groupPitchId: parseInt(id),
+          serviceId: parseInt(serviceId),
+          price: priceList[index] != "" ? parseFloat(priceList[index]) : null,
+        },
+      });
+      index++;
+    }
 
     return pitch;
   } catch (error) {
@@ -176,6 +195,33 @@ export const createPitchType = async (
     const name = pitchTypeData.name;
     const pitchType = await db.pitchtype.create({ data: pitchTypeData });
     for (let i = 1; i <= quantity; i++) {
+      let pitch = await db.pitch.create({
+        data: { id_pitchType: pitchType.id, name: name + " " + i },
+      });
+    }
+    return pitchType;
+  } catch (error) {
+    console.error("Lỗi db:", error);
+    throw error;
+  }
+};
+export const updatePitchType = async (
+  id: string,
+  pitchTypeData: CreatePitchType,
+  quantity: string
+) => {
+  try {
+    const name = pitchTypeData.name;
+    const pitchType = await db.pitchtype.update({
+      where: {
+        id: parseInt(id),
+      },
+      data: pitchTypeData,
+      include: {
+        pitch: true,
+      },
+    });
+    for (let i = pitchType.pitch.length + 1; i <= parseInt(quantity); i++) {
       let pitch = await db.pitch.create({
         data: { id_pitchType: pitchType.id, name: name + " " + i },
       });

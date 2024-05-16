@@ -12,6 +12,22 @@ function randomPhoneNumber() {
 }
 
 async function main() {
+  const deleteBooking = await db.booking.deleteMany({});
+  const deleteGroupPitch_Service = await db.grouppitch_service.deleteMany({});
+  const c = await db.service.deleteMany({});
+  const d = await db.timeSlot.deleteMany({});
+  const a = await db.pitch.deleteMany({});
+  const b = await db.pitchtype.deleteMany({});
+  const deleteGroupPitch = await db.groupPitch.deleteMany({});
+  const e = await db.user.deleteMany({});
+  await db.$executeRaw`ALTER TABLE booking AUTO_INCREMENT = 1`;
+  await db.$executeRaw`ALTER TABLE grouppitch_service AUTO_INCREMENT = 1`;
+  await db.$executeRaw`ALTER TABLE services AUTO_INCREMENT = 1`;
+  await db.$executeRaw`ALTER TABLE timeSlot AUTO_INCREMENT = 1`;
+  await db.$executeRaw`ALTER TABLE pitch AUTO_INCREMENT = 1`;
+  await db.$executeRaw`ALTER TABLE pitchtype AUTO_INCREMENT = 1`;
+  await db.$executeRaw`ALTER TABLE grouppitch AUTO_INCREMENT = 1`;
+  await db.$executeRaw`ALTER TABLE users AUTO_INCREMENT = 1`;
   const serviceList = await db.service.createMany({
     data: [
       {

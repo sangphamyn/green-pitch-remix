@@ -15,7 +15,7 @@ import {
 } from "react-icons/io5";
 import { LuGlassWater } from "react-icons/lu";
 import { PiMapPinLight, PiMoneyLight } from "react-icons/pi";
-import { getDistrictById, getWardById } from "~/helper";
+import { formatCurrency, getDistrictById, getWardById } from "~/helper";
 // import function to register Swiper custom elements
 import { register } from "swiper/element/bundle";
 import { LiaShoePrintsSolid } from "react-icons/lia";
@@ -299,7 +299,7 @@ function group_pitch_detail() {
                           </div>
                           <div className="flex items-center justify-center gap-2">
                             <PiMoneyLight />
-                            {time.price}đ
+                            {formatCurrency(time.price)}
                           </div>
                         </div>
                       );

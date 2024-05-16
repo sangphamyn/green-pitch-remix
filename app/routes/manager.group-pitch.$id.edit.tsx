@@ -19,6 +19,7 @@ import {
   getAllService,
   getGroupPitchById,
   updateGroupPitch,
+  updatePitchType,
 } from "prisma/pitch";
 import React, { ChangeEvent, useState } from "react";
 import { CiCircleList } from "react-icons/ci";
@@ -88,7 +89,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
   const servicePrices = formData.getAll("servicePrices");
   const owner = session.get("userId");
   const pitchImages = formData.getAll("pitchImages");
-
+  const pitchType_id = formData.getAll("pitchType_id");
   // let check = true;
   // console.log("pitchName", pitchName);
   // if (pitchName.includes("")) check = false;
@@ -122,7 +123,12 @@ export async function action({ request, params }: ActionFunctionArgs) {
     };
   }
   if (data !== undefined) {
-    const newGroupPitch = await updateGroupPitch(params.id, data);
+    const newGroupPitch = await updateGroupPitch(
+      params.id,
+      data,
+      services,
+      servicePrices
+    );
     if (newGroupPitch.id) {
       const numOfPitchType = pitchName.length;
       let num = 0;
@@ -133,20 +139,21 @@ export async function action({ request, params }: ActionFunctionArgs) {
           id_groupPitch: newGroupPitch.id,
           description: pitchDesc[i].toString(),
         };
-        let newPitchType = await createPitchType(
+        let newPitchType = await updatePitchType(
+          pitchType_id[i],
           dataPitchType,
-          parseInt(pitchQuantity[i].toString())
+          pitchQuantity[i]
         );
-        for (let j = 0; j < parseInt(numTimeSlot[i].toString()); j++) {
-          await createTimeSlot(
-            newPitchType.id,
-            timeSlot[(num + j) * 4 + 0],
-            timeSlot[(num + j) * 4 + 1],
-            timeSlot[(num + j) * 4 + 2],
-            timeSlot[(num + j) * 4 + 3],
-            parseFloat(timePrice[num + j].toString())
-          );
-        }
+        // for (let j = 0; j < parseInt(numTimeSlot[i].toString()); j++) {
+        //   await createTimeSlot(
+        //     newPitchType.id,
+        //     timeSlot[(num + j) * 4 + 0],
+        //     timeSlot[(num + j) * 4 + 1],
+        //     timeSlot[(num + j) * 4 + 2],
+        //     timeSlot[(num + j) * 4 + 3],
+        //     parseFloat(timePrice[num + j].toString())
+        //   );
+        // }
         num += parseInt(numTimeSlot[i].toString());
       }
       return redirect("/manager/group-pitch");
@@ -194,7 +201,8 @@ function groupPitchAdd() {
       pitchType: string;
       pitchQuantity: number;
       pitchDesc: string;
-      timeSlots: Array<number>;
+      id: string;
+      timeSlots: any;
     }[]
   >(
     groupPitch.pitchTypes.map((acc, pitchType) => {
@@ -202,7 +210,8 @@ function groupPitchAdd() {
       acc["pitchType"] = acc.type;
       acc["pitchQuantity"] = acc.pitch.length;
       acc["pitchDesc"] = acc.description;
-      acc["timeSlots"] = [];
+      acc["timeSlots"] = acc.timeSlot;
+      acc["id"] = acc.id;
       return acc;
     })
   );
@@ -214,6 +223,7 @@ function groupPitchAdd() {
         pitchType: "Sân 7",
         pitchQuantity: 3,
         pitchDesc: "Sơn tả",
+        id: "0",
         timeSlots: [],
       },
     ]);
@@ -235,26 +245,17 @@ function groupPitchAdd() {
   };
   const addTimeSlot = (index: number) => {
     const newFieldTypes = [...fieldTypes];
-    var a = 5;
+    var a = "05:00";
     if (newFieldTypes[index].timeSlots.length) {
-      a = parseInt(
+      a =
         newFieldTypes[index].timeSlots[
           newFieldTypes[index].timeSlots.length - 1
-        ].hourEnd
-      );
+        ].endTime;
     }
-    var b = 0;
-    if (newFieldTypes[index].timeSlots.length)
-      b = parseInt(
-        newFieldTypes[index].timeSlots[
-          newFieldTypes[index].timeSlots.length - 1
-        ].minuteEnd
-      );
     newFieldTypes[index].timeSlots.push({
-      hourStart: a,
-      minuteStart: b,
-      hourEnd: (a + 2) % 24,
-      minuteEnd: b,
+      id: 0,
+      startTime: a,
+      endTime: ((parseInt(a.split(":")[0]) + 2) % 24) + ":" + a.split(":")[1],
       price: "",
     });
     setFieldTypes(newFieldTypes);
@@ -296,7 +297,7 @@ function groupPitchAdd() {
   };
   return (
     <div className="container mx-auto my-12 max-w-[1000px]">
-      <h1 className="text-2xl font-semibold mb-4 text-center">Tạo Sân Bóng</h1>
+      <h1 className="text-2xl font-semibold mb-4 text-center">Sửa Sân Bóng</h1>
       <div className="flex items-center w-full sang-tab">
         <div
           onClick={changeTab1}
@@ -535,7 +536,7 @@ function groupPitchAdd() {
                           <input
                             type="number"
                             id="priceService"
-                            value={use.price}
+                            defaultValue={use?.price}
                             // onChange={handleServicePriceChange}
                             placeholder="Giá"
                             name="servicePrices"
@@ -573,6 +574,7 @@ function groupPitchAdd() {
                 key={index}
                 className="mb-2 border px-10 py-8 rounded relative"
               >
+                <input type="hidden" name="pitchType_id" value={field.id} />
                 <input
                   name="numTimeSlot"
                   id="numTimeSlot"
@@ -632,26 +634,20 @@ function groupPitchAdd() {
                   </label>
                 </div>
                 <div className="grid grid-cols-2 gap-x-6 gap-y-3 mb-4">
-                  {field.timeSlots.map(
-                    (
-                      slot: {
-                        hourStart: number;
-                        minuteStart: number;
-                        hourEnd: number;
-                        minuteEnd: number;
-                      },
-                      slotIndex: number
-                    ) => (
+                  {field.timeSlots.map((slot, slotIndex: number) => (
+                    <>
+                      <input type="hidden" name="timeSlot_id" value={slot.id} />
                       <TimeComponent
-                        hourStart={slot.hourStart}
-                        minuteStart={slot.minuteStart}
-                        hourEnd={slot.hourEnd}
-                        minuteEnd={slot.minuteEnd}
+                        hourStart={parseInt(slot.startTime.split(":")[0])}
+                        minuteStart={parseInt(slot.startTime.split(":")[1])}
+                        hourEnd={parseInt(slot.endTime.split(":")[0])}
+                        minuteEnd={parseInt(slot.endTime.split(":")[1])}
                         name="time"
+                        price={slot.price}
                         removeAction={() => removeTimeSlot(index, slotIndex)}
                       />
-                    )
-                  )}
+                    </>
+                  ))}
                 </div>
                 <div
                   className="btn inline-flex gap-3 items-center bg-green-500 hover:bg-green-600 px-5 py-2 rounded text-white"
