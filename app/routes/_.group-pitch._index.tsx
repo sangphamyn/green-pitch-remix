@@ -1,6 +1,6 @@
 import { LoaderFunction } from "@remix-run/node";
 import { Form, Link, Outlet, useLoaderData } from "@remix-run/react";
-import { getGroupPitchList } from "prisma/pitch";
+import { getGroupPitchList1 } from "prisma/pitch";
 import { FiPlusCircle } from "react-icons/fi";
 import { MdOutlineStadium } from "react-icons/md";
 import { PiMapPinLight } from "react-icons/pi";
@@ -15,7 +15,7 @@ export let loader: LoaderFunction = async ({ request, params }) => {
   let district = searchParams.get("district");
   let ward = searchParams.get("ward");
   let pitchType = searchParams.get("pitchType");
-  const groupPitchList = await getGroupPitchList(
+  const groupPitchList = await getGroupPitchList1(
     name,
     district,
     ward,

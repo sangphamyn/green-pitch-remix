@@ -63,7 +63,7 @@ export const getGroupPitchByOwnerId = async (ownerId: string) => {
     throw error;
   }
 };
-export const getGroupPitchList = async (
+export const getGroupPitchList1 = async (
   name: string | null,
   district: string | null,
   ward: string | null,
@@ -373,7 +373,7 @@ export const getBookingList = async (user: string | null) => {
   }
 };
 
-export const cancelBooking = async (id: string | null) => {
+export const cancelBooking = async (id: string) => {
   try {
     const booking = await db.booking.update({
       where: {
@@ -384,6 +384,62 @@ export const cancelBooking = async (id: string | null) => {
       },
     });
     return booking;
+  } catch (error) {
+    console.error("Lỗi:", error);
+    throw error;
+  }
+};
+
+export const getUserList = async (roles?: number[]) => {
+  try {
+    const userList = await db.user.findMany({
+      where: roles
+        ? {
+            role: {
+              in: roles,
+            },
+          }
+        : {},
+    });
+    return userList;
+  } catch (error) {
+    console.error("Lỗi:", error);
+    throw error;
+  }
+};
+export const getGroupPitchList = async (status?: number[]) => {
+  try {
+    const groupPitchList = await db.groupPitch.findMany({
+      where: status
+        ? {
+            status: {
+              in: status,
+            },
+          }
+        : {},
+    });
+    return groupPitchList;
+  } catch (error) {
+    console.error("Lỗi:", error);
+    throw error;
+  }
+};
+export const getPitchList = async (status?: number[]) => {
+  try {
+    const pitchList = await db.pitch.findMany({
+      where: status
+        ? {
+            pitch_pitchType: {
+              groupPitch: {
+                status: {
+                  in: status,
+                },
+              },
+            },
+          }
+        : {},
+    });
+    return pitchList;
   } catch (error) {
     console.error("Lỗi:", error);
     throw error;

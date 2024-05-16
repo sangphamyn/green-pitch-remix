@@ -68,7 +68,9 @@ export async function action({ request }: ActionFunctionArgs) {
   session.set("createdAt", existUser.createdAt?.toString());
   session.set("role", existUser.role);
 
-  return redirect("/", {
+  let url = "/";
+  if (existUser.role == 2) url = "/admin/dashboard";
+  return redirect(url, {
     headers: { "set-cookie": await commitSession(session) },
   });
 }

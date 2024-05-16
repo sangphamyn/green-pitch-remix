@@ -3,6 +3,7 @@ import { Form, useLoaderData } from "@remix-run/react";
 import { ChangeEvent, useState } from "react";
 import { CiSearch } from "react-icons/ci";
 import { register } from "swiper/element/bundle";
+import FooterComponent from "~/components/FooterComponent";
 import { districts, getDistrictById, wards } from "~/helper";
 
 register();
