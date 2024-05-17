@@ -38,8 +38,12 @@ function AdminHome() {
                           className="inline-flex items-center justify-center w-12 h-12 text-base text-white transition-all duration-200 ease-in-out leading-inherit rounded-xl"
                         >
                           <img
-                            className="w-full rounded-xl"
-                            src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg"
+                            className="w-full h-full object-cover rounded-xl"
+                            src={
+                              user?.avatar
+                                ? user.avatar
+                                : "https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg"
+                            }
                             alt="Image placeholder"
                           />
                         </a>

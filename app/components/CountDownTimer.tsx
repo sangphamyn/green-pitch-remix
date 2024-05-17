@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 const CountdownTimer = ({ targetDate, endDate }) => {
   const calculateTimeLeft = (date) => {
     const now = new Date();
-    const utcNow = now.getTime() - now.getTimezoneOffset() * 60000;
+    const utcNow = now.getTime();
     const target = new Date(date).getTime();
     const distance = target - utcNow;
 
@@ -25,14 +25,13 @@ const CountdownTimer = ({ targetDate, endDate }) => {
   const [isCountDown, setisCountDown] = useState(true);
 
   useEffect(() => {
-    console.log("endDate", endDate);
     const timer = setInterval(() => {
       const timeLeftToTarget = calculateTimeLeft(targetDate);
       if (timeLeftToTarget) {
         setTimeLeft(timeLeftToTarget);
       } else {
         const now = new Date();
-        const utcNow = now.getTime() - now.getTimezoneOffset() * 60000;
+        const utcNow = now.getTime();
         const target = new Date(endDate).getTime();
         if (utcNow >= target) {
           clearInterval(timer);
@@ -58,7 +57,7 @@ const CountdownTimer = ({ targetDate, endDate }) => {
 
   if (!timeLeft) {
     return (
-      <span className="rounded-full px-[10px] py-[4px] bg-green-100 text-green-600 font-medium text-sm">
+      <span className="rounded-full px-[16px] py-[4px] bg-green-100 text-green-600 font-medium text-sm">
         Đã xong
       </span>
     );
@@ -67,14 +66,14 @@ const CountdownTimer = ({ targetDate, endDate }) => {
   return (
     <>
       {isCountDown ? (
-        <span className="rounded-full px-[10px] py-[4px] bg-yellow-100 text-yellow-600 font-medium text-sm">
-          {timeLeft.days} ngày {timeLeft.hours} giờ {timeLeft.minutes} phút{" "}
-          {timeLeft.seconds}s
+        <span className="rounded-full px-[16px] py-[4px] bg-yellow-100 text-yellow-600 font-medium text-sm">
+          {timeLeft.days > 0 ? timeLeft.days + " ngày" : ""} {timeLeft.hours}:
+          {timeLeft.minutes}:{timeLeft.seconds}s
         </span>
       ) : (
-        <span className="rounded-full px-[10px] py-[4px] bg-blue-100 text-blue-600 font-medium text-sm">
-          Đang sử dụng {timeLeft.days} ngày {timeLeft.hours} giờ{" "}
-          {timeLeft.minutes} phút {timeLeft.seconds}s
+        <span className="rounded-full px-[16px] py-[4px] bg-blue-100 text-blue-600 font-medium text-sm">
+          Đang sử dụng {timeLeft.hours ? timeLeft.hours + ":" : ""}
+          {timeLeft.minutes}:{timeLeft.seconds}s
         </span>
       )}
     </>

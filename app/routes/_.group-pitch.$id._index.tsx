@@ -105,7 +105,10 @@ function group_pitch_detail() {
   } else {
     pitchTypeList = data.pitchType;
   }
-  console.log(pitchTypeList);
+  useEffect(() => {
+    setData1(actionData);
+  }, [actionData]);
+  const [data1, setData1] = useState(actionData);
   // let pitchTypeList1 = actionData?.pitchType;
   // pitchTypeList = data.pitchType;
   const user = data.user;
@@ -177,6 +180,7 @@ function group_pitch_detail() {
   const [type, setType] = useState<string>();
   const [pitchTypeId, setPitchTypeId] = useState<string>();
   const handleBooking = (e) => {
+    setData1({});
     setTime(e.target.querySelector(".sang-time").textContent);
     setTimeId(e.target.getAttribute("timeSlot_id"));
     setPrice(e.target.querySelector(".sang-price").textContent);
@@ -185,7 +189,6 @@ function group_pitch_detail() {
     if (Object.keys(user).length > 0)
       document.getElementById("my_modal_2").showModal();
     else document.getElementById("my_modal_3").showModal();
-    document.querySelector(".sang-status")?.classList.add("hidden");
   };
   const [srcValue, setSrcValue] = useState("");
   useEffect(() => {
@@ -458,41 +461,36 @@ function group_pitch_detail() {
                       <p className="py-2">
                         <span className="font-semibold">Giá tiền:</span> {price}
                       </p>
-                      <button
-                        className="btn btn-primary mx-auto mt-4 block"
-                        onClick={() => {
-                          document
-                            .querySelector(".sang-status")
-                            ?.classList.remove("hidden");
-                        }}
-                      >
+                      <button className="btn btn-primary mx-auto mt-4 block">
                         Đặt sân
                       </button>
-                      <div
-                        role="alert"
-                        className={`mt-4 alert sang-status ${
-                          actionData ? "" : "hidden"
-                        } ${
-                          actionData?.status == "success"
-                            ? "alert-success"
-                            : "alert-error"
-                        }`}
-                      >
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          className="stroke-current shrink-0 h-6 w-6"
-                          fill="none"
-                          viewBox="0 0 24 24"
+                      {data1?.status ? (
+                        <div
+                          role="alert"
+                          className={`mt-4 alert sang-status ${
+                            data1?.status == "success"
+                              ? "alert-success"
+                              : "alert-error"
+                          }`}
                         >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth="2"
-                            d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
-                          />
-                        </svg>
-                        <span>{actionData?.message}</span>
-                      </div>
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            className="stroke-current shrink-0 h-6 w-6"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth="2"
+                              d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
+                            />
+                          </svg>
+                          <span>{data1?.message}</span>
+                        </div>
+                      ) : (
+                        ""
+                      )}
                       {/* </div> */}
                     </Form>
                     <form method="dialog" className="modal-backdrop">

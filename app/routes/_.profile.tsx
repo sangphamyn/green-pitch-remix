@@ -1,17 +1,27 @@
 import { ActionFunctionArgs, LoaderFunction, redirect } from "@remix-run/node";
-import { Form, useLoaderData } from "@remix-run/react";
+import { Form, Link, useLoaderData } from "@remix-run/react";
 import { cancelBooking, getBookingList } from "prisma/pitch";
 import { CiCalendar } from "react-icons/ci";
+import { FaPerson } from "react-icons/fa6";
 import { FiPhone } from "react-icons/fi";
 import { MdOutlineEmail } from "react-icons/md";
 import CountdownTimer from "~/components/CountDownTimer";
 import { getSession } from "~/session.server";
 
 export let loader: LoaderFunction = async ({ request, params }) => {
+  let { pageNumber = 0 } = params;
+  let { searchParams } = new URL(request.url);
   let session = await getSession(request.headers.get("cookie"));
   if (Object.keys(session.data).length > 0) {
-    const bookingList = await getBookingList(session.data.userId || "");
-    return { user: session.data, bookingList };
+    const bookingList = await getBookingList(
+      session.data.userId,
+      parseInt(searchParams.get("page")) || 1
+    );
+    return {
+      user: session.data,
+      bookingList,
+      page: searchParams.get("page") || 1,
+    };
   }
   return redirect("/login");
 };
@@ -25,19 +35,20 @@ export default function profile() {
   const data = useLoaderData<typeof loader>();
   const user = data.user;
   const bookingList = data.bookingList;
+  const page = data.page;
   return (
     <div className="container mx-auto mt-5">
-      <div className="flex gap-4">
-        <div className="w-1/3 border p-4">
+      <div className="flex gap-8">
+        <div className="w-1/5 h-fit shadow-xl rounded-md p-4">
           <div className="avatar flex justify-center mb-4">
-            <div className="w-24 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2">
-              <img src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg" />
+            <div className="w-24 rounded-full ring-offset-base-100 ring-offset-2">
+              <img src={user.avatar} />
             </div>
           </div>
           <div className="text-center mb-4">
-            <h2 className="text-3xl font-semibold">{user.name}</h2>
+            <h2 className="text-2xl font-semibold">{user.name}</h2>
           </div>
-          <div className="mx-auto w-fit">
+          <div className="w-fit">
             <div className="flex gap-2 items-center mb-2">
               <FiPhone />
               <span>{user.phone}</span>
@@ -51,13 +62,157 @@ export default function profile() {
             <div className="flex gap-2 items-center mb-2">
               <CiCalendar className="stroke-[0.5px]" />
               <span className="text-neutral-6000 dark:text-neutral-300">
-                Đã tham gia vào {formatDate(user.createdAt)}
+                Tham gia vào {formatDate(user.createdAt)}
               </span>
             </div>
           </div>
         </div>
-        <div className="w-2/3 border p-4">
-          <div className="overflow-x-auto">
+        <div className="w-4/5  ">
+          <div className="mx-auto my-5 w-full">
+            <div className="flex flex-wrap -mx-3">
+              <div className="w-full max-w-full px-3 mb-6 sm:w-1/2 sm:flex-none xl:mb-0 xl:w-1/4">
+                <div className="relative flex flex-col min-w-0 break-words bg-white shadow-xl dark:bg-slate-850 dark:shadow-dark-xl rounded-2xl bg-clip-border">
+                  <div className="flex-auto p-4">
+                    <div className="flex flex-row -mx-3">
+                      <div className="flex-none w-2/3 max-w-full px-3">
+                        <div>
+                          <p className="mb-0 font-sans text-sm font-semibold leading-normal uppercase dark:text-white dark:opacity-60">
+                            Tổng
+                          </p>
+                          <h5 className="mb-2 font-bold dark:text-white">
+                            {bookingList.length}
+                          </h5>
+                        </div>
+                      </div>
+                      <div className="px-3 text-right basis-1/3">
+                        <div className="flex items-center justify-center w-12 h-12 rounded-full bg-gradient-to-tl from-blue-500 to-violet-500">
+                          <FaPerson className="text-white" />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="w-full max-w-full px-3 mb-6 sm:w-1/2 sm:flex-none xl:mb-0 xl:w-1/4">
+                <div className="relative flex flex-col min-w-0 break-words bg-white shadow-xl dark:bg-slate-850 dark:shadow-dark-xl rounded-2xl bg-clip-border">
+                  <div className="flex-auto p-4">
+                    <div className="flex flex-row -mx-3">
+                      <div className="flex-none w-2/3 max-w-full px-3">
+                        <div>
+                          <p className="mb-0 font-sans text-sm font-semibold leading-normal uppercase dark:text-white dark:opacity-60">
+                            Thành công
+                          </p>
+                          <h5 className="mb-2 font-bold dark:text-white">
+                            {
+                              bookingList.filter((booking) => {
+                                let date = new Date(booking?.date);
+                                let endDate = new Date(booking?.date);
+                                const hoursToAdd1 = parseInt(
+                                  booking?.booking_timeSlot.endTime.split(
+                                    ":"
+                                  )[0]
+                                );
+                                const minutesToAdd1 = parseInt(
+                                  booking?.booking_timeSlot.endTime.split(
+                                    ":"
+                                  )[1]
+                                );
+                                endDate.setHours(
+                                  date.getHours() + hoursToAdd1 - 7
+                                );
+                                endDate.setMinutes(
+                                  date.getMinutes() + minutesToAdd1
+                                );
+                                return (
+                                  new Date() > endDate && booking.status == 1
+                                );
+                              }).length
+                            }
+                          </h5>
+                        </div>
+                      </div>
+                      <div className="px-3 text-right basis-1/3">
+                        <div className="flex items-center justify-center w-12 h-12 rounded-full bg-gradient-to-tl from-green-500 to-green-300">
+                          <FaPerson className="text-white" />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="w-full max-w-full px-3 mb-6 sm:w-1/2 sm:flex-none xl:mb-0 xl:w-1/4">
+                <div className="relative flex flex-col min-w-0 break-words bg-white shadow-xl dark:bg-slate-850 dark:shadow-dark-xl rounded-2xl bg-clip-border">
+                  <div className="flex-auto p-4">
+                    <div className="flex flex-row -mx-3">
+                      <div className="flex-none w-2/3 max-w-full px-3">
+                        <div>
+                          <p className="mb-0 font-sans text-sm font-semibold leading-normal uppercase dark:text-white dark:opacity-60">
+                            Sắp đá
+                          </p>
+                          <h5 className="mb-2 font-bold dark:text-white">
+                            {
+                              bookingList.filter((booking) => {
+                                let date = new Date(booking?.date);
+                                const hoursToAdd = parseInt(
+                                  booking?.booking_timeSlot.startTime.split(
+                                    ":"
+                                  )[0]
+                                );
+                                const minutesToAdd = parseInt(
+                                  booking?.booking_timeSlot.startTime.split(
+                                    ":"
+                                  )[1]
+                                );
+                                date.setHours(date.getHours() + hoursToAdd - 7);
+                                date.setMinutes(
+                                  date.getMinutes() + minutesToAdd
+                                );
+                                return date > new Date() && booking.status == 1;
+                              }).length
+                            }
+                          </h5>
+                        </div>
+                      </div>
+                      <div className="px-3 text-right basis-1/3">
+                        <div className="flex items-center justify-center w-12 h-12 rounded-full bg-gradient-to-tl from-orange-500 to-orange-500">
+                          <FaPerson className="text-white" />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="w-full max-w-full px-3 sm:w-1/2 sm:flex-none xl:w-1/4">
+                <div className="relative flex flex-col min-w-0 break-words bg-white shadow-xl dark:bg-slate-850 dark:shadow-dark-xl rounded-2xl bg-clip-border">
+                  <div className="flex-auto p-4">
+                    <div className="flex flex-row -mx-3">
+                      <div className="flex-none w-2/3 max-w-full px-3">
+                        <div>
+                          <p className="mb-0 font-sans text-sm font-semibold leading-normal uppercase dark:text-white dark:opacity-60">
+                            Đã hủy
+                          </p>
+                          <h5 className="mb-2 font-bold dark:text-white">
+                            {
+                              bookingList.filter(
+                                (booking: { status: number }) =>
+                                  booking.status == 2
+                              ).length
+                            }
+                          </h5>
+                        </div>
+                      </div>
+                      <div className="px-3 text-right basis-1/3">
+                        <div className="flex items-center justify-center w-12 h-12 rounded-full bg-gradient-to-tl from-red-600 to-red-500">
+                          <FaPerson className="text-white" />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="overflow-x-auto border-t border-r border-l shadow-xl rounded-md p-4">
             <table className="table">
               {/* head */}
               <thead>
@@ -73,7 +228,7 @@ export default function profile() {
                 {/* row 1 */}
                 {bookingList.map((booking) => {
                   let now = new Date();
-                  now.setHours(now.getHours() + 7);
+                  now.setHours(now.getHours());
                   let date = new Date(booking?.date);
                   const hoursToAdd = parseInt(
                     booking?.booking_timeSlot.startTime.split(":")[0]
@@ -81,8 +236,8 @@ export default function profile() {
                   const minutesToAdd = parseInt(
                     booking?.booking_timeSlot.startTime.split(":")[1]
                   );
-                  date.setHours(date.getHours() + hoursToAdd);
-                  date.setMinutes(date.getMinutes() + minutesToAdd);
+                  date.setHours(hoursToAdd);
+                  date.setMinutes(minutesToAdd);
 
                   let endDate = new Date(booking?.date);
                   const hoursToAdd1 = parseInt(
@@ -91,8 +246,8 @@ export default function profile() {
                   const minutesToAdd1 = parseInt(
                     booking?.booking_timeSlot.endTime.split(":")[1]
                   );
-                  endDate.setHours(date.getHours() + hoursToAdd1);
-                  endDate.setMinutes(date.getMinutes() + minutesToAdd1);
+                  endDate.setHours(hoursToAdd1);
+                  endDate.setMinutes(minutesToAdd1);
                   return (
                     <tr>
                       <td>
@@ -108,6 +263,7 @@ export default function profile() {
                                       )[0]
                                     : "https://img.daisyui.com/tailwind-css-component-profile-2@56w.png"
                                 }
+                                className="rounded-md"
                                 alt="Avatar Tailwind CSS Component"
                               />
                             </div>
@@ -142,12 +298,12 @@ export default function profile() {
                               endDate={endDate}
                             />
                           ) : (
-                            <span className="rounded-full px-[10px] py-[4px] bg-green-100 text-green-600 font-medium text-sm">
+                            <span className="rounded-full px-[16px] py-[4px] bg-green-100 text-green-600 font-medium text-sm">
                               Đã xong
                             </span>
                           )
                         ) : (
-                          <span className="rounded-full px-[10px] py-[4px] bg-red-100 text-red-600 font-medium text-sm">
+                          <span className="rounded-full px-[16px] py-[4px] bg-red-100 text-red-600 font-medium text-sm">
                             Đã hủy
                           </span>
                         )}
@@ -160,7 +316,7 @@ export default function profile() {
                               name="booking_id"
                               value={booking.id}
                             />
-                            <button className="btn btn-ghost btn-xs">
+                            <button className="btn-sm btn btn-outline btn-error">
                               Hủy
                             </button>
                           </Form>
@@ -173,6 +329,25 @@ export default function profile() {
                 })}
               </tbody>
             </table>
+            <div className="w-full text-center">
+              <div className="join mx-auto">
+                <Link
+                  to={`?page=${page - 1}`}
+                  className="join-item btn"
+                  disabled={page == 1 ? true : false}
+                >
+                  «
+                </Link>
+                <button className="join-item btn">{page}</button>
+                <Link
+                  to={`?page=${parseInt(page) + 1}`}
+                  className="join-item btn"
+                  disabled={bookingList.length < 10 ? true : false}
+                >
+                  »
+                </Link>
+              </div>
+            </div>
           </div>
         </div>
       </div>

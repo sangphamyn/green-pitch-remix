@@ -102,11 +102,11 @@ const HeaderComponent = () => {
                   role="button"
                   className="btn btn-ghost btn-circle flex w-auto px-2"
                 >
-                  <div className="w-10 rounded-full">
+                  <div className="w-10 h-10 rounded-full">
                     <img
-                      className="rounded-full"
+                      className="rounded-full w-full h-full object-cover"
                       alt="Tailwind CSS Navbar component"
-                      src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg"
+                      src={user?.avatar}
                     />
                   </div>
                   <div className="text-start">
@@ -119,7 +119,9 @@ const HeaderComponent = () => {
                   className="z-[1] p-2 shadow menu menu-sm dropdown-content bg-base-100 text-black rounded-box w-52"
                 >
                   <li>
-                    <Link to='/profile' className="justify-between">Thông tin cá nhân</Link>
+                    <Link to="/profile" className="justify-between">
+                      Thông tin cá nhân
+                    </Link>
                   </li>
                   <li>
                     <Link to="/logout">Đăng xuất</Link>

@@ -339,8 +339,10 @@ export const bookingabc = async (
   }
 };
 
-export const getBookingList = async (user: string | null) => {
+export const getBookingList = async (user: string | null, page: number) => {
   try {
+    const skip = page * 10;
+    // page = 2;
     const bookingList = await db.booking.findMany({
       where: {
         ...(user && { id_user: parseInt(user) }),
@@ -353,6 +355,8 @@ export const getBookingList = async (user: string | null) => {
           },
         },
       ],
+      take: 10,
+      skip: (Number(page) - 1) * 10,
       include: {
         booking_pitch: {
           include: {
