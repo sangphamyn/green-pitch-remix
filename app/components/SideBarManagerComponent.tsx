@@ -92,14 +92,6 @@ function SideBarManagerComponent() {
             <MdOutlineStadium />
             Cụm sân
           </NavLink>
-
-          <Link
-            to="/"
-            className="flex gap-3 items-center px-6 py-2.5 text-gray-600 hover:text-orange-600 hover:bg-orange-100 group transition"
-          >
-            <FaUsersRectangle />
-            Nhân viên
-          </Link>
         </div>
       </div>
     </div>

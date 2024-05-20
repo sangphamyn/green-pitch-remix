@@ -11,7 +11,7 @@ export let loader: LoaderFunction = async ({ request, params }) => {
   let groupPitchs;
   let idFirst;
   if (session.data.userId) {
-    groupPitchs = await getGroupPitchByOwnerId(session.data.userId);
+    groupPitchs = await getGroupPitchByOwnerId(session.data.userId || 0);
     groupPitchs.map((item) => {
       if (item.status == 2)
         // Da duyet

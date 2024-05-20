@@ -13,7 +13,7 @@ import "react-date-picker/dist/DatePicker.css";
 import "react-calendar/dist/Calendar.css";
 import { getSession } from "~/session.server";
 export let loader: LoaderFunction = async ({ params, request }) => {
-  const pitchType = await getPitchTypeListByGroupPitchId(params.id);
+  const pitchType = await getPitchTypeListByGroupPitchId(params.id ?? 0);
   let groupPitchs;
   let idFirst;
   const paramsId = params.id;

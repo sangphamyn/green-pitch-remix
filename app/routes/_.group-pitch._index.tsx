@@ -142,9 +142,12 @@ export default function Index() {
               <h5 className="font-semibold text-lg">Khu vực</h5>
               <div>
                 <div>
-                  {districts.map((item) => {
+                  {districts.map((item, index) => {
                     return (
-                      <label className="label cursor-pointer justify-between">
+                      <label
+                        key={index}
+                        className="label cursor-pointer justify-between"
+                      >
                         <div className="flex items-center gap-[10px]">
                           <input
                             type="checkbox"

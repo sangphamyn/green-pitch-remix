@@ -427,17 +427,12 @@ function groupPitchAdd() {
                 className="select select-bordered focus:border-primary focus-within:outline-none rounded"
                 onChange={handleChangeDistric}
                 name="district"
+                defaultValue={groupPitch.id_district}
               >
                 {districts.map(
                   (item: { name: string; code: string }, index: number) => {
                     return (
-                      <option
-                        key={index}
-                        value={item?.code}
-                        selected={
-                          item?.code == groupPitch.id_district ? true : false
-                        }
-                      >
+                      <option key={index} defaultValue={parseInt(item?.code)}>
                         {item?.name}
                       </option>
                     );
@@ -452,17 +447,12 @@ function groupPitchAdd() {
               <select
                 className="select select-bordered focus:border-primary focus-within:outline-none rounded"
                 name="ward"
+                defaultValue={groupPitch.id_ward}
               >
                 {wardsList.map(
                   (item: { name: string; code: string }, index: number) => {
                     return (
-                      <option
-                        key={index}
-                        value={item?.code}
-                        selected={
-                          item?.code == groupPitch.id_ward ? true : false
-                        }
-                      >
+                      <option key={index} value={parseInt(item?.code)}>
                         {item?.name}
                       </option>
                     );
@@ -574,11 +564,15 @@ function groupPitchAdd() {
                 key={index}
                 className="mb-2 border px-10 py-8 rounded relative"
               >
-                <input type="hidden" name="pitchType_id" value={field.id} />
+                <input
+                  type="hidden"
+                  name="pitchType_id"
+                  defaultValue={field.id}
+                />
                 <input
                   name="numTimeSlot"
                   id="numTimeSlot"
-                  value={field.timeSlots.length}
+                  defaultValue={field.timeSlots.length}
                   className="hidden"
                 />
                 <div className="flex justify-between gap-4 mb-2">
@@ -635,8 +629,12 @@ function groupPitchAdd() {
                 </div>
                 <div className="grid grid-cols-2 gap-x-6 gap-y-3 mb-4">
                   {field.timeSlots.map((slot, slotIndex: number) => (
-                    <>
-                      <input type="hidden" name="timeSlot_id" value={slot.id} />
+                    <div key={index}>
+                      <input
+                        type="hidden"
+                        name="timeSlot_id"
+                        defaultValue={slot.id}
+                      />
                       <TimeComponent
                         hourStart={parseInt(slot.startTime.split(":")[0])}
                         minuteStart={parseInt(slot.startTime.split(":")[1])}
@@ -646,7 +644,7 @@ function groupPitchAdd() {
                         price={slot.price}
                         removeAction={() => removeTimeSlot(index, slotIndex)}
                       />
-                    </>
+                    </div>
                   ))}
                 </div>
                 <div
@@ -675,7 +673,7 @@ function groupPitchAdd() {
           <div className="flex items-center justify-center mt-8">
             <button
               className="btn btn-primary px-10 rounded-full w-full"
-              value="submit"
+              defaultValue="submit"
             >
               Tạo
             </button>
