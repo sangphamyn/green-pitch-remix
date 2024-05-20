@@ -10,7 +10,6 @@ import { uploadImage } from "../utils/utils.server.js";
 
 export const action = async ({ request }: ActionFunctionArgs) => {
   const uploadHandler = composeUploadHandlers(async ({ name, data }) => {
-    console.log("name: ", name);
     if (name !== "img") {
       return undefined;
     }

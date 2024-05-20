@@ -3,7 +3,7 @@ import { getGroupPitchByOwnerId } from "prisma/pitch";
 import React from "react";
 import { LoaderFunction } from "react-router";
 import HeaderManagerComponent from "~/components/HeaderManagerComponent";
-import SideBarManagerComponent from "~/components/SideBarManagerComponent";
+import SideBarManagerComponent from "~/components/ManagerSidebar";
 import { getSession } from "~/session.server";
 export let loader: LoaderFunction = async ({ request, params }) => {
   const paramsId = params.id;
@@ -21,9 +21,7 @@ export let loader: LoaderFunction = async ({ request, params }) => {
   return { user: session.data, groupPitchs, idFirst, paramsId };
 };
 function manager() {
-  return (
-    <Outlet />
-  );
+  return <Outlet />;
 }
 
 export default manager;

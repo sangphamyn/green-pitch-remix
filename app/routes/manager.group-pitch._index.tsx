@@ -1,13 +1,26 @@
 import { LoaderFunction, redirect } from "@remix-run/node";
 import { Link, Outlet, useLoaderData } from "@remix-run/react";
 import { getGroupPitchByOwnerId } from "prisma/pitch";
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import { FiPlusCircle } from "react-icons/fi";
-import { MdOutlineStadium } from "react-icons/md";
+import { MdOutlineRoomService, MdOutlineStadium } from "react-icons/md";
 import { PiMapPinLight } from "react-icons/pi";
 import { getDistrictById, getWardById } from "~/helper";
 import { getSession } from "~/session.server";
 import { TbFileSad } from "react-icons/tb";
+import { IoIosFootball, IoIosWifi } from "react-icons/io";
+import { LuGlassWater } from "react-icons/lu";
+import {
+  IoAddCircleOutline,
+  IoCarOutline,
+  IoFastFoodOutline,
+  IoShirtOutline,
+} from "react-icons/io5"; // import function to register Swiper custom elements
+import { register } from "swiper/element/bundle";
+import { LiaShoePrintsSolid } from "react-icons/lia";
+import Breadcrumb from "~/components/Breadcrumb";
+// register Swiper custom elements
+
 export let loader: LoaderFunction = async ({ request }) => {
   let session = await getSession(request.headers.get("cookie"));
   if (Object.keys(session.data).length == 0) {
@@ -17,49 +30,83 @@ export let loader: LoaderFunction = async ({ request }) => {
   const groupPitchList = await getGroupPitchByOwnerId(userId);
   return groupPitchList;
 };
-const pitches = [
-  {
-    name: "Sân CNTT",
-    address: "Đường Bắc Sơn, Hoàng Văn Thụ, Thành phố Thái Nguyên, Thái Nguyên",
-    imageUrl: "/images/san-co-nhan-tao-7-nguoi-dep.jpg",
-    status: 1,
-    quantity: 4,
-  },
-  {
-    name: "Sân Thanh Niên",
-    address: "Đường Bắc Sơn, Hoàng Văn Thụ, Thành phố Thái Nguyên, Thái Nguyên",
-    imageUrl: "/images/san-co-nhan-tao-7-nguoi-dep.jpg",
-    status: 0,
-    quantity: 6,
-  },
-  {
-    name: "Sân Công Nghiệp",
-    address: "Đường Bắc Sơn, Hoàng Văn Thụ, Thành phố Thái Nguyên, Thái Nguyên",
-    imageUrl: "/images/san-co-nhan-tao-7-nguoi-dep.jpg",
-    status: 3,
-    quantity: 2,
-  },
-  // Thêm các sân bóng khác vào đây...
-];
+register();
 function group_pitch() {
   const data = useLoaderData<typeof loader>();
   const pitches = data;
-  pitches.map((pitch) => {
+  pitches.map((pitch: any) => {
     let quantity = 0;
-    pitch.pitchTypes.map((type) => {
+    pitch.pitchTypes.map((type: any) => {
       quantity += type.pitch.length;
     });
     pitch.quantity = quantity;
   });
+
+  const itemRefs = useRef([]);
+  const swiperElRef = useRef(null);
+  useEffect(() => {
+    itemRefs.current.forEach((ref, index) => {
+      if (ref) {
+        const params = {
+          injectStyles: [
+            `
+            .swiper-pagination {
+              bottom: 0 !important;
+            }
+            .swiper-pagination-bullet {
+              background-color: hsla(0, 0%, 100%, 0.7);
+              transform: scale(0.75);
+              opacity: 0.5;
+              transition: 0.2s;
+            }
+            .swiper:hover .swiper-pagination-bullet {
+              opacity: 1;
+            }
+            .swiper-pagination-bullet-active {
+              transform: scale(1);
+              background-color: #fff;
+              opacity: 1;
+            }
+            .swiper-button-prev, .swiper-button-next {
+              width: 30px;
+              height: 30px;
+              background: #fff;
+              border-radius: 100%;
+              display: flex;
+              justify-content: center;
+              align-items: center;
+              transition: 0.2s;
+              opacity: 0;
+            }
+            .swiper-button-prev svg, .swiper-button-next svg {
+              width: 10px;
+              height: 10px;
+            }
+            .swiper-button-disabled {
+              opacity: 0 !important;
+            }
+            .swiper:hover .swiper-button-prev, .swiper:hover .swiper-button-next {
+              opacity: 1;
+            }
+            .swiper:hover .swiper-button-disabled {
+              opacity: 0.35 !important;
+            }
+          `,
+          ],
+        };
+
+        Object.assign(ref, params);
+        ref.initialize();
+      }
+    });
+  }, []);
+  const paths = [
+    { title: "Trang chủ", url: "/manager" },
+    { title: "Danh sách các cụm sân", url: "/manager/group-pitch" },
+  ];
   return (
-    <div>
-      <Outlet />
-      <div className="join join-vertical lg:join-horizontal">
-        <Link to="/manager/group-pitch/add" className="btn btn-primary">
-          <FiPlusCircle />
-          Thêm
-        </Link>
-      </div>
+    <div className="container mx-auto mt-3">
+      <Breadcrumb paths={paths} />
       <div className="w-full container mx-auto mt-5">
         <h1 className="mb-12 text-2xl font-extrabold text-center leading-none tracking-tight text-gray-900 md:text-3xl lg:text-4xl dark:text-white">
           Danh sách các cụm sân
@@ -71,21 +118,72 @@ function group_pitch() {
           </div>
         ) : (
           <div className="grid grid-cols-2 gap-10 mt-5">
-            {pitches.map((pitch, index) => (
-              <Link
-                to={"/manager/group-pitch/" + pitch.id}
+            {pitches.map((pitch: any, index: number) => (
+              <div
                 key={index}
-                className="border rounded p-4 flex gap-5 hover:shadow transition hover:text-primary cursor-pointer"
+                className=" rounded p-4 flex gap-5 shadow transition"
               >
-                <img
+                {/* <img
                   src={
                     pitch.images
                       ? pitch.images.split(",")[0]
                       : "/images/san-co-nhan-tao-7-nguoi-dep.jpg"
                   }
                   alt={pitch.name}
-                  className="mb-2 rounded w-1/2 h-[250px] object-cover"
-                />
+                  className="rounded w-[180px] h-[140px] object-cover"
+                /> */}
+                {pitch.images ? (
+                  <>
+                    <div className="w-[180px]">
+                      <swiper-container
+                        init="false"
+                        ref={(el) => (itemRefs.current[index] = el)}
+                        // style="--swiper-navigation-color: #fff; --swiper-pagination-color: #fff"
+                        class="mySwiper"
+                        thumbs-swiper=".mySwiper2"
+                        space-between="10"
+                        pagination="true"
+                        navigation="true"
+                      >
+                        {pitch.images
+                          .split(",")
+                          .map((img: string, index: number) => {
+                            return (
+                              <swiper-slide key={index}>
+                                <img
+                                  src={img}
+                                  className="rounded w-[200px] h-[160px] object-cover"
+                                />
+                              </swiper-slide>
+                            );
+                          })}
+                      </swiper-container>
+
+                      {/* <swiper-container
+                        class="mySwiper2"
+                        slides-per-view="3"
+                        free-mode="true"
+                        watch-slides-progress="true"
+                      >
+                        {pitch.images.split(",").map((img: string, index: number) => {
+                          return (
+                            <swiper-slide>
+                              <img src={img} className="h-[100px] w-full" />
+                            </swiper-slide>
+                          );
+                        })}
+                      </swiper-container> */}
+                    </div>
+                  </>
+                ) : (
+                  <div>
+                    <img
+                      className="w-full h-full object-cover rounded-lg"
+                      src="/images/san-co-nhan-tao-7-nguoi-dep.jpg"
+                      alt=""
+                    />
+                  </div>
+                )}
                 <div>
                   <div
                     className={`text-sm px-4 w-fit mb-2 py-1 ${
@@ -102,22 +200,60 @@ function group_pitch() {
                       ? "Từ chối"
                       : "Chưa duyệt"}
                   </div>
-                  <h2 className="text-lg font-semibold mb-1">{pitch.name}</h2>
+                  <Link
+                    to={"/manager/group-pitch/" + pitch.id}
+                    className="text-lg font-medium mb-3 hover:text-primary transition inline-block w-full"
+                  >
+                    {pitch.name}
+                  </Link>
                   <p className="text-sm text-gray-600 mb-1 flex gap-1">
                     <PiMapPinLight className="shrink-0 text-lg" />{" "}
-                    {getWardById(pitch.id_ward).name},{" "}
-                    {getDistrictById(pitch.id_district).name}
+                    {getWardById(pitch.id_ward)?.name},{" "}
+                    {getDistrictById(pitch.id_district)?.name}
                   </p>
                   <p className="text-sm text-gray-600 mb-1 flex gap-1 items-center">
                     <MdOutlineStadium /> Số sân: {pitch.quantity}
                   </p>
-                  <p className="text-sm mt-4 text-gray-600">
-                    {pitch.description}
-                  </p>
+                  <div className="flex flex-wrap gap-1">
+                    {pitch.services?.map((service: any, index: number) => {
+                      return (
+                        <div className="text-xs px-4 w-fit flex gap-1 items-center py-1 border text-gray-700 rounded-full">
+                          {(() => {
+                            switch (service.id) {
+                              case 1:
+                                return <IoIosWifi />;
+                              case 2:
+                                return <LuGlassWater />;
+                              case 3:
+                                return <IoShirtOutline />;
+                              case 4:
+                                return <IoCarOutline />;
+                              case 5:
+                                return <IoFastFoodOutline />;
+                              case 6:
+                                return <LiaShoePrintsSolid />;
+                              case 7:
+                                return <IoIosFootball />;
+                              default:
+                                return <MdOutlineRoomService />;
+                            }
+                          })()}{" "}
+                          {service.name}
+                        </div>
+                      );
+                    })}
+                  </div>
                 </div>{" "}
                 {/* Thêm thông tin khác của sân bóng nếu cần */}
-              </Link>
+              </div>
             ))}
+            <Link
+              to="/manager/group-pitch/add"
+              className="shadow flex justify-center items-center gap-2 hover:bg-green-100 transition"
+            >
+              <IoAddCircleOutline className="text-2xl" />
+              Thêm sân mới
+            </Link>
           </div>
         )}
       </div>

@@ -3,7 +3,7 @@ import { getGroupPitchByOwnerId } from "prisma/pitch";
 import React from "react";
 import { LoaderFunction } from "react-router";
 import HeaderManagerComponent from "~/components/HeaderManagerComponent";
-import SideBarManagerComponent from "~/components/SideBarManagerComponent";
+import SideBarManagerComponent from "~/components/ManagerSidebar";
 import { getSession } from "~/session.server";
 export let loader: LoaderFunction = async ({ request, params }) => {
   const paramsId = params.id;
@@ -24,8 +24,7 @@ function manager() {
   return (
     <div className="flex">
       <SideBarManagerComponent />
-      <div className="w-full bg-slate-100">
-        <HeaderManagerComponent />
+      <div className="w-full">
         <Outlet />
       </div>
     </div>

@@ -100,9 +100,12 @@ export const getGroupPitchList1 = async (
 export const getGroupPitchById = async (id: string) => {
   try {
     const groupPitch = await db.groupPitch.findFirst({
-      where: {
-        id: parseInt(id),
-      },
+      where:
+        id && id != "&"
+          ? {
+              id: parseInt(id),
+            }
+          : {},
       include: {
         pitchTypes: {
           include: {
@@ -113,9 +116,12 @@ export const getGroupPitchById = async (id: string) => {
       },
     });
     const service = await db.grouppitch_service.findMany({
-      where: {
-        groupPitchId: parseInt(id),
-      },
+      where:
+        id && id != "&"
+          ? {
+              groupPitchId: parseInt(id),
+            }
+          : {},
       include: {
         service: true,
       },
@@ -258,9 +264,12 @@ export const createTimeSlot = async (
 export const getPitchTypeListByGroupPitchId = async (id: string) => {
   try {
     const pitchTypeList = await db.pitchtype.findMany({
-      where: {
-        id_groupPitch: parseInt(id),
-      },
+      where:
+        id && id != "&"
+          ? {
+              id_groupPitch: parseInt(id),
+            }
+          : {},
       include: {
         timeSlot: {
           include: {
@@ -339,22 +348,44 @@ export const bookingabc = async (
   }
 };
 
-export const getBookingList = async (user: string | null, page: number) => {
+export const getBookingList = async (
+  user: string | null,
+  page: number,
+  groupPitchId: string,
+  orderBy: string
+) => {
   try {
     const skip = page * 10;
     // page = 2;
-    const bookingList = await db.booking.findMany({
-      where: {
-        ...(user && { id_user: parseInt(user) }),
-      },
-      orderBy: [
-        { date: "desc" },
-        {
-          booking_timeSlot: {
-            startTime: "desc",
-          },
+    let where = {};
+    if (groupPitchId) {
+      where["booking_pitch"] = {
+        pitch_pitchType: {
+          id_groupPitch: parseInt(groupPitchId),
         },
-      ],
+      };
+    }
+    if (user) {
+      where["id_user"] = parseInt(user);
+    }
+    let orderBy1 = [];
+    if (orderBy) {
+      let a = {};
+      a[orderBy] = "desc";
+      orderBy1.push(a);
+    } else {
+      orderBy1.push({
+        date: "desc",
+      });
+      orderBy1.push({
+        booking_timeSlot: {
+          startTime: "desc",
+        },
+      });
+    }
+    const bookingList = await db.booking.findMany({
+      where: where,
+      orderBy: orderBy1,
       take: 10,
       skip: (Number(page) - 1) * 10,
       include: {
@@ -368,6 +399,7 @@ export const getBookingList = async (user: string | null, page: number) => {
           },
         },
         booking_timeSlot: true,
+        booking_user: true,
       },
     });
     return bookingList;

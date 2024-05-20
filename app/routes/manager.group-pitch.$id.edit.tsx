@@ -33,7 +33,7 @@ import { getSession } from "~/session.server";
 import { uploadImage } from "~/utils/utils.server";
 
 export let loader: LoaderFunction = async ({ request, params }) => {
-  const pitch = await getGroupPitchById(params.id);
+  const pitch = await getGroupPitchById(params.id ?? "0");
   const services = await getAllService();
   return { services, pitch };
 };
@@ -164,7 +164,6 @@ export async function action({ request, params }: ActionFunctionArgs) {
 function groupPitchAdd() {
   const data = useLoaderData<typeof loader>();
   const groupPitch = data.pitch.groupPitch;
-  console.log(groupPitch);
   const services = data.pitch.service;
   let actionData = useActionData<{ message: Record<string, any> }>();
   const [activeTab1, setActiveTab1] = useState(1);
@@ -241,7 +240,6 @@ function groupPitchAdd() {
       ...prevState,
       [serviceId]: { status: isChecked },
     }));
-    console.log("selectedServices", selectedServices);
   };
   const addTimeSlot = (index: number) => {
     const newFieldTypes = [...fieldTypes];

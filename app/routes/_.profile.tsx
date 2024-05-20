@@ -226,7 +226,7 @@ export default function profile() {
               </thead>
               <tbody>
                 {/* row 1 */}
-                {bookingList.map((booking) => {
+                {bookingList.map((booking, index: number) => {
                   let now = new Date();
                   now.setHours(now.getHours());
                   let date = new Date(booking?.date);
@@ -249,7 +249,7 @@ export default function profile() {
                   endDate.setHours(hoursToAdd1);
                   endDate.setMinutes(minutesToAdd1);
                   return (
-                    <tr>
+                    <tr key={index}>
                       <td>
                         <div className="flex items-center gap-3">
                           <div className="avatar">

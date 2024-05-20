@@ -1,6 +1,7 @@
 import {
   ActionFunctionArgs,
   LoaderFunction,
+  LoaderFunctionArgs,
   json,
   redirect,
 } from "@remix-run/node";
@@ -49,9 +50,12 @@ type ValuePiece = Date | null;
 
 const db = new PrismaClient();
 type Value = ValuePiece | [ValuePiece, ValuePiece];
-export let loader: LoaderFunction = async ({ request, params }) => {
-  const pitch = await getGroupPitchById(params.id);
-  const pitchType = await getPitchTypeListByGroupPitchId(params.id);
+export let loader: LoaderFunction = async ({
+  params,
+  request,
+}: LoaderFunctionArgs) => {
+  const pitch = await getGroupPitchById(params.id ?? "0");
+  const pitchType = await getPitchTypeListByGroupPitchId(params.id ?? "0");
   let session = await getSession(request.headers.get("cookie"));
   return { pitch, pitchType, user: session.data };
 };
@@ -62,8 +66,13 @@ export async function action({ request, params }: ActionFunctionArgs) {
   const timeId = formData.get("id_timeSlot");
   const user = formData.get("user");
   const pitchTypeId = formData.get("pitchType_id");
-  const pitchList = await getPitchListByPitchTypeId(pitchTypeId);
-  const bookingList = await getBookingListByDateTimeSlotId(date, timeId);
+  const pitchList = await getPitchListByPitchTypeId(
+    pitchTypeId?.toString() ?? "0"
+  );
+  const bookingList = await getBookingListByDateTimeSlotId(
+    date?.toString() ?? "",
+    timeId?.toString() ?? "0"
+  );
   let pitchId;
   for (let i = 0; i < pitchList.length; i++) {
     let check = true;
@@ -313,9 +322,9 @@ function group_pitch_detail() {
                       </div>
                     </div>
                   </div>
-                  {pitchTypeList?.map((item) => {
+                  {pitchTypeList?.map((item, index: number) => {
                     return (
-                      <div className="flex mb-3">
+                      <div className="flex mb-3" key={index}>
                         <div className="w-1/5 flex-shrink-0">
                           {item.name} - {item.type} - {item.description} (
                           {item.pitch.length} sân)
@@ -512,7 +521,7 @@ function group_pitch_detail() {
               </div>
             </div>
           </div>
-          <div className="w-[420px]">
+          <div>
             <div className="bg-gray-200 p-4 rounded-lg mb-4">
               <h3 className="font-semibold text-xl mb-4">Thông tin sân</h3>
               <div className="flex justify-between mb-1">
@@ -535,9 +544,12 @@ function group_pitch_detail() {
               <div className="bg-white p-4 rounded mt-4">
                 <h3 className="font-semibold text-md mb-4">Dịch vụ</h3>
                 <div className="grid grid-cols-2">
-                  {services.map((service) => {
+                  {services.map((service, index: number) => {
                     return (
-                      <div className="flex gap-2 items-center text-sm mb-2">
+                      <div
+                        className="flex gap-2 items-center text-sm mb-2"
+                        key={index}
+                      >
                         {(() => {
                           switch (service.serviceId) {
                             case 1:

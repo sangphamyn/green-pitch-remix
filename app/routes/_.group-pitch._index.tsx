@@ -6,7 +6,7 @@ import { MdOutlineStadium } from "react-icons/md";
 import { PiMapPinLight } from "react-icons/pi";
 import { districts, getDistrictById, getWardById, wards } from "~/helper";
 import { TbFileSad } from "react-icons/tb";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Breadcrumb from "~/components/Breadcrumb";
 import { CiSearch } from "react-icons/ci";
 export let loader: LoaderFunction = async ({ request, params }) => {
@@ -23,6 +23,8 @@ export let loader: LoaderFunction = async ({ request, params }) => {
   );
   return { groupPitchList };
 };
+import { register } from "swiper/element/bundle";
+register();
 export default function Index() {
   const data = useLoaderData<typeof loader>();
   const pitches = data.groupPitchList;
@@ -60,9 +62,66 @@ export default function Index() {
   );
   const handleChangeDistric = async (e: ChangeEvent<HTMLSelectElement>) => {
     const dt = getDistrictById(e.target.value);
-    console.log(dt);
     setWardsList(wards.filter((item) => item.district == dt.name));
   };
+  const itemRefs = useRef([]);
+  const swiperElRef = useRef(null);
+  useEffect(() => {
+    itemRefs.current.forEach((ref, index) => {
+      if (ref) {
+        const params = {
+          injectStyles: [
+            `
+            .swiper-pagination {
+              bottom: 0 !important;
+            }
+            .swiper-pagination-bullet {
+              background-color: hsla(0, 0%, 100%, 0.7);
+              transform: scale(0.75);
+              opacity: 0.5;
+              transition: 0.2s;
+            }
+            .swiper:hover .swiper-pagination-bullet {
+              opacity: 1;
+            }
+            .swiper-pagination-bullet-active {
+              transform: scale(1);
+              background-color: #fff;
+              opacity: 1;
+            }
+            .swiper-button-prev, .swiper-button-next {
+              width: 30px;
+              height: 30px;
+              background: #fff;
+              border-radius: 100%;
+              display: flex;
+              justify-content: center;
+              align-items: center;
+              transition: 0.2s;
+              opacity: 0;
+            }
+            .swiper-button-prev svg, .swiper-button-next svg {
+              width: 10px;
+              height: 10px;
+            }
+            .swiper-button-disabled {
+              opacity: 0 !important;
+            }
+            .swiper:hover .swiper-button-prev, .swiper:hover .swiper-button-next {
+              opacity: 1;
+            }
+            .swiper:hover .swiper-button-disabled {
+              opacity: 0.35 !important;
+            }
+          `,
+          ],
+        };
+
+        Object.assign(ref, params);
+        ref.initialize();
+      }
+    });
+  }, [districtFilter]);
   return (
     <div>
       <Outlet />
@@ -192,26 +251,71 @@ export default function Index() {
                   )
                     return;
                   return (
-                    <Link
-                      to={"/group-pitch/" + pitch.id}
+                    <div
                       key={index}
-                      className="rounded p-4 gap-5 transition hover:text-primary cursor-pointer sang-grouppitch"
+                      className="rounded p-4 gap-5 transition sang-grouppitch"
                     >
-                      <div className="overflow-hidden inline-flex rounded ">
-                        <img
-                          src={
-                            pitch.images
-                              ? pitch.images.split(",")[0]
-                              : "/images/san-co-nhan-tao-7-nguoi-dep.jpg"
-                          }
-                          alt={pitch.name}
-                          className="h-[300px] w-full object-cover transition duration-700"
-                        />
+                      <div className="overflow-hidden inline-flex rounded w-full">
+                        {pitch.images ? (
+                          <>
+                            <div className="w-full">
+                              <swiper-container
+                                init="false"
+                                ref={(el) => (itemRefs.current[index] = el)}
+                                // style="--swiper-navigation-color: #fff; --swiper-pagination-color: #fff"
+                                class="mySwiper"
+                                thumbs-swiper=".mySwiper2"
+                                space-between="10"
+                                pagination="true"
+                                navigation="true"
+                              >
+                                {pitch.images
+                                  .split(",")
+                                  .map((img: string, index: number) => {
+                                    return (
+                                      <swiper-slide key={index}>
+                                        <img
+                                          src={img}
+                                          className="rounded w-full h-[300px] object-cover transition duration-300"
+                                        />
+                                      </swiper-slide>
+                                    );
+                                  })}
+                              </swiper-container>
+
+                              {/* <swiper-container
+                        class="mySwiper2"
+                        slides-per-view="3"
+                        free-mode="true"
+                        watch-slides-progress="true"
+                      >
+                        {pitch.images.split(",").map((img: string, index: number) => {
+                          return (
+                            <swiper-slide>
+                              <img src={img} className="h-[100px] w-full" />
+                            </swiper-slide>
+                          );
+                        })}
+                      </swiper-container> */}
+                            </div>
+                          </>
+                        ) : (
+                          <div>
+                            <img
+                              className="w-full h-full object-cover rounded-lg"
+                              src="/images/san-co-nhan-tao-7-nguoi-dep.jpg"
+                              alt=""
+                            />
+                          </div>
+                        )}
                       </div>
                       <div>
-                        <h2 className="text-lg font-semibold mb-1">
+                        <Link
+                          to={"/group-pitch/" + pitch.id}
+                          className="text-lg font-semibold mb-1 inline-block w-full hover:text-primary transition"
+                        >
                           {pitch.name}
-                        </h2>
+                        </Link>
                         <p className="text-sm text-gray-600 mb-1 flex gap-1">
                           <PiMapPinLight className="shrink-0 text-lg" />{" "}
                           {getWardById(pitch.id_ward).name},{" "}
@@ -226,7 +330,7 @@ export default function Index() {
                       </p> */}
                       </div>{" "}
                       {/* Thêm thông tin khác của sân bóng nếu cần */}
-                    </Link>
+                    </div>
                   );
                 })}
               </div>

@@ -1,4 +1,4 @@
-import { LoaderFunction } from "@remix-run/node";
+import { LoaderFunction, LoaderFunctionArgs } from "@remix-run/node";
 import { Link, useActionData, useLoaderData } from "@remix-run/react";
 import {
   getGroupPitchById,
@@ -22,9 +22,9 @@ import { LiaShoePrintsSolid } from "react-icons/lia";
 import { MdOutlineRoomService } from "react-icons/md";
 // register Swiper custom elements
 register();
-export let loader: LoaderFunction = async ({ params }) => {
-  const pitch = await getGroupPitchById(params.id);
-  const pitchType = await getPitchTypeListByGroupPitchId(params.id);
+export let loader: LoaderFunction = async ({ params }: LoaderFunctionArgs) => {
+  const pitch = await getGroupPitchById(params.id ?? "0");
+  const pitchType = await getPitchTypeListByGroupPitchId(params.id ?? "0");
   return { pitch, pitchType };
 };
 function group_pitch_detail() {

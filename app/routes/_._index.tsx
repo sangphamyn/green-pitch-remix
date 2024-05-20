@@ -18,7 +18,6 @@ export default function Index() {
   );
   const handleChangeDistric = async (e: ChangeEvent<HTMLSelectElement>) => {
     const dt = getDistrictById(e.target.value);
-    console.log(dt);
     setWardsList(wards.filter((item) => item.district == dt.name));
   };
   return (

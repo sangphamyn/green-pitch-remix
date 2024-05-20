@@ -1,10 +1,11 @@
+import { Link } from "@remix-run/react";
 import React from "react";
 
 function FooterComponent() {
   return (
     <footer className="footer items-center p-4 bg-white text-gray-700 border-t mt-auto">
       <aside className="items-center grid-flow-col">
-        <p>© 2024 by Green Boy - All right reserved</p>
+        <Link to="/">© 2024 by Green Boy - All right reserved</Link>
       </aside>
       <nav className="grid-flow-col gap-4 md:place-self-center md:justify-self-end">
         <a>
