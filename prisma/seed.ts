@@ -555,7 +555,7 @@ async function main() {
         id_timeSlot: 21,
         id_user: 2,
         id_pitch: 5,
-        createdAt: new Date(),
+        createdAt: new Date("2024-05-13"),
       },
       {
         date: new Date("2024-05-14"),
@@ -569,7 +569,7 @@ async function main() {
         id_timeSlot: 29,
         id_user: 2,
         id_pitch: 7,
-        createdAt: new Date(),
+        createdAt: new Date("2024-05-12"),
       },
       {
         date: new Date("2024-05-15"),
@@ -605,6 +605,20 @@ async function main() {
         id_user: 3,
         id_pitch: 5,
         createdAt: new Date(),
+      },
+      {
+        date: new Date("2024-05-22"),
+        id_timeSlot: 10,
+        id_user: 1,
+        id_pitch: 3,
+        createdAt: new Date("2024-05-21"),
+      },
+      {
+        date: new Date("2024-05-22"),
+        id_timeSlot: 7,
+        id_user: 1,
+        id_pitch: 1,
+        createdAt: new Date("2024-05-22 03:00:00"),
       },
     ],
   });

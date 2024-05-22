@@ -330,25 +330,29 @@ function schedule() {
                   })}
                 </tbody>
               </table>
-              <div className="w-full text-center">
-                <div className="join mx-auto">
-                  <Link
-                    to={`?page=${page - 1}`}
-                    className="join-item btn"
-                    disabled={page == 1 ? true : false}
-                  >
-                    «
-                  </Link>
-                  <button className="join-item btn">{page}</button>
-                  <Link
-                    to={`?page=${parseInt(page) + 1}`}
-                    className="join-item btn"
-                    disabled={bookingList.length < 10 ? true : false}
-                  >
-                    »
-                  </Link>
+              {page == 1 && bookingList.length < 10 ? (
+                ""
+              ) : (
+                <div className="w-full text-center">
+                  <div className="join mx-auto">
+                    <Link
+                      to={`?page=${page - 1}`}
+                      className="join-item btn"
+                      disabled={page == 1 ? true : false}
+                    >
+                      «
+                    </Link>
+                    <button className="join-item btn">{page}</button>
+                    <Link
+                      to={`?page=${parseInt(page) + 1}`}
+                      className="join-item btn"
+                      disabled={bookingList.length < 10 ? true : false}
+                    >
+                      »
+                    </Link>
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
           </div>
         </div>

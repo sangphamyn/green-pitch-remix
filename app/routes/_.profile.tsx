@@ -8,10 +8,13 @@ import {
 import { CiCalendar } from "react-icons/ci";
 import { FaPerson } from "react-icons/fa6";
 import { FiPhone } from "react-icons/fi";
-import { MdOutlineEmail } from "react-icons/md";
+import { MdOutlineEmail, MdSummarize } from "react-icons/md";
 import CountdownTimer from "~/components/CountDownTimer";
 import { getSession } from "~/session.server";
-
+import { ImFileEmpty } from "react-icons/im";
+import { FaCheckCircle } from "react-icons/fa";
+import { IoIosCloseCircle } from "react-icons/io";
+import { IoPaperPlane } from "react-icons/io5";
 export let loader: LoaderFunction = async ({ request, params }) => {
   let { pageNumber = 0 } = params;
   let { searchParams } = new URL(request.url);
@@ -95,7 +98,7 @@ export default function profile() {
                       </div>
                       <div className="px-3 text-right basis-1/3">
                         <div className="flex items-center justify-center w-12 h-12 rounded-full bg-gradient-to-tl from-blue-500 to-violet-500">
-                          <FaPerson className="text-white" />
+                          <MdSummarize className="text-white" />
                         </div>
                       </div>
                     </div>
@@ -142,7 +145,7 @@ export default function profile() {
                       </div>
                       <div className="px-3 text-right basis-1/3">
                         <div className="flex items-center justify-center w-12 h-12 rounded-full bg-gradient-to-tl from-green-500 to-green-300">
-                          <FaPerson className="text-white" />
+                          <FaCheckCircle className="text-white" />
                         </div>
                       </div>
                     </div>
@@ -150,7 +153,7 @@ export default function profile() {
                 </div>
               </div>
               <div className="w-full max-w-full px-3 mb-6 sm:w-1/2 sm:flex-none xl:mb-0 xl:w-1/4">
-                <div className="relative flex flex-col min-w-0 break-words bg-white shadow-xl dark:bg-slate-850 dark:shadow-dark-xl rounded-2xl bg-clip-border">
+                <div className="relative flex flex-col min-w-0 break-words bg-white shadow-lg dark:bg-slate-850 dark:shadow-dark-xl rounded-2xl bg-clip-border">
                   <div className="flex-auto p-4">
                     <div className="flex flex-row -mx-3">
                       <div className="flex-none w-2/3 max-w-full px-3">
@@ -184,7 +187,7 @@ export default function profile() {
                       </div>
                       <div className="px-3 text-right basis-1/3">
                         <div className="flex items-center justify-center w-12 h-12 rounded-full bg-gradient-to-tl from-orange-500 to-orange-500">
-                          <FaPerson className="text-white" />
+                          <IoPaperPlane className="text-white" />
                         </div>
                       </div>
                     </div>
@@ -192,7 +195,7 @@ export default function profile() {
                 </div>
               </div>
               <div className="w-full max-w-full px-3 sm:w-1/2 sm:flex-none xl:w-1/4">
-                <div className="relative flex flex-col min-w-0 break-words bg-white shadow-xl dark:bg-slate-850 dark:shadow-dark-xl rounded-2xl bg-clip-border">
+                <div className="relative flex flex-col min-w-0 break-words bg-white shadow-lg dark:bg-slate-850 dark:shadow-dark-xl rounded-2xl bg-clip-border">
                   <div className="flex-auto p-4">
                     <div className="flex flex-row -mx-3">
                       <div className="flex-none w-2/3 max-w-full px-3">
@@ -212,7 +215,7 @@ export default function profile() {
                       </div>
                       <div className="px-3 text-right basis-1/3">
                         <div className="flex items-center justify-center w-12 h-12 rounded-full bg-gradient-to-tl from-red-600 to-red-500">
-                          <FaPerson className="text-white" />
+                          <IoIosCloseCircle className="text-white" />
                         </div>
                       </div>
                     </div>
@@ -221,142 +224,154 @@ export default function profile() {
               </div>
             </div>
           </div>
-          <div className="overflow-x-auto border-t border-r border-l shadow-xl rounded-md p-4">
-            <table className="table">
-              {/* head */}
-              <thead>
-                <tr>
-                  <th>Sân</th>
-                  <th>Thời gian đặt</th>
-                  <th>Thời gian đá</th>
-                  <th>Trạng thái</th>
-                  <th></th>
-                </tr>
-              </thead>
-              <tbody>
-                {/* row 1 */}
-                {bookingList.map((booking, index: number) => {
-                  let now = new Date();
-                  now.setHours(now.getHours());
-                  let date = new Date(booking?.date);
-                  const hoursToAdd = parseInt(
-                    booking?.booking_timeSlot.startTime.split(":")[0]
-                  );
-                  const minutesToAdd = parseInt(
-                    booking?.booking_timeSlot.startTime.split(":")[1]
-                  );
-                  date.setHours(hoursToAdd);
-                  date.setMinutes(minutesToAdd);
-
-                  let endDate = new Date(booking?.date);
-                  const hoursToAdd1 = parseInt(
-                    booking?.booking_timeSlot.endTime.split(":")[0]
-                  );
-                  const minutesToAdd1 = parseInt(
-                    booking?.booking_timeSlot.endTime.split(":")[1]
-                  );
-                  endDate.setHours(hoursToAdd1);
-                  endDate.setMinutes(minutesToAdd1);
-                  return (
-                    <tr key={index}>
-                      <td>
-                        <div className="flex items-center gap-3">
-                          <div className="avatar">
-                            <div className="mask w-12 h-12">
-                              <img
-                                src={
-                                  booking.booking_pitch.pitch_pitchType
-                                    .groupPitch.images
-                                    ? booking.booking_pitch.pitch_pitchType.groupPitch.images.split(
-                                        ","
-                                      )[0]
-                                    : "https://img.daisyui.com/tailwind-css-component-profile-2@56w.png"
-                                }
-                                className="rounded-md"
-                                alt="Avatar Tailwind CSS Component"
-                              />
-                            </div>
-                          </div>
-                          <div>
-                            <div className="font-bold">
-                              {
-                                booking?.booking_pitch?.pitch_pitchType
-                                  ?.groupPitch.name
-                              }
-                            </div>
-                            <div className="text-sm opacity-50">
-                              {booking?.booking_pitch?.pitch_pitchType?.name}
-                            </div>
-                          </div>
-                        </div>
-                      </td>
-                      <td>{formatDate1(booking?.createdAt)}</td>
-                      <td>
-                        {formatDate(booking?.date)}
-                        <br />
-                        <span className="badge badge-ghost badge-sm">
-                          {booking?.booking_timeSlot.startTime} -{" "}
-                          {booking?.booking_timeSlot.endTime}
-                        </span>
-                      </td>
-                      <td>
-                        {booking?.status == 1 ? (
-                          endDate > now ? (
-                            <CountdownTimer
-                              targetDate={date}
-                              endDate={endDate}
-                            />
-                          ) : (
-                            <span className="rounded-full px-[16px] py-[4px] bg-green-100 text-green-600 font-medium text-sm">
-                              Đã xong
-                            </span>
-                          )
-                        ) : (
-                          <span className="rounded-full px-[16px] py-[4px] bg-red-100 text-red-600 font-medium text-sm">
-                            Đã hủy
-                          </span>
-                        )}
-                      </td>
-                      {now < date && booking?.status == 1 ? (
-                        <th>
-                          <Form method="POST">
-                            <input
-                              type="hidden"
-                              name="booking_id"
-                              value={booking.id}
-                            />
-                            <button className="btn-sm btn btn-outline btn-error">
-                              Hủy
-                            </button>
-                          </Form>
-                        </th>
-                      ) : (
-                        <></>
-                      )}
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-            <div className="w-full text-center">
-              <div className="join mx-auto">
-                <Link
-                  to={`?page=${page - 1}`}
-                  className="join-item btn"
-                  disabled={page == 1 ? true : false}
-                >
-                  «
-                </Link>
-                <button className="join-item btn">{page}</button>
-                <Link
-                  to={`?page=${parseInt(page) + 1}`}
-                  className="join-item btn"
-                  disabled={bookingList.length < 10 ? true : false}
-                >
-                  »
-                </Link>
+          <div className="overflow-x-auto border-t border-r border-l shadow-lg rounded-md p-4">
+            {bookingList.length == 0 ? (
+              <div className="text-center flex flex-col items-center justify-center py-10">
+                <ImFileEmpty className="text-3xl mb-2" />
+                Chưa có lịch đặt sân
               </div>
-            </div>
+            ) : (
+              <table className="table">
+                {/* head */}
+                <thead>
+                  <tr>
+                    <th>Sân</th>
+                    <th>Thời gian đặt</th>
+                    <th>Thời gian đá</th>
+                    <th>Trạng thái</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {/* row 1 */}
+                  {bookingList.map((booking, index: number) => {
+                    let now = new Date();
+                    now.setHours(now.getHours());
+                    let date = new Date(booking?.date);
+                    const hoursToAdd = parseInt(
+                      booking?.booking_timeSlot.startTime.split(":")[0]
+                    );
+                    const minutesToAdd = parseInt(
+                      booking?.booking_timeSlot.startTime.split(":")[1]
+                    );
+                    date.setHours(hoursToAdd);
+                    date.setMinutes(minutesToAdd);
+
+                    let endDate = new Date(booking?.date);
+                    const hoursToAdd1 = parseInt(
+                      booking?.booking_timeSlot.endTime.split(":")[0]
+                    );
+                    const minutesToAdd1 = parseInt(
+                      booking?.booking_timeSlot.endTime.split(":")[1]
+                    );
+                    endDate.setHours(hoursToAdd1);
+                    endDate.setMinutes(minutesToAdd1);
+                    return (
+                      <tr key={index}>
+                        <td>
+                          <div className="flex items-center gap-3">
+                            <div className="avatar">
+                              <div className="mask w-12 h-12">
+                                <img
+                                  src={
+                                    booking.booking_pitch.pitch_pitchType
+                                      .groupPitch.images
+                                      ? booking.booking_pitch.pitch_pitchType.groupPitch.images.split(
+                                          ","
+                                        )[0]
+                                      : "https://img.daisyui.com/tailwind-css-component-profile-2@56w.png"
+                                  }
+                                  className="rounded-md"
+                                  alt="Avatar Tailwind CSS Component"
+                                />
+                              </div>
+                            </div>
+                            <div>
+                              <div className="font-bold">
+                                {
+                                  booking?.booking_pitch?.pitch_pitchType
+                                    ?.groupPitch.name
+                                }
+                              </div>
+                              <div className="text-sm opacity-50">
+                                {booking?.booking_pitch?.pitch_pitchType?.name}
+                              </div>
+                            </div>
+                          </div>
+                        </td>
+                        <td>{formatDate1(booking?.createdAt)}</td>
+                        <td>
+                          {formatDate(booking?.date)}
+                          <br />
+                          <span className="badge badge-ghost badge-sm">
+                            {booking?.booking_timeSlot.startTime} -{" "}
+                            {booking?.booking_timeSlot.endTime}
+                          </span>
+                        </td>
+                        <td>
+                          {booking?.status == 1 ? (
+                            endDate > now ? (
+                              <CountdownTimer
+                                targetDate={date}
+                                endDate={endDate}
+                              />
+                            ) : (
+                              <span className="rounded-full px-[16px] py-[4px] bg-green-100 text-green-600 font-medium text-sm">
+                                Đã xong
+                              </span>
+                            )
+                          ) : (
+                            <span className="rounded-full px-[16px] py-[4px] bg-red-100 text-red-600 font-medium text-sm">
+                              Đã hủy
+                            </span>
+                          )}
+                        </td>
+                        {now < date && booking?.status == 1 ? (
+                          <th>
+                            <Form method="POST">
+                              <input
+                                type="hidden"
+                                name="booking_id"
+                                value={booking.id}
+                              />
+                              <button className="btn-sm btn btn-outline btn-error">
+                                Hủy
+                              </button>
+                            </Form>
+                          </th>
+                        ) : (
+                          <></>
+                        )}
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            )}
+
+            {page == 1 && bookingList.length < 10 ? (
+              ""
+            ) : (
+              <div className="w-full text-center">
+                <div className="join mx-auto">
+                  <Link
+                    to={`?page=${page - 1}`}
+                    className="join-item btn"
+                    disabled={page == 1 ? true : false}
+                  >
+                    «
+                  </Link>
+                  <button className="join-item btn">{page}</button>
+                  <Link
+                    to={`?page=${parseInt(page) + 1}`}
+                    className="join-item btn"
+                    disabled={bookingList.length < 10 ? true : false}
+                  >
+                    »
+                  </Link>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>
