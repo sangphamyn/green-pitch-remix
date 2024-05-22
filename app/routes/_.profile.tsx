@@ -1,6 +1,10 @@
 import { ActionFunctionArgs, LoaderFunction, redirect } from "@remix-run/node";
 import { Form, Link, useLoaderData } from "@remix-run/react";
-import { cancelBooking, getBookingList } from "prisma/pitch";
+import {
+  cancelBooking,
+  getAllBookingListByUser,
+  getBookingList,
+} from "prisma/pitch";
 import { CiCalendar } from "react-icons/ci";
 import { FaPerson } from "react-icons/fa6";
 import { FiPhone } from "react-icons/fi";
@@ -17,10 +21,14 @@ export let loader: LoaderFunction = async ({ request, params }) => {
       session.data.userId,
       parseInt(searchParams.get("page")) || 1
     );
+    const allBooking = await getAllBookingListByUser(
+      session.data.userId ?? "0"
+    );
     return {
       user: session.data,
       bookingList,
       page: searchParams.get("page") || 1,
+      allBooking,
     };
   }
   return redirect("/login");
@@ -35,6 +43,7 @@ export default function profile() {
   const data = useLoaderData<typeof loader>();
   const user = data.user;
   const bookingList = data.bookingList;
+  const allBooking = data.allBooking;
   const page = data.page;
   return (
     <div className="container mx-auto mt-5">
@@ -80,7 +89,7 @@ export default function profile() {
                             Tổng
                           </p>
                           <h5 className="mb-2 font-bold dark:text-white">
-                            {bookingList.length}
+                            {allBooking.length}
                           </h5>
                         </div>
                       </div>
@@ -104,7 +113,7 @@ export default function profile() {
                           </p>
                           <h5 className="mb-2 font-bold dark:text-white">
                             {
-                              bookingList.filter((booking) => {
+                              allBooking.filter((booking) => {
                                 let date = new Date(booking?.date);
                                 let endDate = new Date(booking?.date);
                                 const hoursToAdd1 = parseInt(
@@ -151,7 +160,7 @@ export default function profile() {
                           </p>
                           <h5 className="mb-2 font-bold dark:text-white">
                             {
-                              bookingList.filter((booking) => {
+                              allBooking.filter((booking) => {
                                 let date = new Date(booking?.date);
                                 const hoursToAdd = parseInt(
                                   booking?.booking_timeSlot.startTime.split(
@@ -193,7 +202,7 @@ export default function profile() {
                           </p>
                           <h5 className="mb-2 font-bold dark:text-white">
                             {
-                              bookingList.filter(
+                              allBooking.filter(
                                 (booking: { status: number }) =>
                                   booking.status == 2
                               ).length

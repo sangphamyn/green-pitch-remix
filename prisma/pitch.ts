@@ -355,7 +355,7 @@ export const getBookingList = async (
   orderBy: string
 ) => {
   try {
-    const skip = page * 10;
+    const skip = page * 15;
     // page = 2;
     let where = {};
     if (groupPitchId) {
@@ -372,6 +372,7 @@ export const getBookingList = async (
     if (orderBy) {
       let a = {};
       a[orderBy] = "desc";
+      orderBy1.push({ updatedAt: "desc" });
       orderBy1.push(a);
     } else {
       orderBy1.push({
@@ -386,8 +387,8 @@ export const getBookingList = async (
     const bookingList = await db.booking.findMany({
       where: where,
       orderBy: orderBy1,
-      take: 10,
-      skip: (Number(page) - 1) * 10,
+      take: 15,
+      skip: (Number(page) - 1) * 15,
       include: {
         booking_pitch: {
           include: {
@@ -408,15 +409,53 @@ export const getBookingList = async (
     throw error;
   }
 };
-
+export const getAllBookingListByUser = async (user: string | null) => {
+  try {
+    const bookingList = await db.booking.findMany({
+      where: {
+        id_user: parseInt(user),
+      },
+      orderBy: [
+        {
+          date: "desc",
+        },
+        {
+          booking_timeSlot: {
+            startTime: "desc",
+          },
+        },
+      ],
+      include: {
+        booking_pitch: {
+          include: {
+            pitch_pitchType: {
+              include: {
+                groupPitch: true,
+              },
+            },
+          },
+        },
+        booking_timeSlot: true,
+        booking_user: true,
+      },
+    });
+    return bookingList;
+  } catch (error) {
+    console.error("Lỗi:", error);
+    throw error;
+  }
+};
 export const cancelBooking = async (id: string) => {
   try {
+    const now = new Date();
+    now.setHours(now.getHours() + 7);
     const booking = await db.booking.update({
       where: {
         id: parseInt(id),
       },
       data: {
         status: 2,
+        updatedAt: now,
       },
     });
     return booking;

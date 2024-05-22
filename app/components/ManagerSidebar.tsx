@@ -61,7 +61,8 @@ function SideBarManagerComponent() {
             tabIndex={0}
             className={({ isActive }) =>
               "flex items-center w-full p-3 rounded-lg text-start leading-tight transition-all hover:bg-blue-100 hover:bg-opacity-80 focus:bg-blue-100 hover:text-blue-900 focus:text-blue-900 outline-none " +
-              (isActive ? "bg-blue-100 text-blue-900" : "")
+              (isActive ? "bg-blue-100 text-blue-900" : "") +
+              (idFirst ? "" : "pointer-events-none")
             }
           >
             <div className="grid place-items-center mr-4">

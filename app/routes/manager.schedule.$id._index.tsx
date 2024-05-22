@@ -285,14 +285,14 @@ function schedule() {
                         key={index}
                         className="border-black/12.5 rounded-t-inherit relative block border-b border-solid py-2 px-0 text-inherit"
                       >
-                        <div className="flex items-center -mx-3">
-                          <div className="flex items-center w-auto max-w-full px-3 flex-0">
+                        <div className="flex items-center justify-between -mx-3">
+                          <div className="flex items-center w-auto max-w-full flex-0">
                             <a
                               href="javascript:;"
-                              className="inline-flex items-center justify-center w-12 h-12 text-base text-white transition-all duration-200 ease-in-out leading-inherit rounded-xl"
+                              className="inline-flex items-center justify-center w-8 h-8 text-base text-white transition-all duration-200 ease-in-out leading-inherit rounded-xl"
                             >
                               <img
-                                className="w-full h-full object-cover rounded-xl"
+                                className="w-full h-full object-cover rounded-lg"
                                 src={
                                   booking.booking_user?.avatar
                                     ? booking.booking_user.avatar
@@ -301,24 +301,28 @@ function schedule() {
                                 alt="Image placeholder"
                               />
                             </a>
+                            <div className="max-w-full px-3 flex-1-0">
+                              <h6 className="mb-0">
+                                <div className="font-medium">
+                                  {booking.booking_user.name}
+                                </div>
+                              </h6>
+                              {booking.status == 1 ? (
+                                <span className="py-1 px-2 text-[10px] rounded inline-flex items-center whitespace-nowrap text-center font-bold uppercase leading-none text-emerald-600 bg-emerald-200">
+                                  Đặt sân
+                                </span>
+                              ) : (
+                                <span className="py-1 px-2 text-[10px] rounded inline-flex items-center whitespace-nowrap text-center font-bold uppercase leading-none text-red-600 bg-red-200">
+                                  Huỷ sân
+                                </span>
+                              )}
+                            </div>
                           </div>
-                          <div className="w-full max-w-full px-3 flex-1-0">
-                            <h6 className="mb-0">
-                              <div className="font-semibold">
-                                {booking.booking_user.name}
-                              </div>
-                            </h6>
-                            <span className="py-1 px-2 text-[10px] rounded inline-block whitespace-nowrap text-center align-baseline font-bold uppercase leading-none text-emerald-600 bg-emerald-200">
-                              Online
-                            </span>
-                          </div>
-                          <div className="w-auto max-w-full px-3 flex-0">
-                            <button
-                              type="button"
-                              className="inline-block font-bold leading-normal text-blue-500 text-center align-middle cursor-pointer select-none border border-solid border-blue-500 rounded-lg bg-transparent transition-all ease-in tracking-tight-rem shadow-none px-4 py-1.5 text-xs hover:opacity-75 active:hover:opacity-75"
-                            >
-                              {timeDifference(booking.createdAt)}
-                            </button>
+
+                          <div className="w-auto max-w-full px-3 flex-0 text-xs">
+                            {booking.status == 1
+                              ? timeDifference(booking.createdAt)
+                              : timeDifference(booking.updatedAt)}
                           </div>
                         </div>
                       </div>
@@ -528,7 +532,7 @@ function timeDifference(previous1) {
   const minutes = Math.floor((elapsed % msPerHour) / msPerMinute);
 
   return `${days ? days + " ngày" : ""} ${
-    hours ? hours + " giờ" : ""
-  } ${minutes} phút trước`;
+    hours && days == 0 ? hours + " giờ" : ""
+  } ${days > 0 || hours > 0 ? "" : minutes + " phút"} trước`;
 }
 export default schedule;
