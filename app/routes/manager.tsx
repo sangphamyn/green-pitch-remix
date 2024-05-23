@@ -9,11 +9,11 @@ export let loader: LoaderFunction = async ({ request, params }) => {
   const paramsId = params.id;
   let session = await getSession(request.headers.get("cookie"));
   let groupPitchs;
-  let idFirst;
+  let idFirst = 0;
   if (session.data.userId) {
     groupPitchs = await getGroupPitchByOwnerId(session.data.userId || 0);
     groupPitchs.map((item) => {
-      if (item.status == 2)
+      if (item.status == 2 && idFirst == 0)
         // Da duyet
         idFirst = item.id;
     });

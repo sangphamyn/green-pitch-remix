@@ -339,6 +339,7 @@ export const bookingabc = async (
         id_user: parseInt(id_user),
         id_pitch: parseInt(id_pitch),
         createdAt: now,
+        updatedAt: now,
       },
     });
     return booking;
@@ -387,6 +388,55 @@ export const getBookingList = async (
     const bookingList = await db.booking.findMany({
       where: where,
       orderBy: orderBy1,
+      take: 15,
+      skip: (Number(page) - 1) * 15,
+      include: {
+        booking_pitch: {
+          include: {
+            pitch_pitchType: {
+              include: {
+                groupPitch: true,
+              },
+            },
+          },
+        },
+        booking_timeSlot: true,
+        booking_user: true,
+      },
+    });
+    return bookingList;
+  } catch (error) {
+    console.error("Lỗi:", error);
+    throw error;
+  }
+};
+export const getBookingList1 = async (page: number, groupPitchId: string) => {
+  try {
+    const skip = page * 15;
+    // page = 2;
+    let where = {};
+    if (groupPitchId) {
+      where["booking_pitch"] = {
+        pitch_pitchType: {
+          id_groupPitch: parseInt(groupPitchId),
+        },
+      };
+    }
+
+    const bookingList = await db.booking.findMany({
+      where: where,
+      orderBy: [
+        {
+          updatedAt: {
+            // Sắp xếp theo updatedAt trước, nếu updatedAt không null
+            sort: "desc",
+            nulls: "last", // Đưa các giá trị null xuống cuối
+          },
+        },
+        {
+          createdAt: "desc", // Sau đó sắp xếp theo createdAt
+        },
+      ],
       take: 15,
       skip: (Number(page) - 1) * 15,
       include: {

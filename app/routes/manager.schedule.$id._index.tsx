@@ -37,7 +37,7 @@ export let loader: LoaderFunction = async ({
     "",
     parseInt(searchParams.get("page")) || 1,
     paramsId ?? "0",
-    "createdAt"
+    "updatedAt"
   );
   return {
     pitchType,
@@ -125,22 +125,22 @@ function schedule() {
       container.removeEventListener("mousemove", handleMouseMove);
     };
   }, []);
+
+  const [value, onChange] = useState<Value>(new Date());
   const currentDate = new Date();
-  const day = currentDate.getDate();
-  const month = currentDate.getMonth() + 1;
-  const year = currentDate.getFullYear();
+  const day = value.getDate();
+  const month = value.getMonth() + 1;
+  const year = value.getFullYear();
   const options = {
     weekday: "long",
     year: "numeric",
     month: "long",
     day: "numeric",
   };
-  const formattedDate = currentDate.toLocaleDateString("vi-VN", options);
+  const formattedDate = value.toLocaleDateString("vi-VN", options);
   const dayOfWeek = new Intl.DateTimeFormat("vi-VN", {
     weekday: "long",
-  }).format(currentDate);
-
-  const [value, onChange] = useState<Value>(new Date());
+  }).format(value);
   const handleChange = (e) => {
     if (e == null) onChange(new Date());
     else onChange(e);
@@ -415,8 +415,8 @@ function ChildComponent({ subData, timeSlot, minTime, maxTime, value }) {
                 <>
                   <div
                     key={index}
-                    className={`border-t cursor-pointer  transition ${
-                      booking.length > 0
+                    className={`border-t cursor-pointer flex flex-col items-center justify-center transition ${
+                      booking.length > 0 && booking[0]?.status == 1
                         ? "bg-green-100 hover:bg-green-200"
                         : "hover:bg-[#F9FAFB]"
                     }`}
@@ -424,11 +424,14 @@ function ChildComponent({ subData, timeSlot, minTime, maxTime, value }) {
                       height: `${time * 64}px`,
                     }}
                   >
-                    {booking.length > 0
-                      ? booking[0]?.booking_user?.name +
-                        " - " +
-                        booking[0]?.booking_user?.phone
-                      : ""}
+                    {booking.length > 0 && booking[0]?.status == 1 ? (
+                      <>
+                        <span>{booking[0]?.booking_user?.name}</span>
+                        <span>{booking[0]?.booking_user?.phone}</span>
+                      </>
+                    ) : (
+                      ""
+                    )}
                   </div>
                   <div
                     className="cursor-pointer hover:bg-[#F9FAFB] transition"

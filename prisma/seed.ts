@@ -198,6 +198,54 @@ async function main() {
         groupPitchId: 2,
         serviceId: 7,
       },
+      {
+        groupPitchId: 3,
+        serviceId: 2,
+        price: 0,
+      },
+      {
+        groupPitchId: 3,
+        serviceId: 3,
+        price: 40000,
+      },
+      {
+        groupPitchId: 4,
+        serviceId: 1,
+        price: 0,
+      },
+      {
+        groupPitchId: 4,
+        serviceId: 2,
+        price: 0,
+      },
+      {
+        groupPitchId: 4,
+        serviceId: 3,
+        price: 40000,
+      },
+      {
+        groupPitchId: 4,
+        serviceId: 7,
+      },
+      {
+        groupPitchId: 5,
+        serviceId: 1,
+        price: 0,
+      },
+      {
+        groupPitchId: 5,
+        serviceId: 2,
+        price: 0,
+      },
+      {
+        groupPitchId: 5,
+        serviceId: 3,
+        price: 40000,
+      },
+      {
+        groupPitchId: 5,
+        serviceId: 7,
+      },
     ],
   });
   const pitchType = await db.pitchtype.createMany({
@@ -231,6 +279,24 @@ async function main() {
         type: "Sân 7",
         description: "Sân chẳng có gì đặc biệt",
         id_groupPitch: 2,
+      },
+      {
+        name: "Sân X10",
+        type: "Sân 5",
+        description: "",
+        id_groupPitch: 3,
+      },
+      {
+        name: "Sân Thanh Niên",
+        type: "Sân 7",
+        description: "",
+        id_groupPitch: 4,
+      },
+      {
+        name: "Sân Kinh Tế",
+        type: "Sân 11",
+        description: "",
+        id_groupPitch: 5,
       },
     ],
   });
@@ -506,6 +572,78 @@ async function main() {
         price: 470000,
         id_pitchType: 5,
       },
+      {
+        startTime: "15:30",
+        endTime: "17:00",
+        price: 450000,
+        id_pitchType: 6,
+      },
+      {
+        startTime: "17:00",
+        endTime: "18:30",
+        price: 500000,
+        id_pitchType: 6,
+      },
+      {
+        startTime: "18:30",
+        endTime: "20:00",
+        price: 500000,
+        id_pitchType: 6,
+      },
+      {
+        startTime: "20:00",
+        endTime: "21:30",
+        price: 470000,
+        id_pitchType: 6,
+      },
+      {
+        startTime: "15:30",
+        endTime: "17:00",
+        price: 450000,
+        id_pitchType: 7,
+      },
+      {
+        startTime: "17:00",
+        endTime: "18:30",
+        price: 500000,
+        id_pitchType: 7,
+      },
+      {
+        startTime: "18:30",
+        endTime: "20:00",
+        price: 500000,
+        id_pitchType: 7,
+      },
+      {
+        startTime: "20:00",
+        endTime: "21:30",
+        price: 470000,
+        id_pitchType: 7,
+      },
+      {
+        startTime: "15:30",
+        endTime: "17:00",
+        price: 450000,
+        id_pitchType: 8,
+      },
+      {
+        startTime: "17:00",
+        endTime: "18:30",
+        price: 500000,
+        id_pitchType: 8,
+      },
+      {
+        startTime: "18:30",
+        endTime: "20:00",
+        price: 500000,
+        id_pitchType: 8,
+      },
+      {
+        startTime: "20:00",
+        endTime: "21:30",
+        price: 470000,
+        id_pitchType: 8,
+      },
     ],
   });
   const pitch = await db.pitch.createMany({
@@ -546,8 +684,31 @@ async function main() {
         id_pitchType: 5,
         name: "Sân bình thường 2",
       },
+      {
+        id_pitchType: 6,
+        name: "1",
+      },
+      {
+        id_pitchType: 7,
+        name: "1",
+      },
+      {
+        id_pitchType: 8,
+        name: "1",
+      },
     ],
   });
+  const now = new Date();
+  now.setHours(now.getHours() + 7);
+  let date = new Date();
+  date.setHours(7);
+  date.setMinutes(0);
+  date.setSeconds(0);
+  date.setMilliseconds(0);
+
+  let date1 = new Date();
+  date1.setHours(date1.getHours() + 7);
+  date1.setMinutes(date1.getMinutes() - 15);
   const bookingList = await db.booking.createMany({
     data: [
       {
@@ -556,13 +717,15 @@ async function main() {
         id_user: 2,
         id_pitch: 5,
         createdAt: new Date("2024-05-13"),
+        updatedAt: new Date("2024-05-13"),
       },
       {
         date: new Date("2024-05-14"),
         id_timeSlot: 21,
         id_user: 3,
         id_pitch: 5,
-        createdAt: new Date(),
+        createdAt: new Date("2024-05-14"),
+        updatedAt: new Date("2024-05-14"),
       },
       {
         date: new Date("2024-05-14"),
@@ -570,41 +733,47 @@ async function main() {
         id_user: 2,
         id_pitch: 7,
         createdAt: new Date("2024-05-12"),
+        updatedAt: new Date("2024-05-12"),
       },
       {
         date: new Date("2024-05-15"),
         id_timeSlot: 37,
         id_user: 3,
         id_pitch: 8,
-        createdAt: new Date(),
+        createdAt: new Date("2024-05-12"),
+        updatedAt: new Date("2024-05-12"),
       },
       {
         date: new Date("2024-05-16"),
         id_timeSlot: 25,
         id_user: 2,
         id_pitch: 6,
-        createdAt: new Date(),
+        createdAt: new Date("2024-05-15"),
+        updatedAt: new Date("2024-05-15"),
       },
       {
         date: new Date("2024-06-14"),
         id_timeSlot: 32,
         id_user: 3,
         id_pitch: 7,
-        createdAt: new Date(),
+        createdAt: new Date("2024-05-20"),
+        updatedAt: new Date("2024-05-20"),
       },
       {
         date: new Date("2024-06-25"),
         id_timeSlot: 40,
         id_user: 2,
         id_pitch: 8,
-        createdAt: new Date(),
+        createdAt: new Date("2024-05-23T06:00:00Z"),
+        updatedAt: new Date("2024-05-23T06:00:00Z"),
       },
       {
         date: new Date("2024-06-12"),
         id_timeSlot: 25,
         id_user: 3,
         id_pitch: 5,
-        createdAt: new Date(),
+        createdAt: new Date("2024-05-23"),
+        updatedAt: new Date("2024-05-23"),
       },
       {
         date: new Date("2024-05-22"),
@@ -612,6 +781,7 @@ async function main() {
         id_user: 1,
         id_pitch: 3,
         createdAt: new Date("2024-05-21"),
+        updatedAt: new Date("2024-05-21"),
       },
       {
         date: new Date("2024-05-22"),
@@ -619,6 +789,32 @@ async function main() {
         id_user: 1,
         id_pitch: 1,
         createdAt: new Date("2024-05-22 03:00:00"),
+        updatedAt: new Date("2024-05-22 03:00:00"),
+      },
+      {
+        date: date,
+        id_timeSlot: 2,
+        id_user: 1,
+        id_pitch: 1,
+        createdAt: now,
+        updatedAt: now,
+      },
+      {
+        date: date,
+        id_timeSlot: 3,
+        id_user: 2,
+        id_pitch: 2,
+        createdAt: now,
+        updatedAt: now,
+      },
+      {
+        date: date,
+        id_timeSlot: 1,
+        id_user: 3,
+        id_pitch: 2,
+        createdAt: now,
+        updatedAt: date1,
+        status: 2,
       },
     ],
   });
