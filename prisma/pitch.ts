@@ -459,6 +459,38 @@ export const getBookingList1 = async (page: number, groupPitchId: string) => {
     throw error;
   }
 };
+export const getBookingList2 = async (ownerId: number) => {
+  try {
+    const bookingList = await db.booking.findMany({
+      where: {
+        booking_timeSlot: {
+          timeSlot_pitchType: {
+            groupPitch: {
+              ownerId: ownerId,
+            },
+          },
+        },
+      },
+      include: {
+        booking_pitch: {
+          include: {
+            pitch_pitchType: {
+              include: {
+                groupPitch: true,
+              },
+            },
+          },
+        },
+        booking_timeSlot: true,
+        booking_user: true,
+      },
+    });
+    return bookingList;
+  } catch (error) {
+    console.error("Lỗi:", error);
+    throw error;
+  }
+};
 export const getAllBookingListByUser = async (user: string | null) => {
   try {
     const bookingList = await db.booking.findMany({
@@ -532,16 +564,24 @@ export const getUserList = async (roles?: number[]) => {
     throw error;
   }
 };
-export const getGroupPitchList = async (status?: number[]) => {
+export const getGroupPitchList = async (
+  status?: number[],
+  owner?: number[]
+) => {
   try {
+    let where = {};
+    if (status) {
+      where["status"] = {
+        in: status,
+      };
+    }
+    if (owner) {
+      where["ownerId"] = {
+        in: owner,
+      };
+    }
     const groupPitchList = await db.groupPitch.findMany({
-      where: status
-        ? {
-            status: {
-              in: status,
-            },
-          }
-        : {},
+      where: where,
     });
     return groupPitchList;
   } catch (error) {
