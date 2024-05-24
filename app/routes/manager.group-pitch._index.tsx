@@ -119,6 +119,13 @@ function group_pitch() {
             <div className="text-center flex justify-center items-center flex-col h-96 bg-white">
               <TbFileSad className="w-20 h-20 mb-4" />
               <p className="text-2xl">Hiện chưa có sân nào</p>
+              <Link
+                to="/manager/group-pitch/add"
+                className="shadow flex justify-center items-center gap-2 hover:bg-green-100 transition bg-white py-10 px-12 mt-4"
+              >
+                <IoAddCircleOutline className="text-2xl" />
+                Thêm sân mới
+              </Link>
             </div>
           ) : (
             <div className="grid grid-cols-2 gap-10 mt-5">

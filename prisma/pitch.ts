@@ -639,3 +639,25 @@ export const getPitchList = async (status?: number[]) => {
     throw error;
   }
 };
+export const getPitchList1 = async (ownerId: number, status?: number[]) => {
+  try {
+    const pitchList = await db.pitch.findMany({
+      where: status
+        ? {
+            pitch_pitchType: {
+              groupPitch: {
+                status: {
+                  in: status,
+                },
+                ownerId: ownerId,
+              },
+            },
+          }
+        : {},
+    });
+    return pitchList;
+  } catch (error) {
+    console.error("Lỗi:", error);
+    throw error;
+  }
+};

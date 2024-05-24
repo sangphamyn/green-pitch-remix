@@ -4,6 +4,7 @@ import {
   getBookingList2,
   getGroupPitchList,
   getPitchList,
+  getPitchList1,
   getUserList,
 } from "prisma/pitch";
 import React from "react";
@@ -34,9 +35,15 @@ ChartJS.register(
 
 export let loader: LoaderFunction = async ({ request }) => {
   const userList = await getUserList(); // Lấy danh sách tất cả người dùng đã đăng ký
-  const groupPitchList = await getGroupPitchList([2], [1]); // Lấy danh sách các sân đã được duyệt
-  const pitchList = await getPitchList([2]);
   let session = await getSession(request.headers.get("cookie"));
+  const groupPitchList = await getGroupPitchList(
+    [2],
+    [session.data.userId ? parseInt(session.data.userId) : 0]
+  ); // Lấy danh sách các sân đã được duyệt
+  const pitchList = await getPitchList1(
+    session.data.userId ? parseInt(session.data.userId) : 0,
+    [2]
+  );
   const bookingList = await getBookingList2(
     parseInt(session.data.userId ? session.data.userId : "0")
   );
