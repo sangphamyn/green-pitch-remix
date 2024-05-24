@@ -298,7 +298,7 @@ function group_pitch_detail() {
                           value={value}
                           name="dateSearch"
                           clearIcon={false}
-                          minDate={new Date()}
+                          // minDate={new Date()}
                         />
                       </Form>
                       <div

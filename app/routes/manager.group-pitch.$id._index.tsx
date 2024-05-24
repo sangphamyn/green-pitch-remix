@@ -162,7 +162,7 @@ function group_pitch_detail() {
             <div className="flex justify-between mb-1">
               <p>Giá sân trung bình: </p>
               <p className="font-semibold">
-                {Math.round(minPrice)}đ - {Math.round(maxPrice)}đ/h
+                {formatCurrency(minPrice)} - {formatCurrency(maxPrice)}/h
               </p>
             </div>
             <div className="bg-gray-50 p-4 rounded mt-4">
@@ -200,7 +200,9 @@ function group_pitch_detail() {
                               : "text-orange-800 bg-orange-200"
                           }`}
                         >
-                          {service.price == "0" ? "Free" : service.price + " đ"}
+                          {service.price == "0"
+                            ? "Free"
+                            : formatCurrency(service.price)}
                         </div>
                       ) : (
                         <></>
