@@ -725,65 +725,100 @@ async function main() {
   let date1 = new Date();
   date1.setHours(date1.getHours() + 7);
   date1.setMinutes(date1.getMinutes() - 15);
+
+  async function randomDate(start, end) {
+    const date = new Date(
+      start.getTime() + Math.random() * (end.getTime() - start.getTime())
+    );
+    date.setHours(7, 0, 0, 0); // Đặt giờ phút giây về 0
+    return date;
+  }
+
+  function randomInt(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+  }
+
+  async function fetchData() {
+    const timeSlots = await db.timeSlot.findMany();
+    const pitches = await db.pitch.findMany();
+
+    return { timeSlots, pitches };
+  }
+
+  async function generateRandomObjects(num) {
+    const objects = [];
+    const startDate = new Date("2024-05-01");
+    const endDate = new Date("2024-06-30");
+    const now = new Date();
+    const { timeSlots, pitches } = await fetchData();
+
+    const usedCombinations = new Set();
+
+    for (let i = 0; i < num; i++) {
+      let date, id_timeSlot, id_pitch;
+
+      do {
+        date = await randomDate(startDate, endDate);
+        const timeSlot = timeSlots[randomInt(0, timeSlots.length - 1)];
+        const availablePitches = pitches.filter(
+          (pitch) => pitch.id_pitchType === timeSlot.id_pitchType
+        );
+        const pitch =
+          availablePitches[randomInt(0, availablePitches.length - 1)];
+
+        id_timeSlot = timeSlot.id;
+        id_pitch = pitch.id;
+      } while (
+        usedCombinations.has(`${date.toISOString()}_${id_timeSlot}_${id_pitch}`)
+      );
+
+      usedCombinations.add(`${date.toISOString()}_${id_timeSlot}_${id_pitch}`);
+
+      const createdAtOffset = randomInt(1, 48) * 60 * 60 * 1000; // từ 1 giờ đến 2 ngày
+      let createdAt = new Date(date.getTime() - createdAtOffset);
+
+      if (createdAt > now) {
+        // date = new Date(now.getTime() + createdAtOffset);
+        createdAt.setTime(now.getTime() - randomInt(1, 48) * 60 * 60 * 1000);
+      }
+
+      const updatedAt = new Date(createdAt);
+      if (i % 7 == 0) {
+        objects.push({
+          date: date,
+          id_user: randomInt(1, 5),
+          createdAt: createdAt,
+          updatedAt: updatedAt,
+          id_timeSlot: id_timeSlot,
+          id_pitch: id_pitch,
+          status: 2,
+        });
+      } else {
+        objects.push({
+          date: date,
+          id_user: randomInt(1, 5),
+          createdAt: createdAt,
+          updatedAt: updatedAt,
+          id_timeSlot: id_timeSlot,
+          id_pitch: id_pitch,
+        });
+      }
+    }
+
+    return objects;
+  }
+  let data = [];
+  await generateRandomObjects(10)
+    .then((objects) => {
+      data.push(objects);
+      db.$disconnect();
+    })
+    .catch((e) => {
+      console.error(e);
+      db.$disconnect();
+    });
   const bookingList = await db.booking.createMany({
-    data: [
-      {
-        date: new Date("2024-05-13"),
-        id_timeSlot: 1,
-        id_user: 3,
-        id_pitch: 1,
-        createdAt: new Date("2024-05-12 16:25:49"),
-        updatedAt: new Date("2024-05-12 16:25:49"),
-      },
-      {
-        date: new Date("2024-05-17"),
-        id_timeSlot: 2,
-        id_user: 3,
-        id_pitch: 1,
-        createdAt: new Date("2024-05-15 10:15:55"),
-        updatedAt: new Date("2024-05-15 10:15:55"),
-      },
-      {
-        date: new Date("2024-05-21"),
-        id_timeSlot: 1,
-        id_user: 3,
-        id_pitch: 1,
-        createdAt: new Date("2024-05-20 16:53:32"),
-        updatedAt: new Date("2024-05-20 16:53:32"),
-      },
-      {
-        date: new Date("2024-05-15"),
-        id_timeSlot: 13,
-        id_user: 3,
-        id_pitch: 3,
-        createdAt: new Date("2024-05-15 23:14:22"),
-        updatedAt: new Date("2024-05-15 23:14:22"),
-      },
-      {
-        date: new Date("2024-05-23"),
-        id_timeSlot: 14,
-        id_user: 3,
-        id_pitch: 3,
-        createdAt: new Date("2024-05-22 19:53:14"),
-        updatedAt: new Date("2024-05-22 19:53:14"),
-      },
-      {
-        date: new Date("2024-05-26"),
-        id_timeSlot: 18,
-        id_user: 3,
-        id_pitch: 3,
-        createdAt: new Date("2024-05-24 15:30:22"),
-        updatedAt: new Date("2024-05-24 15:30:22"),
-      },
-      {
-        date: new Date("2024-06-01"),
-        id_timeSlot: 17,
-        id_user: 3,
-        id_pitch: 3,
-        createdAt: new Date("2024-05-24 13:50:24"),
-        updatedAt: new Date("2024-05-24 13:50:24"),
-      },
-    ],
+    data: data[0],
   });
 }
 main()

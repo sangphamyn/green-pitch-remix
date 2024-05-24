@@ -28,7 +28,7 @@ const HeaderComponent = () => {
                 />
               </svg>
             </div>
-            <ul
+            {/* <ul
               tabIndex={0}
               className="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 text-gray-900 rounded-box w-52"
             >
@@ -49,7 +49,7 @@ const HeaderComponent = () => {
               <li>
                 <a>Item 3</a>
               </li>
-            </ul>
+            </ul> */}
           </div>
           <Link
             to="http://localhost:5173/"
@@ -69,7 +69,7 @@ const HeaderComponent = () => {
             <li>
               <NavLink to="/group-pitch">Danh sách sân</NavLink>
             </li>
-            <li>
+            {/* <li>
               <details>
                 <summary>Parent</summary>
                 <ul className="p-2 bg-base-100 w-40 text-black">
@@ -84,7 +84,7 @@ const HeaderComponent = () => {
             </li>
             <li>
               <a>Item 3</a>
-            </li>
+            </li> */}
           </ul>
         </div>
         <div className="navbar-end">
