@@ -633,6 +633,18 @@ export const getGroupPitchList = async (
     }
     const groupPitchList = await db.groupPitch.findMany({
       where: where,
+      include: {
+        servicesInGroupPitch: {
+          include: {
+            service: true,
+          },
+        },
+        pitchTypes: {
+          include: {
+            pitch: true,
+          },
+        },
+      },
     });
     return groupPitchList;
   } catch (error) {
@@ -762,6 +774,60 @@ export const setUserStatus = async (userId: number, status: number) => {
       });
     }
     return booking1;
+  } catch (error) {
+    console.error("Lỗi:", error);
+    throw error;
+  }
+};
+export const setGroupPitchStatus = async (
+  grouppitchId: number,
+  status: number
+) => {
+  try {
+    const now = new Date();
+    now.setHours(now.getHours() + 7);
+    if (status == 2) {
+      status = 0;
+    } else {
+      status = 2;
+    }
+    const groupPitch = await db.groupPitch.update({
+      where: {
+        id: grouppitchId,
+      },
+      data: {
+        status: status,
+      },
+    });
+    const currentDate = new Date();
+    const currentHours = currentDate.getHours();
+    const currentMinutes = currentDate.getMinutes();
+    const currentTime = `${currentHours
+      .toString()
+      .padStart(2, "0")}:${currentMinutes.toString().padStart(2, "0")}`;
+    const booking = await db.booking.updateMany({
+      where: {
+        date: {
+          gt: currentDate, // so sánh ngày trước hiện tại
+        },
+        booking_timeSlot: {
+          timeSlot_pitchType: {
+            groupPitch: {
+              id: grouppitchId,
+            },
+          },
+          startTime: {
+            gt: currentTime, // so sánh endTime trước hiện tại
+          },
+        },
+      },
+      data: {
+        status: 2,
+        updatedAt: now,
+      },
+    });
+
+    return booking;
   } catch (error) {
     console.error("Lỗi:", error);
     throw error;
