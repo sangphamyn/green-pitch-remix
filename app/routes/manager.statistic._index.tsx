@@ -48,19 +48,6 @@ function AdminHome() {
   const groupPitchList = data.groupPitchList;
   const pitchList = data.pitchList;
   const bookingList = data.bookingList;
-  const getDayOfWeek = (dateString: any) => {
-    const date = new Date(dateString);
-    const daysOfWeek = [
-      "Chủ Nhật",
-      "Thứ Hai",
-      "Thứ Ba",
-      "Thứ Tư",
-      "Thứ Năm",
-      "Thứ Sáu",
-      "Thứ Bảy",
-    ];
-    return daysOfWeek[date.getDay()];
-  };
   const count = [0, 0, 0, 0, 0, 0, 0];
 
   bookingList.map((booking: any, index: number) => {
@@ -189,7 +176,7 @@ function AdminHome() {
   };
   return (
     <div className="bg-gray-100 min-h-screen">
-      <div className="bg-blue-400 w-full h-52 flex justify-center">
+      <div className="bg-blue-500 w-full h-52 flex justify-center shadow-lg shadow-blue-200">
         <span className="py-10 text-white font-semibold text-3xl">
           Thống kê
         </span>
@@ -289,7 +276,7 @@ function AdminHome() {
             </div>
           </div>
         </div>
-        <div className="my-5 grid grid-cols-2 gap-6">
+        <div className="my-5 grid grid-cols-2 gap-6 mt-10">
           <div className=" bg-white px-6 py-6 rounded-md">
             <h4>Tỉ lệ đặt theo ngày trong tuần</h4>
             <Bar data={dataLine} options={options} />

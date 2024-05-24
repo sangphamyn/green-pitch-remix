@@ -79,7 +79,7 @@ function group_pitch_detail() {
   return (
     <div className="bg-gray-100 min-h-screen">
       {/* <Breadcrumb paths={paths} /> */}
-      <div className="bg-blue-400 w-full h-52 flex justify-center">
+      <div className="bg-blue-500 w-full h-52 flex justify-center shadow-lg shadow-blue-200">
         <span className="py-10 text-white text-3xl text-center">
           <span className=" font-semibold">{pitch.name}</span>
           <p className="text-sm text-white mt-4 mb-1 flex gap-1 justify-center">

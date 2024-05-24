@@ -82,6 +82,9 @@ export const getGroupPitchList1 = async (
             },
           },
         }),
+        ...{
+          status: 2,
+        },
       },
       include: {
         pitchTypes: {
@@ -470,6 +473,32 @@ export const getBookingList2 = async (ownerId: number) => {
             },
           },
         },
+      },
+      include: {
+        booking_pitch: {
+          include: {
+            pitch_pitchType: {
+              include: {
+                groupPitch: true,
+              },
+            },
+          },
+        },
+        booking_timeSlot: true,
+        booking_user: true,
+      },
+    });
+    return bookingList;
+  } catch (error) {
+    console.error("Lỗi:", error);
+    throw error;
+  }
+};
+export const getBookingList3 = async () => {
+  try {
+    const bookingList = await db.booking.findMany({
+      where: {
+        status: 1,
       },
       include: {
         booking_pitch: {

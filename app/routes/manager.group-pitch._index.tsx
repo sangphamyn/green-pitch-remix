@@ -107,7 +107,7 @@ function group_pitch() {
   return (
     <div className="bg-gray-100 min-h-screen">
       {/* <Breadcrumb paths={paths} /> */}
-      <div className="bg-blue-400 w-full h-52 flex justify-center">
+      <div className="bg-blue-500 w-full h-52 flex justify-center shadow-lg shadow-blue-200">
         <span className="py-10 text-white font-semibold text-3xl">
           Danh sách các cụm sân
         </span>
