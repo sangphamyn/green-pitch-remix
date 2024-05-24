@@ -90,6 +90,7 @@ function AdminHome() {
       "rgb(201, 203, 207)",
     ],
     borderWidth: 1,
+    barThickness: 40,
   });
   const dataLine = {
     labels: ["Thứ 2", "Thứ 3", "Thứ 4", "Thứ 5", "Thứ 6", "Thứ 7", "Chủ nhật"],
@@ -119,104 +120,184 @@ function AdminHome() {
       },
     },
   };
+  const timeSlots = new Array(12).fill(0);
+
+  bookingList.forEach((booking: any) => {
+    const startTime = booking.booking_timeSlot.startTime;
+    const hours = parseInt(startTime.split(":")[0], 10);
+
+    // Tính toán index của khoảng thời gian
+    const index = Math.floor(hours / 2);
+    timeSlots[index]++;
+  });
+  const data1 = {
+    labels: [
+      "0-2h",
+      "2-4h",
+      "4-6h",
+      "6-8h",
+      "8-10h",
+      "10-12h",
+      "12-14h",
+      "14-16h",
+      "16-18h",
+      "18-20h",
+      "20-22h",
+      "22-24h",
+    ],
+    datasets: [
+      {
+        label: "Số lượng đặt sân",
+        data: timeSlots,
+        borderColor: "rgba(75,192,192,1)",
+        backgroundColor: "rgba(75,192,192,0.2)",
+        fill: true,
+        barThickness: 30,
+      },
+    ],
+  };
+
+  const options1 = {
+    responsive: true,
+    plugins: {
+      legend: {
+        position: "top",
+      },
+      title: {
+        display: true,
+        text: "Số lượng đặt sân theo các khung giờ trong ngày",
+      },
+    },
+    scales: {
+      x: {
+        grid: {
+          display: false,
+        },
+        title: {
+          display: true,
+          text: "Khung giờ",
+        },
+      },
+      y: {
+        beginAtZero: true,
+        title: {
+          display: true,
+          text: "Số lượng đặt sân",
+        },
+      },
+    },
+  };
   return (
-    <div className="mx-auto my-5 w-full px-10">
-      <div className="flex flex-wrap -mx-3">
-        <div className="w-full max-w-full px-3 mb-6 sm:w-1/2 sm:flex-none xl:mb-0 xl:w-1/4">
-          <div className="relative flex flex-col min-w-0 break-words bg-white shadow-xl dark:bg-slate-850 dark:shadow-dark-xl rounded-2xl bg-clip-border">
-            <div className="flex-auto p-4">
-              <div className="flex flex-row -mx-3">
-                <div className="flex-none w-2/3 max-w-full px-3">
-                  <div>
-                    <p className="mb-0 font-sans text-sm font-semibold leading-normal uppercase dark:text-white dark:opacity-60">
-                      Người dùng
-                    </p>
-                    <h5 className="mb-2 font-bold dark:text-white">
-                      {userList.length}
-                    </h5>
-                  </div>
-                </div>
-                <div className="px-3 text-right basis-1/3">
-                  <div className="flex items-center justify-center w-12 h-12 rounded-full bg-gradient-to-tl from-blue-500 to-violet-500">
-                    <FaPerson className="text-white" />
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div className="w-full max-w-full px-3 mb-6 sm:w-1/2 sm:flex-none xl:mb-0 xl:w-1/4">
-          <div className="relative flex flex-col min-w-0 break-words bg-white shadow-xl dark:bg-slate-850 dark:shadow-dark-xl rounded-2xl bg-clip-border">
-            <div className="flex-auto p-4">
-              <div className="flex flex-row -mx-3">
-                <div className="flex-none w-2/3 max-w-full px-3">
-                  <div>
-                    <p className="mb-0 font-sans text-sm font-semibold leading-normal uppercase dark:text-white dark:opacity-60">
-                      Số lượng cụm sân
-                    </p>
-                    <h5 className="mb-2 font-bold dark:text-white">
-                      {groupPitchList.length}
-                    </h5>
-                  </div>
-                </div>
-                <div className="px-3 text-right basis-1/3">
-                  <div className="flex items-center justify-center w-12 h-12 rounded-full bg-gradient-to-tl from-red-600 to-orange-600">
-                    <FaPerson className="text-white" />
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div className="w-full max-w-full px-3 mb-6 sm:w-1/2 sm:flex-none xl:mb-0 xl:w-1/4">
-          <div className="relative flex flex-col min-w-0 break-words bg-white shadow-xl dark:bg-slate-850 dark:shadow-dark-xl rounded-2xl bg-clip-border">
-            <div className="flex-auto p-4">
-              <div className="flex flex-row -mx-3">
-                <div className="flex-none w-2/3 max-w-full px-3">
-                  <div>
-                    <p className="mb-0 font-sans text-sm font-semibold leading-normal uppercase dark:text-white dark:opacity-60">
-                      Số lượng sân
-                    </p>
-                    <h5 className="mb-2 font-bold dark:text-white">
-                      {pitchList.length}
-                    </h5>
-                  </div>
-                </div>
-                <div className="px-3 text-right basis-1/3">
-                  <div className="flex items-center justify-center w-12 h-12 rounded-full bg-gradient-to-tl from-emerald-500 to-teal-400">
-                    <FaPerson className="text-white" />
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div className="w-full max-w-full px-3 sm:w-1/2 sm:flex-none xl:w-1/4">
-          <div className="relative flex flex-col min-w-0 break-words bg-white shadow-xl dark:bg-slate-850 dark:shadow-dark-xl rounded-2xl bg-clip-border">
-            <div className="flex-auto p-4">
-              <div className="flex flex-row -mx-3">
-                <div className="flex-none w-2/3 max-w-full px-3">
-                  <div>
-                    <p className="mb-0 font-sans text-sm font-semibold leading-normal uppercase dark:text-white dark:opacity-60">
-                      Sales
-                    </p>
-                    <h5 className="mb-2 font-bold dark:text-white">$103,430</h5>
-                  </div>
-                </div>
-                <div className="px-3 text-right basis-1/3">
-                  <div className="flex items-center justify-center w-12 h-12 rounded-full bg-gradient-to-tl from-orange-500 to-yellow-500">
-                    <FaPerson className="text-white" />
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+    <div className="bg-gray-100 min-h-screen">
+      <div className="bg-blue-400 w-full h-52 flex justify-center">
+        <span className="py-10 text-white font-semibold text-3xl">
+          Thống kê
+        </span>
       </div>
-      <div className="my-5">
-        <div className="w-1/2">
-          <h4>Tỉ lệ đặt theo ngày trong tụần</h4>
-          <Bar data={dataLine} options={options} />
+      <div className="mx-auto my-5 w-full px-10 -translate-y-20">
+        <div className="flex flex-wrap -mx-3">
+          <div className="w-full max-w-full px-3 mb-6 sm:w-1/2 sm:flex-none xl:mb-0 xl:w-1/4">
+            <div className="relative flex flex-col min-w-0 break-words bg-white shadow-xl dark:bg-slate-850 dark:shadow-dark-xl rounded-2xl bg-clip-border">
+              <div className="flex-auto p-4">
+                <div className="flex flex-row -mx-3">
+                  <div className="flex-none w-2/3 max-w-full px-3">
+                    <div>
+                      <p className="mb-0 font-sans text-sm font-semibold leading-normal uppercase dark:text-white dark:opacity-60">
+                        Số lần đặt sân
+                      </p>
+                      <h5 className="mb-2 font-bold dark:text-white">
+                        {bookingList.length}
+                      </h5>
+                    </div>
+                  </div>
+                  <div className="px-3 text-right basis-1/3">
+                    <div className="flex items-center justify-center w-12 h-12 rounded-full bg-gradient-to-tl from-blue-500 to-violet-500">
+                      <FaPerson className="text-white" />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="w-full max-w-full px-3 mb-6 sm:w-1/2 sm:flex-none xl:mb-0 xl:w-1/4">
+            <div className="relative flex flex-col min-w-0 break-words bg-white shadow-xl dark:bg-slate-850 dark:shadow-dark-xl rounded-2xl bg-clip-border">
+              <div className="flex-auto p-4">
+                <div className="flex flex-row -mx-3">
+                  <div className="flex-none w-2/3 max-w-full px-3">
+                    <div>
+                      <p className="mb-0 font-sans text-sm font-semibold leading-normal uppercase dark:text-white dark:opacity-60">
+                        Số lượng cụm sân
+                      </p>
+                      <h5 className="mb-2 font-bold dark:text-white">
+                        {groupPitchList.length}
+                      </h5>
+                    </div>
+                  </div>
+                  <div className="px-3 text-right basis-1/3">
+                    <div className="flex items-center justify-center w-12 h-12 rounded-full bg-gradient-to-tl from-red-600 to-orange-600">
+                      <FaPerson className="text-white" />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="w-full max-w-full px-3 mb-6 sm:w-1/2 sm:flex-none xl:mb-0 xl:w-1/4">
+            <div className="relative flex flex-col min-w-0 break-words bg-white shadow-xl dark:bg-slate-850 dark:shadow-dark-xl rounded-2xl bg-clip-border">
+              <div className="flex-auto p-4">
+                <div className="flex flex-row -mx-3">
+                  <div className="flex-none w-2/3 max-w-full px-3">
+                    <div>
+                      <p className="mb-0 font-sans text-sm font-semibold leading-normal uppercase dark:text-white dark:opacity-60">
+                        Số lượng sân
+                      </p>
+                      <h5 className="mb-2 font-bold dark:text-white">
+                        {pitchList.length}
+                      </h5>
+                    </div>
+                  </div>
+                  <div className="px-3 text-right basis-1/3">
+                    <div className="flex items-center justify-center w-12 h-12 rounded-full bg-gradient-to-tl from-emerald-500 to-teal-400">
+                      <FaPerson className="text-white" />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="w-full max-w-full px-3 sm:w-1/2 sm:flex-none xl:w-1/4">
+            <div className="relative flex flex-col min-w-0 break-words bg-white shadow-xl dark:bg-slate-850 dark:shadow-dark-xl rounded-2xl bg-clip-border">
+              <div className="flex-auto p-4">
+                <div className="flex flex-row -mx-3">
+                  <div className="flex-none w-2/3 max-w-full px-3">
+                    <div>
+                      <p className="mb-0 font-sans text-sm font-semibold leading-normal uppercase dark:text-white dark:opacity-60">
+                        Sales
+                      </p>
+                      <h5 className="mb-2 font-bold dark:text-white">
+                        $103,430
+                      </h5>
+                    </div>
+                  </div>
+                  <div className="px-3 text-right basis-1/3">
+                    <div className="flex items-center justify-center w-12 h-12 rounded-full bg-gradient-to-tl from-orange-500 to-yellow-500">
+                      <FaPerson className="text-white" />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div className="my-5 grid grid-cols-2 gap-6">
+          <div className=" bg-white px-6 py-6 rounded-md">
+            <h4>Tỉ lệ đặt theo ngày trong tuần</h4>
+            <Bar data={dataLine} options={options} />
+          </div>
+          <div className=" bg-white px-6 py-6 rounded-md">
+            <h4>Tỉ lệ đặt theo giờ trong ngày</h4>
+            <Bar data={data1} options={options1} />
+          </div>
         </div>
       </div>
     </div>

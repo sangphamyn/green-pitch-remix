@@ -121,7 +121,7 @@ export default function Index() {
         ref.initialize();
       }
     });
-  }, [districtFilter]);
+  }, [districtFilter, data]);
   return (
     <div>
       <Outlet />

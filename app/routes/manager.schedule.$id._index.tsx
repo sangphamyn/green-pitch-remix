@@ -154,205 +154,212 @@ function schedule() {
     }
   });
   return (
-    <div className="w-full mt-5 px-20">
-      <div className="dropdown">
-        <div tabIndex={0} role="button" className="btn btn-primary m-1">
-          {name}
-        </div>
-        <ul
-          tabIndex={0}
-          className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52"
-        >
-          {groupPitch?.map((item, index: number) => {
-            return (
-              <li key={index}>
-                <Link to={`/manager/schedule/${item.id}`}>{item.name}</Link>
-              </li>
-            );
-          })}
-        </ul>
+    <div className="bg-gray-100 min-h-screen">
+      <div className="bg-blue-400 w-full h-52 flex justify-center">
+        <span className="py-10 text-white font-semibold text-3xl">
+          Lịch sân
+        </span>
       </div>
-      <div
-        className="rounded-lg border bg-white border-[#E5E7EB] mb-6"
-        style={{ height: "calc(100vh - 116px)" }}
-      >
-        <div className="px-6 py-4 flex border-[#E5E7EB] bg-[#F9FAFB] rounded-t-lg">
-          <div>
-            <Form method="POST" className="flex gap-4 items-center">
-              <DatePicker
-                onChange={handleChange}
-                value={value}
-                name="dateSearch"
-                clearIcon={false}
-              />
-            </Form>
-            <div
-              onClick={() => {
-                document
-                  .querySelector(".react-date-picker__calendar-button")
-                  .click();
-              }}
-              className="cursor-pointer hover:text-primary transition"
-            >
-              <time
-                dateTime="2022-01-22"
-                className="font-semibold flex items-center gap-2"
-              >
-                <SlCalender className="mb-[2px]" />
-                {day} tháng {month}, {year}
-              </time>
-              <p className="text-sm mt-1">{dayOfWeek}</p>
-            </div>
+      <div className="w-full mt-5 px-20 -translate-y-28">
+        <div className="dropdown">
+          <div tabIndex={0} role="button" className="btn btn-primary m-1">
+            {name}
           </div>
+          <ul
+            tabIndex={0}
+            className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52"
+          >
+            {groupPitch?.map((item, index: number) => {
+              return (
+                <li key={index}>
+                  <Link to={`/manager/schedule/${item.id}`}>{item.name}</Link>
+                </li>
+              );
+            })}
+          </ul>
         </div>
-        <div className="flex" style={{ height: "calc(100% - 83px)" }}>
-          <div className="w-3/4 flex overflow-auto">
-            <div className="w-28 shrink-0 pr-2 border-r border-[#E5E7EB] h-fit">
-              <div className="px-4 h-12 font-semibold"></div>
-
-              {hours?.map((hour) => {
-                if (hour + 1 > minTime / 60 && hour < minTime / 60)
-                  return (
-                    <div
-                      key={hour}
-                      style={{ height: `${(minTime / 60 - hour) * 64}px` }}
-                      className="flex items-center justify-end -translate-y-1/2"
-                    >
-                      {hour % 12 === 0 ? 12 : hour % 12}:
-                      {(minTime / 60 - hour) * 60}
-                      {hour >= 12 ? " PM" : " AM"}
-                    </div>
-                  );
-                return hour >= minTime / 60 && hour <= maxTime / 60 ? (
-                  <div
-                    key={hour}
-                    className="h-16 flex items-center justify-end -translate-y-1/2 relative after:absolute after:w-1 after:h-[2px] after:bg-[#b7babe] after:top-full after:left-full after:-translate-x-1/2 after:-translate-y-1/2"
-                  >
-                    {hour % 12 === 0 ? 12 : hour % 12}
-                    {hour >= 12 ? "PM" : "AM"}
-                  </div>
-                ) : (
-                  <></>
-                );
-              })}
-            </div>
-            <div className="w-full">
-              <div className=" overflow-auto flex h-fit min-w-full sang-drag-container">
-                {pitchType?.map((item, index) => {
-                  return (
-                    <ChildComponent
-                      subData={item.pitch}
-                      timeSlot={item.timeSlot}
-                      minTime={minTime}
-                      maxTime={maxTime}
-                      value={value}
-                      key={index}
-                    />
-                  );
-                })}
+        <div
+          className="rounded-lg border bg-white border-[#E5E7EB] mb-6"
+          style={{ height: "calc(100vh - 116px)" }}
+        >
+          <div className="px-6 py-4 flex border-[#E5E7EB] bg-[#F9FAFB] rounded-t-lg">
+            <div>
+              <Form method="POST" className="flex gap-4 items-center">
+                <DatePicker
+                  onChange={handleChange}
+                  value={value}
+                  name="dateSearch"
+                  clearIcon={false}
+                />
+              </Form>
+              <div
+                onClick={() => {
+                  document
+                    .querySelector(".react-date-picker__calendar-button")
+                    .click();
+                }}
+                className="cursor-pointer hover:text-primary transition"
+              >
+                <time
+                  dateTime="2022-01-22"
+                  className="font-semibold flex items-center gap-2"
+                >
+                  <SlCalender className="mb-[2px]" />
+                  {day} tháng {month}, {year}
+                </time>
+                <p className="text-sm mt-1">{dayOfWeek}</p>
               </div>
             </div>
           </div>
-          <div className="w-1/4">
-            <div className="overflow-y-auto h-full border-t border-r border-l shadow-xl rounded-md p-4">
-              <table className="table">
-                <tbody>
-                  {/* row 1 */}
-                  {bookingList.map((booking, index: number) => {
-                    let now = new Date();
-                    now.setHours(now.getHours());
-                    let date = new Date(booking?.date);
-                    const hoursToAdd = parseInt(
-                      booking?.booking_timeSlot.startTime.split(":")[0]
-                    );
-                    const minutesToAdd = parseInt(
-                      booking?.booking_timeSlot.startTime.split(":")[1]
-                    );
-                    date.setHours(hoursToAdd);
-                    date.setMinutes(minutesToAdd);
+          <div className="flex" style={{ height: "calc(100% - 83px)" }}>
+            <div className="w-3/4 flex overflow-auto">
+              <div className="w-28 shrink-0 pr-2 border-r border-[#E5E7EB] h-fit">
+                <div className="px-4 h-12 font-semibold"></div>
 
-                    let endDate = new Date(booking?.date);
-                    const hoursToAdd1 = parseInt(
-                      booking?.booking_timeSlot.endTime.split(":")[0]
-                    );
-                    const minutesToAdd1 = parseInt(
-                      booking?.booking_timeSlot.endTime.split(":")[1]
-                    );
-                    endDate.setHours(hoursToAdd1);
-                    endDate.setMinutes(minutesToAdd1);
+                {hours?.map((hour) => {
+                  if (hour + 1 > minTime / 60 && hour < minTime / 60)
                     return (
                       <div
-                        key={index}
-                        className="border-black/12.5 rounded-t-inherit relative block border-b border-solid py-2 px-0 text-inherit"
+                        key={hour}
+                        style={{ height: `${(minTime / 60 - hour) * 64}px` }}
+                        className="flex items-center justify-end -translate-y-1/2"
                       >
-                        <div className="flex items-center justify-between -mx-3">
-                          <div className="flex items-center w-auto max-w-full flex-0">
-                            <a
-                              href="javascript:;"
-                              className="inline-flex items-center justify-center w-8 h-8 text-base text-white transition-all duration-200 ease-in-out leading-inherit rounded-xl"
-                            >
-                              <img
-                                className="w-full h-full object-cover rounded-lg"
-                                src={
-                                  booking.booking_user?.avatar
-                                    ? booking.booking_user.avatar
-                                    : "https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg"
-                                }
-                                alt="Image placeholder"
-                              />
-                            </a>
-                            <div className="max-w-full px-3 flex-1-0">
-                              <h6 className="mb-0">
-                                <div className="font-medium">
-                                  {booking.booking_user.name}
-                                </div>
-                              </h6>
-                              {booking.status == 1 ? (
-                                <span className="py-1 px-2 text-[10px] rounded inline-flex items-center whitespace-nowrap text-center font-bold uppercase leading-none text-emerald-600 bg-emerald-200">
-                                  Đặt sân
-                                </span>
-                              ) : (
-                                <span className="py-1 px-2 text-[10px] rounded inline-flex items-center whitespace-nowrap text-center font-bold uppercase leading-none text-red-600 bg-red-200">
-                                  Huỷ sân
-                                </span>
-                              )}
-                            </div>
-                          </div>
-
-                          <div className="w-auto max-w-full px-3 flex-0 text-xs">
-                            {booking.status == 1
-                              ? timeDifference(booking.createdAt)
-                              : timeDifference(booking.updatedAt)}
-                          </div>
-                        </div>
+                        {hour % 12 === 0 ? 12 : hour % 12}:
+                        {(minTime / 60 - hour) * 60}
+                        {hour >= 12 ? " PM" : " AM"}
                       </div>
                     );
+                  return hour >= minTime / 60 && hour <= maxTime / 60 ? (
+                    <div
+                      key={hour}
+                      className="h-16 flex items-center justify-end -translate-y-1/2 relative after:absolute after:w-1 after:h-[2px] after:bg-[#b7babe] after:top-full after:left-full after:-translate-x-1/2 after:-translate-y-1/2"
+                    >
+                      {hour % 12 === 0 ? 12 : hour % 12}
+                      {hour >= 12 ? "PM" : "AM"}
+                    </div>
+                  ) : (
+                    <></>
+                  );
+                })}
+              </div>
+              <div className="w-full">
+                <div className=" overflow-auto flex h-fit min-w-full sang-drag-container">
+                  {pitchType?.map((item, index) => {
+                    return (
+                      <ChildComponent
+                        subData={item.pitch}
+                        timeSlot={item.timeSlot}
+                        minTime={minTime}
+                        maxTime={maxTime}
+                        value={value}
+                        key={index}
+                      />
+                    );
                   })}
-                </tbody>
-              </table>
-              {page == 1 && bookingList.length < 10 ? (
-                ""
-              ) : (
-                <div className="w-full text-center">
-                  <div className="join mx-auto">
-                    <Link
-                      to={`?page=${page - 1}`}
-                      className="join-item btn"
-                      disabled={page == 1 ? true : false}
-                    >
-                      «
-                    </Link>
-                    <button className="join-item btn">{page}</button>
-                    <Link
-                      to={`?page=${parseInt(page) + 1}`}
-                      className="join-item btn"
-                      disabled={bookingList.length < 10 ? true : false}
-                    >
-                      »
-                    </Link>
-                  </div>
                 </div>
-              )}
+              </div>
+            </div>
+            <div className="w-1/4">
+              <div className="overflow-y-auto h-full border-t border-r border-l shadow-xl rounded-md p-4">
+                <table className="table">
+                  <tbody>
+                    {/* row 1 */}
+                    {bookingList.map((booking, index: number) => {
+                      let now = new Date();
+                      now.setHours(now.getHours());
+                      let date = new Date(booking?.date);
+                      const hoursToAdd = parseInt(
+                        booking?.booking_timeSlot.startTime.split(":")[0]
+                      );
+                      const minutesToAdd = parseInt(
+                        booking?.booking_timeSlot.startTime.split(":")[1]
+                      );
+                      date.setHours(hoursToAdd);
+                      date.setMinutes(minutesToAdd);
+
+                      let endDate = new Date(booking?.date);
+                      const hoursToAdd1 = parseInt(
+                        booking?.booking_timeSlot.endTime.split(":")[0]
+                      );
+                      const minutesToAdd1 = parseInt(
+                        booking?.booking_timeSlot.endTime.split(":")[1]
+                      );
+                      endDate.setHours(hoursToAdd1);
+                      endDate.setMinutes(minutesToAdd1);
+                      return (
+                        <div
+                          key={index}
+                          className="border-black/12.5 rounded-t-inherit relative block border-b border-solid py-2 px-0 text-inherit"
+                        >
+                          <div className="flex items-center justify-between -mx-3">
+                            <div className="flex items-center w-auto max-w-full flex-0">
+                              <a
+                                href="javascript:;"
+                                className="inline-flex items-center justify-center w-8 h-8 text-base text-white transition-all duration-200 ease-in-out leading-inherit rounded-xl"
+                              >
+                                <img
+                                  className="w-full h-full object-cover rounded-lg"
+                                  src={
+                                    booking.booking_user?.avatar
+                                      ? booking.booking_user.avatar
+                                      : "https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg"
+                                  }
+                                  alt="Image placeholder"
+                                />
+                              </a>
+                              <div className="max-w-full px-3 flex-1-0">
+                                <h6 className="mb-0">
+                                  <div className="font-medium">
+                                    {booking.booking_user.name}
+                                  </div>
+                                </h6>
+                                {booking.status == 1 ? (
+                                  <span className="py-1 px-2 text-[10px] rounded inline-flex items-center whitespace-nowrap text-center font-bold uppercase leading-none text-emerald-600 bg-emerald-200">
+                                    Đặt sân
+                                  </span>
+                                ) : (
+                                  <span className="py-1 px-2 text-[10px] rounded inline-flex items-center whitespace-nowrap text-center font-bold uppercase leading-none text-red-600 bg-red-200">
+                                    Huỷ sân
+                                  </span>
+                                )}
+                              </div>
+                            </div>
+
+                            <div className="w-auto max-w-full px-3 flex-0 text-xs">
+                              {booking.status == 1
+                                ? timeDifference(booking.createdAt)
+                                : timeDifference(booking.updatedAt)}
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </tbody>
+                </table>
+                {page == 1 && bookingList.length < 10 ? (
+                  ""
+                ) : (
+                  <div className="w-full text-center">
+                    <div className="join mx-auto">
+                      <Link
+                        to={`?page=${page - 1}`}
+                        className="join-item btn"
+                        disabled={page == 1 ? true : false}
+                      >
+                        «
+                      </Link>
+                      <button className="join-item btn">{page}</button>
+                      <Link
+                        to={`?page=${parseInt(page) + 1}`}
+                        className="join-item btn"
+                        disabled={bookingList.length < 10 ? true : false}
+                      >
+                        »
+                      </Link>
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </div>

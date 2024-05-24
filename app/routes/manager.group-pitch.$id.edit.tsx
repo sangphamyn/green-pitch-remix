@@ -294,444 +294,459 @@ function groupPitchAdd() {
     }
   };
   return (
-    <div className="container mx-auto my-12 max-w-[1000px]">
-      <h1 className="text-2xl font-semibold mb-4 text-center">Sửa Sân Bóng</h1>
-      <div className="flex items-center w-full sang-tab">
-        <div
-          onClick={changeTab1}
-          className={`w-auto px-8 relative cursor-pointer flex justify-center items-center gap-3 py-3 text-xl font-semibold rounded-t-lg border-b-0 ${
-            activeTab1
-              ? "border after:absolute after:w-full after:h-[3px] after:bg-white after:bottom-[-1px] bg-white"
-              : ""
-          }`}
-        >
-          <LiaEditSolid />
-          Thông tin
-        </div>
-        <div
-          onClick={changeTab2}
-          className={`w-auto px-8 relative cursor-pointer flex justify-center py-3 text-xl items-center gap-3 font-semibold rounded-t-lg border-b-0 ${
-            activeTab2
-              ? "border after:absolute after:w-full after:h-[3px] after:bg-white after:bottom-[-1px] bg-white"
-              : ""
-          }`}
-        >
-          <CiCircleList /> Danh sách sân và giá
-        </div>
+    <div className="bg-gray-100 min-h-screen">
+      {/* <Breadcrumb paths={paths} /> */}
+      <div className="bg-blue-400 w-full h-52 flex justify-center">
+        <span className="py-10 text-white font-semibold text-3xl">
+          Sửa Sân Bóng
+        </span>
       </div>
-      <Form method="POST" encType="multipart/form-data">
-        <div
-          className={`sang-tab-content border bg-white rounded-b-lg px-14 py-6 transition top-0 left-0 right-0 ${
-            activeTab1
-              ? "visible opacity-100  duration-300"
-              : "hidden opacity-0"
-          }`}
-        >
-          <div className="label pb-1">
-            <span className="label-text font-semibold">Ảnh</span>
+      <div className="container mx-auto my-12 max-w-[1000px] -translate-y-28">
+        <div className="flex items-center w-full sang-tab">
+          <div
+            onClick={changeTab1}
+            className={`w-auto px-8 relative cursor-pointer flex justify-center items-center gap-3 py-3 text-xl font-semibold rounded-t-lg border-b-0 ${
+              activeTab1
+                ? "border after:absolute after:w-full after:h-[3px] after:bg-white after:bottom-[-1px] bg-white"
+                : ""
+            }`}
+          >
+            <LiaEditSolid />
+            Thông tin
           </div>
-          <div id="previewContainer" className="flex gap-3 mb-3">
-            {previewImages.map((image, index) => (
-              <div className="avatar border relative" key={index}>
-                <div className="w-24 rounded">
-                  <img src={image} />
-                </div>
-                <div
-                  className="p-2 hover:text-error transition absolute top-1 right-1 bg-white shadow-lg rounded-full"
-                  // onClick={removeAction}
-                >
-                  <GoTrash className="text-sm" />
-                </div>
-              </div>
-            ))}
-            <div
-              className={`rounded-md border border-grey-500 bg-gray-50 shadow-md w-28 ${
-                actionData?.message?.pitchImages ? "border-error" : ""
-              }`}
-            >
-              <label
-                htmlFor="upload"
-                className="flex flex-col items-center gap-2 cursor-pointer p-4"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-10 w-10 fill-white stroke-grey-500"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  strokeWidth="1"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M9 13h6m-3-3v6m5 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                  />
-                </svg>
-                <span className="text-gray-600 font-medium">Tải ảnh</span>
-              </label>
-              <input
-                id="upload"
-                type="file"
-                className="hidden"
-                onChange={handleUploadImage}
-                name="pitchImages"
-                multiple
-                accept="image/*"
-              />
-            </div>
+          <div
+            onClick={changeTab2}
+            className={`w-auto px-8 relative cursor-pointer flex justify-center py-3 text-xl items-center gap-3 font-semibold rounded-t-lg border-b-0 ${
+              activeTab2
+                ? "border after:absolute after:w-full after:h-[3px] after:bg-white after:bottom-[-1px] bg-white"
+                : ""
+            }`}
+          >
+            <CiCircleList /> Danh sách sân và giá
           </div>
-          {actionData?.message?.pitchImages ? (
-            <div className="label pt-1 pb-0">
-              <span className="label-text-alt text-error">
-                {actionData.message.pitchImages}
-              </span>
-            </div>
-          ) : (
-            <></>
-          )}
-
-          <label className="form-control w-full mb-1">
+        </div>
+        <Form method="POST" encType="multipart/form-data">
+          <div
+            className={`sang-tab-content border bg-white rounded-b-lg px-14 py-6 transition top-0 left-0 right-0 rounded-tr-lg ${
+              activeTab1
+                ? "visible opacity-100  duration-300"
+                : "hidden opacity-0"
+            }`}
+          >
             <div className="label pb-1">
-              <span className="label-text font-semibold">Tên sân</span>
+              <span className="label-text font-semibold">Ảnh</span>
             </div>
-            <input
-              type="text"
-              name="groupPitchName"
-              placeholder="Nhập tên cụm sân"
-              defaultValue={groupPitch.name}
-              className={`input input-bordered flex items-center gap-2 focus-within:outline-none ${
-                actionData?.message?.groupPitchName
-                  ? "input-error"
-                  : "focus-within:border-primary"
-              }`}
-            />
-          </label>
-          {actionData?.message?.groupPitchName ? (
-            <div className="label pt-1 pb-0">
-              <span className="label-text-alt text-error">
-                {actionData.message.groupPitchName}
-              </span>
+            <div id="previewContainer" className="flex gap-3 mb-3">
+              {previewImages.map((image, index) => (
+                <div className="avatar border relative" key={index}>
+                  <div className="w-24 rounded">
+                    <img src={image} />
+                  </div>
+                  <div
+                    className="p-2 hover:text-error transition absolute top-1 right-1 bg-white shadow-lg rounded-full"
+                    // onClick={removeAction}
+                  >
+                    <GoTrash className="text-sm" />
+                  </div>
+                </div>
+              ))}
+              <div
+                className={`rounded-md border border-grey-500 bg-gray-50 shadow-md w-28 ${
+                  actionData?.message?.pitchImages ? "border-error" : ""
+                }`}
+              >
+                <label
+                  htmlFor="upload"
+                  className="flex flex-col items-center gap-2 cursor-pointer p-4"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-10 w-10 fill-white stroke-grey-500"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth="1"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M9 13h6m-3-3v6m5 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                    />
+                  </svg>
+                  <span className="text-gray-600 font-medium">Tải ảnh</span>
+                </label>
+                <input
+                  id="upload"
+                  type="file"
+                  className="hidden"
+                  onChange={handleUploadImage}
+                  name="pitchImages"
+                  multiple
+                  accept="image/*"
+                />
+              </div>
             </div>
-          ) : (
-            <></>
-          )}
-          <div className="flex gap-4">
-            <label className="form-control">
-              <div className="label pb-1">
-                <span className="label-text font-semibold">
-                  Thành phố/huyện
+            {actionData?.message?.pitchImages ? (
+              <div className="label pt-1 pb-0">
+                <span className="label-text-alt text-error">
+                  {actionData.message.pitchImages}
                 </span>
               </div>
-              <select
-                className="select select-bordered focus:border-primary focus-within:outline-none rounded"
-                onChange={handleChangeDistric}
-                name="district"
-                defaultValue={groupPitch.id_district}
-              >
-                {districts.map(
-                  (item: { name: string; code: string }, index: number) => {
-                    return (
-                      <option key={index} defaultValue={parseInt(item?.code)}>
-                        {item?.name}
-                      </option>
-                    );
-                  }
-                )}
-              </select>
-            </label>
-            <label className="form-control">
+            ) : (
+              <></>
+            )}
+
+            <label className="form-control w-full mb-1">
               <div className="label pb-1">
-                <span className="label-text font-semibold">Phường/Xã</span>
+                <span className="label-text font-semibold">Tên sân</span>
               </div>
-              <select
-                className="select select-bordered focus:border-primary focus-within:outline-none rounded"
-                name="ward"
-                defaultValue={groupPitch.id_ward}
-              >
-                {wardsList.map(
-                  (item: { name: string; code: string }, index: number) => {
-                    return (
-                      <option key={index} value={parseInt(item?.code)}>
-                        {item?.name}
-                      </option>
-                    );
-                  }
-                )}
-              </select>
+              <input
+                type="text"
+                name="groupPitchName"
+                placeholder="Nhập tên cụm sân"
+                defaultValue={groupPitch.name}
+                className={`input input-bordered flex items-center gap-2 focus-within:outline-none ${
+                  actionData?.message?.groupPitchName
+                    ? "input-error"
+                    : "focus-within:border-primary"
+                }`}
+              />
             </label>
+            {actionData?.message?.groupPitchName ? (
+              <div className="label pt-1 pb-0">
+                <span className="label-text-alt text-error">
+                  {actionData.message.groupPitchName}
+                </span>
+              </div>
+            ) : (
+              <></>
+            )}
+            <div className="flex gap-4">
+              <label className="form-control">
+                <div className="label pb-1">
+                  <span className="label-text font-semibold">
+                    Thành phố/huyện
+                  </span>
+                </div>
+                <select
+                  className="select select-bordered focus:border-primary focus-within:outline-none rounded"
+                  onChange={handleChangeDistric}
+                  name="district"
+                  defaultValue={groupPitch.id_district}
+                >
+                  {districts.map(
+                    (item: { name: string; code: string }, index: number) => {
+                      return (
+                        <option key={index} defaultValue={parseInt(item?.code)}>
+                          {item?.name}
+                        </option>
+                      );
+                    }
+                  )}
+                </select>
+              </label>
+              <label className="form-control">
+                <div className="label pb-1">
+                  <span className="label-text font-semibold">Phường/Xã</span>
+                </div>
+                <select
+                  className="select select-bordered focus:border-primary focus-within:outline-none rounded"
+                  name="ward"
+                  defaultValue={groupPitch.id_ward}
+                >
+                  {wardsList.map(
+                    (item: { name: string; code: string }, index: number) => {
+                      return (
+                        <option key={index} value={parseInt(item?.code)}>
+                          {item?.name}
+                        </option>
+                      );
+                    }
+                  )}
+                </select>
+              </label>
+              <label className="form-control w-full mb-1">
+                <div className="label pb-1">
+                  <span className="label-text font-semibold">
+                    Địa chỉ chi tiết
+                  </span>
+                </div>
+                <input
+                  type="text"
+                  placeholder="Nhập địa chỉ chi tiết, ngõ, đường, mô tả,..."
+                  className="input input-bordered focus:border-primary focus-within:outline-none w-full rounded"
+                  name="address_detail"
+                  defaultValue={groupPitch.address_detail}
+                />
+              </label>
+            </div>
             <label className="form-control w-full mb-1">
               <div className="label pb-1">
                 <span className="label-text font-semibold">
-                  Địa chỉ chi tiết
+                  Link google map
                 </span>
               </div>
               <input
                 type="text"
-                placeholder="Nhập địa chỉ chi tiết, ngõ, đường, mô tả,..."
+                placeholder="Nhập link google map"
                 className="input input-bordered focus:border-primary focus-within:outline-none w-full rounded"
-                name="address_detail"
-                defaultValue={groupPitch.address_detail}
+                name="address_map"
+                defaultValue={groupPitch.map}
               />
             </label>
-          </div>
-          <label className="form-control w-full mb-1">
+            <label className="form-control">
+              <div className="label pb-1">
+                <span className="label-text font-semibold">Mô tả</span>
+              </div>
+              <textarea
+                className="textarea textarea-bordered h-24 focus:border-primary focus-within:outline-none rounded"
+                placeholder="Các thông tin cơ bản"
+                defaultValue={groupPitch.description}
+                name="groupPitchDesc"
+              ></textarea>
+            </label>
             <div className="label pb-1">
-              <span className="label-text font-semibold">Link google map</span>
+              <span className="label-text font-semibold">Dịch vụ</span>
             </div>
-            <input
-              type="text"
-              placeholder="Nhập link google map"
-              className="input input-bordered focus:border-primary focus-within:outline-none w-full rounded"
-              name="address_map"
-              defaultValue={groupPitch.map}
-            />
-          </label>
-          <label className="form-control">
-            <div className="label pb-1">
-              <span className="label-text font-semibold">Mô tả</span>
+            <div className="grid grid-cols-2">
+              {serviceList.map(
+                (service: { id: number; name: string }, index: number) => {
+                  const use = services.find(
+                    (item) => item.serviceId == service.id
+                  );
+                  return (
+                    <div className="form-control" key={index}>
+                      <label className="label cursor-pointer justify-start gap-4 items-center pr-10">
+                        <input
+                          type="checkbox"
+                          name="groupPitchServices"
+                          id={"service_" + service.id}
+                          defaultValue={service.id}
+                          onChange={handleCheckboxChange}
+                          className="checkbox rounded"
+                          defaultChecked={!!use}
+                        />
+                        <span className="label-text w-28">{service.name}</span>
+                        {selectedServices &&
+                        selectedServices[service.id]?.status ? (
+                          <div className="div">
+                            <input
+                              type="number"
+                              id="priceService"
+                              defaultValue={use?.price}
+                              // onChange={handleServicePriceChange}
+                              placeholder="Giá"
+                              name="servicePrices"
+                              className="input-xs input input-bordered rounded focus:border-primary focus-within:outline-none"
+                            />
+                          </div>
+                        ) : (
+                          ""
+                        )}
+                      </label>
+                    </div>
+                  );
+                }
+              )}
             </div>
-            <textarea
-              className="textarea textarea-bordered h-24 focus:border-primary focus-within:outline-none rounded"
-              placeholder="Các thông tin cơ bản"
-              defaultValue={groupPitch.description}
-              name="groupPitchDesc"
-            ></textarea>
-          </label>
-          <div className="label pb-1">
-            <span className="label-text font-semibold">Dịch vụ</span>
+            <div className="flex items-center justify-center mt-8">
+              <div
+                className="btn btn-primary px-10 rounded-full w-full"
+                onClick={changeTab2}
+              >
+                Thêm danh sách sân và giá
+              </div>
+            </div>
           </div>
-          <div className="grid grid-cols-2">
-            {serviceList.map(
-              (service: { id: number; name: string }, index: number) => {
-                const use = services.find(
-                  (item) => item.serviceId == service.id
-                );
-                return (
-                  <div className="form-control" key={index}>
-                    <label className="label cursor-pointer justify-start gap-4 items-center pr-10">
+          <div
+            className={`sang-tab-content bg-white border rounded px-14 py-6  transition top-0 left-0 right-0 ${
+              activeTab2
+                ? "visible opacity-100  duration-300"
+                : "hidden opacity-0"
+            }`}
+          >
+            <div className="mb-8">
+              {fieldTypes.map((field, index) => (
+                <div
+                  key={index}
+                  className="mb-2 border px-10 py-8 rounded relative"
+                >
+                  <input
+                    type="hidden"
+                    name="pitchType_id"
+                    defaultValue={field.id}
+                  />
+                  <input
+                    name="numTimeSlot"
+                    id="numTimeSlot"
+                    defaultValue={field.timeSlots.length}
+                    className="hidden"
+                  />
+                  <div className="flex justify-between gap-4 mb-2">
+                    <label className="form-control mb-1 w-full">
+                      <div className="label pb-1">
+                        <span className="label-text font-semibold">
+                          Tên sân
+                        </span>
+                      </div>
                       <input
-                        type="checkbox"
-                        name="groupPitchServices"
-                        id={"service_" + service.id}
-                        defaultValue={service.id}
-                        onChange={handleCheckboxChange}
-                        className="checkbox rounded"
-                        defaultChecked={!!use}
+                        type="text"
+                        placeholder="Nhập tên sân"
+                        name="pitchName"
+                        id="pitchName"
+                        defaultValue={field.pitchName}
+                        className="input input-bordered focus:border-primary focus-within:outline-none w-full rounded"
                       />
-                      <span className="label-text w-28">{service.name}</span>
-                      {selectedServices &&
-                      selectedServices[service.id]?.status ? (
-                        <div className="div">
-                          <input
-                            type="number"
-                            id="priceService"
-                            defaultValue={use?.price}
-                            // onChange={handleServicePriceChange}
-                            placeholder="Giá"
-                            name="servicePrices"
-                            className="input-xs input input-bordered rounded focus:border-primary focus-within:outline-none"
-                          />
-                        </div>
-                      ) : (
-                        ""
-                      )}
+                    </label>
+                    <label className="form-control">
+                      <div className="label pb-1">
+                        <span className="label-text font-semibold">
+                          Loại sân
+                        </span>
+                      </div>
+                      <select
+                        className="select select-bordered focus:border-primary focus-within:outline-none rounded"
+                        name="pitchType"
+                        defaultValue={field.pitchType}
+                      >
+                        <option defaultValue="5">Sân 5</option>
+                        <option defaultValue="7">Sân 7</option>
+                        <option defaultValue="11">Sân 11</option>
+                      </select>
+                    </label>
+                    <label className="form-control mb-1">
+                      <div className="label pb-1">
+                        <span className="label-text font-semibold">
+                          Số lượng
+                        </span>
+                      </div>
+                      <input
+                        type="number"
+                        placeholder="Số sân"
+                        name="pitchQuantity"
+                        defaultValue={field.pitchQuantity}
+                        className="input input-bordered focus:border-primary focus-within:outline-none w-full rounded"
+                      />
+                    </label>
+                    <label className="form-control w-full">
+                      <div className="label pb-1">
+                        <span className="label-text font-semibold">Mô tả</span>
+                      </div>
+                      <textarea
+                        className="textarea textarea-bordered focus:border-primary focus-within:outline-none h-1 rounded"
+                        placeholder="Các thông tin cơ bản"
+                        name="pitchDesc"
+                        defaultValue={field.pitchDesc}
+                      ></textarea>
                     </label>
                   </div>
-                );
-              }
+                  <div className="grid grid-cols-2 gap-x-6 gap-y-3 mb-4">
+                    {field.timeSlots.map((slot, slotIndex: number) => (
+                      <div key={index}>
+                        <input
+                          type="hidden"
+                          name="timeSlot_id"
+                          defaultValue={slot.id}
+                        />
+                        <TimeComponent
+                          hourStart={parseInt(slot.startTime.split(":")[0])}
+                          minuteStart={parseInt(slot.startTime.split(":")[1])}
+                          hourEnd={parseInt(slot.endTime.split(":")[0])}
+                          minuteEnd={parseInt(slot.endTime.split(":")[1])}
+                          name="time"
+                          price={slot.price}
+                          removeAction={() => removeTimeSlot(index, slotIndex)}
+                        />
+                      </div>
+                    ))}
+                  </div>
+                  <div
+                    className="btn inline-flex gap-3 items-center bg-green-500 hover:bg-green-600 px-5 py-2 rounded text-white"
+                    onClick={() => addTimeSlot(index)}
+                  >
+                    Thêm khoảng thời gian
+                    <GoPlusCircle />
+                  </div>
+                  <div
+                    className="p-3 hover:text-error transition absolute top-1 right-1 cursor-pointer"
+                    onClick={() => removeFieldType(index)}
+                  >
+                    <IoMdClose />
+                  </div>
+                </div>
+              ))}
+              <div
+                className="btn inline-flex gap-3 items-center bg-green-500 hover:bg-green-600 px-5 py-2 rounded text-white"
+                onClick={addFieldType}
+              >
+                Thêm Loại Sân
+                <GoPlusCircle />
+              </div>
+            </div>
+            <div className="flex items-center justify-center mt-8">
+              <button
+                className="btn btn-primary px-10 rounded-full w-full"
+                defaultValue="submit"
+              >
+                Tạo
+              </button>
+            </div>
+            {actionData?.message?.pitchImages ? (
+              <div className="label pt-1 pb-0">
+                <span className="label-text-alt text-error">
+                  {actionData.message.pitchImages}
+                </span>
+              </div>
+            ) : (
+              <></>
+            )}
+            {actionData?.message?.groupPitchName ? (
+              <div className="label pt-1 pb-0">
+                <span className="label-text-alt text-error">
+                  {actionData.message.groupPitchName}
+                </span>
+              </div>
+            ) : (
+              <></>
+            )}
+            {actionData?.message?.pitchName ? (
+              <div className="label pt-1 pb-0">
+                <span className="label-text-alt text-error">
+                  {actionData.message.pitchName}
+                </span>
+              </div>
+            ) : (
+              <></>
+            )}
+            {actionData?.message?.pitchQuantity ? (
+              <div className="label pt-1 pb-0">
+                <span className="label-text-alt text-error">
+                  {actionData.message.pitchQuantity}
+                </span>
+              </div>
+            ) : (
+              <></>
+            )}
+            {actionData?.message?.timeSlot ? (
+              <div className="label pt-1 pb-0">
+                <span className="label-text-alt text-error">
+                  {actionData.message.timeSlot}
+                </span>
+              </div>
+            ) : (
+              <></>
+            )}
+            {actionData?.message?.timePrice ? (
+              <div className="label pt-1 pb-0">
+                <span className="label-text-alt text-error">
+                  {actionData.message.timePrice}
+                </span>
+              </div>
+            ) : (
+              <></>
             )}
           </div>
-          <div className="flex items-center justify-center mt-8">
-            <div
-              className="btn btn-primary px-10 rounded-full w-full"
-              onClick={changeTab2}
-            >
-              Thêm danh sách sân và giá
-            </div>
-          </div>
-        </div>
-        <div
-          className={`sang-tab-content bg-white border rounded px-14 py-6  transition top-0 left-0 right-0 ${
-            activeTab2
-              ? "visible opacity-100  duration-300"
-              : "hidden opacity-0"
-          }`}
-        >
-          <div className="mb-8">
-            {fieldTypes.map((field, index) => (
-              <div
-                key={index}
-                className="mb-2 border px-10 py-8 rounded relative"
-              >
-                <input
-                  type="hidden"
-                  name="pitchType_id"
-                  defaultValue={field.id}
-                />
-                <input
-                  name="numTimeSlot"
-                  id="numTimeSlot"
-                  defaultValue={field.timeSlots.length}
-                  className="hidden"
-                />
-                <div className="flex justify-between gap-4 mb-2">
-                  <label className="form-control mb-1 w-full">
-                    <div className="label pb-1">
-                      <span className="label-text font-semibold">Tên sân</span>
-                    </div>
-                    <input
-                      type="text"
-                      placeholder="Nhập tên sân"
-                      name="pitchName"
-                      id="pitchName"
-                      defaultValue={field.pitchName}
-                      className="input input-bordered focus:border-primary focus-within:outline-none w-full rounded"
-                    />
-                  </label>
-                  <label className="form-control">
-                    <div className="label pb-1">
-                      <span className="label-text font-semibold">Loại sân</span>
-                    </div>
-                    <select
-                      className="select select-bordered focus:border-primary focus-within:outline-none rounded"
-                      name="pitchType"
-                      defaultValue={field.pitchType}
-                    >
-                      <option defaultValue="5">Sân 5</option>
-                      <option defaultValue="7">Sân 7</option>
-                      <option defaultValue="11">Sân 11</option>
-                    </select>
-                  </label>
-                  <label className="form-control mb-1">
-                    <div className="label pb-1">
-                      <span className="label-text font-semibold">Số lượng</span>
-                    </div>
-                    <input
-                      type="number"
-                      placeholder="Số sân"
-                      name="pitchQuantity"
-                      defaultValue={field.pitchQuantity}
-                      className="input input-bordered focus:border-primary focus-within:outline-none w-full rounded"
-                    />
-                  </label>
-                  <label className="form-control w-full">
-                    <div className="label pb-1">
-                      <span className="label-text font-semibold">Mô tả</span>
-                    </div>
-                    <textarea
-                      className="textarea textarea-bordered focus:border-primary focus-within:outline-none h-1 rounded"
-                      placeholder="Các thông tin cơ bản"
-                      name="pitchDesc"
-                      defaultValue={field.pitchDesc}
-                    ></textarea>
-                  </label>
-                </div>
-                <div className="grid grid-cols-2 gap-x-6 gap-y-3 mb-4">
-                  {field.timeSlots.map((slot, slotIndex: number) => (
-                    <div key={index}>
-                      <input
-                        type="hidden"
-                        name="timeSlot_id"
-                        defaultValue={slot.id}
-                      />
-                      <TimeComponent
-                        hourStart={parseInt(slot.startTime.split(":")[0])}
-                        minuteStart={parseInt(slot.startTime.split(":")[1])}
-                        hourEnd={parseInt(slot.endTime.split(":")[0])}
-                        minuteEnd={parseInt(slot.endTime.split(":")[1])}
-                        name="time"
-                        price={slot.price}
-                        removeAction={() => removeTimeSlot(index, slotIndex)}
-                      />
-                    </div>
-                  ))}
-                </div>
-                <div
-                  className="btn inline-flex gap-3 items-center bg-green-500 hover:bg-green-600 px-5 py-2 rounded text-white"
-                  onClick={() => addTimeSlot(index)}
-                >
-                  Thêm khoảng thời gian
-                  <GoPlusCircle />
-                </div>
-                <div
-                  className="p-3 hover:text-error transition absolute top-1 right-1 cursor-pointer"
-                  onClick={() => removeFieldType(index)}
-                >
-                  <IoMdClose />
-                </div>
-              </div>
-            ))}
-            <div
-              className="btn inline-flex gap-3 items-center bg-green-500 hover:bg-green-600 px-5 py-2 rounded text-white"
-              onClick={addFieldType}
-            >
-              Thêm Loại Sân
-              <GoPlusCircle />
-            </div>
-          </div>
-          <div className="flex items-center justify-center mt-8">
-            <button
-              className="btn btn-primary px-10 rounded-full w-full"
-              defaultValue="submit"
-            >
-              Tạo
-            </button>
-          </div>
-          {actionData?.message?.pitchImages ? (
-            <div className="label pt-1 pb-0">
-              <span className="label-text-alt text-error">
-                {actionData.message.pitchImages}
-              </span>
-            </div>
-          ) : (
-            <></>
-          )}
-          {actionData?.message?.groupPitchName ? (
-            <div className="label pt-1 pb-0">
-              <span className="label-text-alt text-error">
-                {actionData.message.groupPitchName}
-              </span>
-            </div>
-          ) : (
-            <></>
-          )}
-          {actionData?.message?.pitchName ? (
-            <div className="label pt-1 pb-0">
-              <span className="label-text-alt text-error">
-                {actionData.message.pitchName}
-              </span>
-            </div>
-          ) : (
-            <></>
-          )}
-          {actionData?.message?.pitchQuantity ? (
-            <div className="label pt-1 pb-0">
-              <span className="label-text-alt text-error">
-                {actionData.message.pitchQuantity}
-              </span>
-            </div>
-          ) : (
-            <></>
-          )}
-          {actionData?.message?.timeSlot ? (
-            <div className="label pt-1 pb-0">
-              <span className="label-text-alt text-error">
-                {actionData.message.timeSlot}
-              </span>
-            </div>
-          ) : (
-            <></>
-          )}
-          {actionData?.message?.timePrice ? (
-            <div className="label pt-1 pb-0">
-              <span className="label-text-alt text-error">
-                {actionData.message.timePrice}
-              </span>
-            </div>
-          ) : (
-            <></>
-          )}
-        </div>
-      </Form>
+        </Form>
+      </div>
     </div>
   );
 }

@@ -77,48 +77,52 @@ function group_pitch_detail() {
     setSrcValue(srcValue);
   });
   return (
-    <div>
-      <div className="join join-vertical lg:join-horizontal">
-        <Link
-          to={`/manager/group-pitch/${pitch.id}/edit`}
-          className="btn btn-primary"
-        >
-          <CiEdit />
-          Sửa
-        </Link>
+    <div className="bg-gray-100 min-h-screen">
+      {/* <Breadcrumb paths={paths} /> */}
+      <div className="bg-blue-400 w-full h-52 flex justify-center">
+        <span className="py-10 text-white text-3xl text-center">
+          <span className=" font-semibold">{pitch.name}</span>
+          <p className="text-sm text-white mt-4 mb-1 flex gap-1 justify-center">
+            <PiMapPinLight className="shrink-0 text-lg" />{" "}
+            {pitch.address_detail}, {getWardById(pitch.id_ward).name},{" "}
+            {getDistrictById(pitch.id_district).name}
+          </p>
+        </span>
       </div>
-      <h1 className="mb-12 text-2xl font-extrabold text-center leading-none tracking-tight text-gray-900 md:text-3xl lg:text-4xl dark:text-white">
-        {pitch.name}
-      </h1>
-      <p className="text-sm text-gray-600 mb-1 flex gap-1 justify-center">
-        <PiMapPinLight className="shrink-0 text-lg" /> {pitch.address_detail},{" "}
-        {getWardById(pitch.id_ward).name},{" "}
-        {getDistrictById(pitch.id_district).name}
-      </p>
-      <div className="grid grid-cols-3 px-20 py-5 gap-6">
-        {pitch.images ? (
-          <>
-            <div>
-              <swiper-container
-                // style="--swiper-navigation-color: #fff; --swiper-pagination-color: #fff"
-                class="mySwiper"
-                thumbs-swiper=".mySwiper2"
-                space-between="10"
-                navigation="true"
-              >
-                {pitch.images.split(",").map((img: string, index: number) => {
-                  return (
-                    <swiper-slide key={index}>
-                      <img
-                        src={img}
-                        className="h-[320px] w-full object-cover rounded-md"
-                      />
-                    </swiper-slide>
-                  );
-                })}
-              </swiper-container>
+      <div className="-translate-y-28">
+        <div className="join join-vertical lg:join-horizontal">
+          <Link
+            to={`/manager/group-pitch/${pitch.id}/edit`}
+            className="btn btn-primary"
+          >
+            <CiEdit />
+            Sửa
+          </Link>
+        </div>
+        <div className="grid grid-cols-3 px-20 py-5 gap-6">
+          {pitch.images ? (
+            <>
+              <div>
+                <swiper-container
+                  // style="--swiper-navigation-color: #fff; --swiper-pagination-color: #fff"
+                  class="mySwiper"
+                  thumbs-swiper=".mySwiper2"
+                  space-between="10"
+                  navigation="true"
+                >
+                  {pitch.images.split(",").map((img: string, index: number) => {
+                    return (
+                      <swiper-slide key={index}>
+                        <img
+                          src={img}
+                          className="h-[320px] w-full object-cover rounded-md"
+                        />
+                      </swiper-slide>
+                    );
+                  })}
+                </swiper-container>
 
-              {/* <swiper-container
+                {/* <swiper-container
                 class="mySwiper2"
                 slides-per-view="3"
                 free-mode="true"
@@ -132,93 +136,93 @@ function group_pitch_detail() {
                   );
                 })}
               </swiper-container> */}
+              </div>
+            </>
+          ) : (
+            <div>
+              <img
+                className="w-full h-full object-cover rounded-lg"
+                src="/images/san-co-nhan-tao-7-nguoi-dep.jpg"
+                alt=""
+              />
             </div>
-          </>
-        ) : (
-          <div>
-            <img
-              className="w-full h-full object-cover rounded-lg"
-              src="/images/san-co-nhan-tao-7-nguoi-dep.jpg"
-              alt=""
-            />
-          </div>
-        )}
-        <div className="bg-gray-200 p-4 rounded-lg">
-          <h3 className="font-semibold text-xl mb-4">Thông tin sân</h3>
-          <div className="flex justify-between mb-1">
-            <p>Giờ mở cửa</p>
-            <p className="font-semibold">
-              {minutesToTime(minTime)} - {minutesToTime(maxTime)}
-            </p>
-          </div>
-          <div className="flex justify-between mb-1">
-            <p>Số sân thi đấu: </p>
-            <p className="font-semibold">{numOfPitch} Sân</p>
-          </div>
-          <div className="flex justify-between mb-1">
-            <p>Giá sân trung bình: </p>
-            <p className="font-semibold">
-              {Math.round(minPrice)}đ - {Math.round(maxPrice)}đ/h
-            </p>
-          </div>
-          <div className="bg-white p-4 rounded mt-4">
-            <h3 className="font-semibold text-md mb-4">Dịch vụ</h3>
-            <div className="grid grid-cols-2">
-              {services.map((service) => {
-                return (
-                  <div className="flex gap-2 items-center text-sm mb-2">
-                    {(() => {
-                      switch (service.serviceId) {
-                        case 1:
-                          return <IoIosWifi />;
-                        case 2:
-                          return <LuGlassWater />;
-                        case 3:
-                          return <IoShirtOutline />;
-                        case 4:
-                          return <IoCarOutline />;
-                        case 5:
-                          return <IoFastFoodOutline />;
-                        case 6:
-                          return <LiaShoePrintsSolid />;
-                        case 7:
-                          return <IoIosFootball />;
-                        default:
-                          return <MdOutlineRoomService />;
-                      }
-                    })()}{" "}
-                    {service.service.name}
-                    {service.price != null ? (
-                      <div
-                        className={`text-xs px-3 flex gap-1 items-center w-fit mb-2 py-[2px]  rounded-full ${
-                          service.price == "0"
-                            ? "text-green-800 bg-green-200"
-                            : "text-orange-800 bg-orange-200"
-                        }`}
-                      >
-                        {service.price == "0" ? "Free" : service.price + " đ"}
-                      </div>
-                    ) : (
-                      <></>
-                    )}
-                  </div>
-                );
-              })}
+          )}
+          <div className="bg-white p-4 rounded-lg">
+            <h3 className="font-semibold text-xl mb-4">Thông tin sân</h3>
+            <div className="flex justify-between mb-1">
+              <p>Giờ mở cửa</p>
+              <p className="font-semibold">
+                {minutesToTime(minTime)} - {minutesToTime(maxTime)}
+              </p>
+            </div>
+            <div className="flex justify-between mb-1">
+              <p>Số sân thi đấu: </p>
+              <p className="font-semibold">{numOfPitch} Sân</p>
+            </div>
+            <div className="flex justify-between mb-1">
+              <p>Giá sân trung bình: </p>
+              <p className="font-semibold">
+                {Math.round(minPrice)}đ - {Math.round(maxPrice)}đ/h
+              </p>
+            </div>
+            <div className="bg-gray-50 p-4 rounded mt-4">
+              <h3 className="font-semibold text-md mb-4">Dịch vụ</h3>
+              <div className="grid grid-cols-2">
+                {services.map((service) => {
+                  return (
+                    <div className="flex gap-2 items-center text-sm mb-2">
+                      {(() => {
+                        switch (service.serviceId) {
+                          case 1:
+                            return <IoIosWifi />;
+                          case 2:
+                            return <LuGlassWater />;
+                          case 3:
+                            return <IoShirtOutline />;
+                          case 4:
+                            return <IoCarOutline />;
+                          case 5:
+                            return <IoFastFoodOutline />;
+                          case 6:
+                            return <LiaShoePrintsSolid />;
+                          case 7:
+                            return <IoIosFootball />;
+                          default:
+                            return <MdOutlineRoomService />;
+                        }
+                      })()}{" "}
+                      {service.service.name}
+                      {service.price != null ? (
+                        <div
+                          className={`text-xs px-3 flex gap-1 items-center w-fit mb-2 py-[2px]  rounded-full ${
+                            service.price == "0"
+                              ? "text-green-800 bg-green-200"
+                              : "text-orange-800 bg-orange-200"
+                          }`}
+                        >
+                          {service.price == "0" ? "Free" : service.price + " đ"}
+                        </div>
+                      ) : (
+                        <></>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
             </div>
           </div>
+          <iframe
+            src={srcValue}
+            width="600"
+            height="300"
+            //   allowfullscreen=""
+            loading="lazy"
+            className="w-full h-full rounded-md"
+          ></iframe>
         </div>
-        <iframe
-          src={srcValue}
-          width="600"
-          height="300"
-          //   allowfullscreen=""
-          loading="lazy"
-          className="w-full h-full"
-        ></iframe>
-      </div>
-      <div className="px-20 py-5">
-        <h1>Lịch và giá</h1>
-        {/* <div>
+        <div className="px-20 py-5">
+          <h1>Lịch và giá</h1>
+          {/* <div>
       <div>
         <div>Sân Loại A (4 sân)</div>
         <div>
@@ -280,34 +284,35 @@ function group_pitch_detail() {
         </div>
       </div>
     </div> */}
-        <div>
           <div>
-            {pitchTypeList.map((item) => {
-              return (
-                <div className="flex gap-4 mb-3">
-                  <div className="shrink-0">
-                    {item.name} - {item.type} - {item.description} (
-                    {item.pitch.length} sân)
-                  </div>
-                  <div className="flex flex-wrap gap-2">
-                    {item.timeSlot.map((time) => {
-                      return (
-                        <div className="border rounded-md px-3 py-2 text-sm">
-                          <div className="flex items-center justify-center gap-2">
-                            <FaRegClock />
-                            {time.startTime} - {time.endTime}
+            <div>
+              {pitchTypeList.map((item) => {
+                return (
+                  <div className="flex gap-4 mb-3">
+                    <div className="shrink-0">
+                      {item.name} - {item.type} - {item.description} (
+                      {item.pitch.length} sân)
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                      {item.timeSlot.map((time) => {
+                        return (
+                          <div className="border rounded-md px-3 py-2 text-sm bg-white">
+                            <div className="flex items-center justify-center gap-2">
+                              <FaRegClock />
+                              {time.startTime} - {time.endTime}
+                            </div>
+                            <div className="flex items-center justify-center gap-2">
+                              <PiMoneyLight />
+                              {formatCurrency(time.price)}
+                            </div>
                           </div>
-                          <div className="flex items-center justify-center gap-2">
-                            <PiMoneyLight />
-                            {formatCurrency(time.price)}
-                          </div>
-                        </div>
-                      );
-                    })}
+                        );
+                      })}
+                    </div>
                   </div>
-                </div>
-              );
-            })}
+                );
+              })}
+            </div>
           </div>
         </div>
       </div>

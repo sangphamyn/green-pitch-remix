@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { FaLongArrowAltRight } from "react-icons/fa";
 import { GoTrash } from "react-icons/go";
 import { LuClock } from "react-icons/lu";
@@ -57,7 +57,12 @@ const TimeComponent: React.FC<Props> = ({
       inputRefs4.current.value = e.currentTarget.textContent || "";
     setSpanText4(parseInt(e.currentTarget.textContent));
   };
-
+  useEffect(() => {
+    setSpanText1(hourStart);
+    setSpanText2(minuteStart);
+    setSpanText3(hourEnd);
+    setSpanText4(minuteEnd);
+  }, [hourStart]);
   return (
     <div className="flex">
       <div className="flex items-center flex-shrink-0 bg-slate-200 w-fit rounded px-3 mr-3">
@@ -486,7 +491,7 @@ const TimeComponent: React.FC<Props> = ({
         type="number"
         placeholder="Giá"
         name="timePrice"
-        defaultValue={price}
+        value={price}
         className="input input-bordered focus:border-primary focus-within:outline-none w-full"
       />
       <div
