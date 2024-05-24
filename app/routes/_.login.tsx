@@ -59,6 +59,13 @@ export async function action({ request }: ActionFunctionArgs) {
       message: message,
     });
   }
+  if (existUser?.role == 3) {
+    message["ban"] = "Tài khoản bị khóa";
+    return json({
+      status: "error",
+      message: message,
+    });
+  }
   let session = await getSession(request.headers.get("cookie"));
   session.set("userId", existUser.id.toString());
   session.set("name", existUser.name.toString());
@@ -192,6 +199,15 @@ function login() {
             Đăng nhập
           </button>
         </div>
+        {data?.message?.ban ? (
+          <div className="label pt-1 pb-0">
+            <span className="label-text-alt text-error">
+              {data.message.ban}
+            </span>
+          </div>
+        ) : (
+          <></>
+        )}
       </Form>
     </div>
   );

@@ -258,10 +258,10 @@ function AdminHome() {
                   <div className="flex-none w-2/3 max-w-full px-3">
                     <div>
                       <p className="mb-0 font-sans text-sm font-semibold leading-normal uppercase dark:text-white dark:opacity-60">
-                        Sales
+                        Số lượng đặt sân
                       </p>
                       <h5 className="mb-2 font-bold dark:text-white">
-                        $103,430
+                        {bookingList.length}
                       </h5>
                     </div>
                   </div>

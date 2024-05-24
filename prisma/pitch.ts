@@ -466,6 +466,7 @@ export const getBookingList2 = async (ownerId: number) => {
   try {
     const bookingList = await db.booking.findMany({
       where: {
+        status: 1,
         booking_timeSlot: {
           timeSlot_pitchType: {
             groupPitch: {
@@ -586,6 +587,27 @@ export const getUserList = async (roles?: number[]) => {
             },
           }
         : {},
+      include: {
+        groupPitches: true,
+      },
+    });
+    return userList;
+  } catch (error) {
+    console.error("Lỗi:", error);
+    throw error;
+  }
+};
+export const getUserList1 = async () => {
+  try {
+    const userList = await db.user.findMany({
+      where: {
+        groupPitches: {
+          some: {},
+        },
+      },
+      include: {
+        groupPitches: true,
+      },
     });
     return userList;
   } catch (error) {
@@ -656,6 +678,90 @@ export const getPitchList1 = async (ownerId: number, status?: number[]) => {
         : {},
     });
     return pitchList;
+  } catch (error) {
+    console.error("Lỗi:", error);
+    throw error;
+  }
+};
+export const setUserStatus = async (userId: number, status: number) => {
+  try {
+    const now = new Date();
+    now.setHours(now.getHours() + 7);
+    const user = await db.user.update({
+      where: {
+        id: userId,
+      },
+      data: {
+        role: status,
+      },
+    });
+    const currentDate = new Date();
+    const currentHours = currentDate.getHours();
+    const currentMinutes = currentDate.getMinutes();
+    const currentTime = `${currentHours
+      .toString()
+      .padStart(2, "0")}:${currentMinutes.toString().padStart(2, "0")}`;
+    const booking = await db.booking.updateMany({
+      where: {
+        id_user: userId,
+        date: {
+          gt: currentDate, // so sánh ngày trước hiện tại
+        },
+        booking_timeSlot: {
+          startTime: {
+            gt: currentTime, // so sánh endTime trước hiện tại
+          },
+        },
+      },
+      data: {
+        status: 2,
+        updatedAt: now,
+      },
+    });
+    const booking1 = await db.booking.updateMany({
+      where: {
+        booking_timeSlot: {
+          timeSlot_pitchType: {
+            groupPitch: {
+              ownerId: userId,
+            },
+          },
+          startTime: {
+            gt: currentTime,
+          },
+        },
+        date: {
+          gt: currentDate,
+        },
+      },
+      data: {
+        status: 2,
+        updatedAt: now,
+      },
+    });
+
+    if (status == 3) {
+      const groupPitch = await db.groupPitch.updateMany({
+        where: {
+          ownerId: userId,
+          status: 2,
+        },
+        data: {
+          status: 3,
+        },
+      });
+    } else {
+      const groupPitch = await db.groupPitch.updateMany({
+        where: {
+          ownerId: userId,
+          status: 3,
+        },
+        data: {
+          status: 2,
+        },
+      });
+    }
+    return booking1;
   } catch (error) {
     console.error("Lỗi:", error);
     throw error;

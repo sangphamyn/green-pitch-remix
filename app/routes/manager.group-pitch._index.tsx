@@ -207,8 +207,8 @@ function group_pitch() {
                     >
                       {pitch.status == 2
                         ? "Đã duyệt"
-                        : pitch.status == 0
-                        ? "Từ chối"
+                        : pitch.status == 0 || pitch.status == 3
+                        ? "Khóa"
                         : "Chưa duyệt"}
                     </div>
                     <Link

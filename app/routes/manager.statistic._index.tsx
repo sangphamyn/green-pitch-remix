@@ -178,6 +178,9 @@ function AdminHome() {
           display: true,
           text: "Số lượng đặt sân",
         },
+        ticks: {
+          stepSize: 1, // Điều chỉnh step của trục y
+        },
       },
     },
   };
