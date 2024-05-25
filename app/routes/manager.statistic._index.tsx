@@ -34,7 +34,13 @@ ChartJS.register(
   Tooltip,
   Legend
 );
-
+import {
+  subDays,
+  addDays,
+  eachDayOfInterval,
+  format,
+  parseISO,
+} from "date-fns";
 export let loader: LoaderFunction = async ({ request }) => {
   const userList = await getUserList(); // Lấy danh sách tất cả người dùng đã đăng ký
   let session = await getSession(request.headers.get("cookie"));
@@ -61,7 +67,6 @@ function AdminHome() {
   const pitchList = data.pitchList;
   const bookingList = data.bookingList;
   const bookingPrice = data.bookingPrice;
-  console.log(bookingPrice);
   let total = 0;
   bookingPrice.map((item: any) => {
     total += item.booking_timeSlot.price;
@@ -195,6 +200,74 @@ function AdminHome() {
       },
     },
   };
+  // console.log(bookingList);
+  const formatBookingDate = (isoDateString) => {
+    return format(parseISO(isoDateString), "yyyy-MM-dd");
+  };
+  const generateLabels = () => {
+    const startDate = subDays(new Date(), 14);
+    const endDate = addDays(new Date(), 14);
+    return eachDayOfInterval({ start: startDate, end: endDate }).map((date) =>
+      format(date, "yyyy-MM-dd")
+    );
+  };
+  const allBookings = [
+    { date: "2024-05-11", bookings: 5 },
+    { date: "2024-05-12", bookings: 8 },
+    { date: "2024-05-25", bookings: 10 },
+    { date: "2024-05-26", bookings: 7 },
+    { date: "2024-06-01", bookings: 3 },
+    { date: "2024-06-08", bookings: 7 },
+    { date: "2024-06-09", bookings: 10 },
+    // thêm các booking khác
+  ];
+
+  const labels = generateLabels();
+  labels[14] = "Hôm nay";
+  const bookingsData = labels.map((label) => {
+    const booking = bookingList.filter(
+      (b) => formatBookingDate(b.date) === label
+    );
+    return booking ? booking.length : 0;
+  });
+  console.log(bookingsData);
+  const chartData = {
+    labels,
+    datasets: [
+      {
+        label: "Số lượng đặt sân",
+        data: bookingsData,
+        borderColor: "rgba(75,192,192,1)",
+        backgroundColor: "rgba(75,192,192,0.2)",
+        fill: true,
+      },
+    ],
+  };
+
+  const options2 = {
+    responsive: true,
+    plugins: {
+      legend: {
+        position: "top",
+      },
+      title: {
+        display: true,
+        text: "Số lượng đặt sân theo từng ngày",
+      },
+    },
+    scales: {
+      y: {
+        beginAtZero: true,
+        title: {
+          display: true,
+          text: "Số lượng đặt sân",
+        },
+        ticks: {
+          stepSize: 1, // Điều chỉnh step của trục y
+        },
+      },
+    },
+  };
   return (
     <div className="bg-gray-100 min-h-screen">
       <div className="bg-blue-500 w-full h-52 flex justify-center shadow-lg shadow-blue-200">
@@ -305,6 +378,10 @@ function AdminHome() {
           <div className=" bg-white px-6 py-6 rounded-md">
             <h4>Tỉ lệ đặt theo giờ trong ngày</h4>
             <Bar data={data1} options={options1} />
+          </div>
+          <div className=" bg-white px-6 py-6 rounded-md">
+            <h4>Số lượng đặt sân từ 2 tuần trước tới 2 tuần tới</h4>
+            <Line data={chartData} options={options2} />
           </div>
         </div>
       </div>

@@ -284,6 +284,7 @@ export const getPitchTypeListByGroupPitchId = async (id: string) => {
             booking: {
               include: {
                 booking_user: true,
+                booking_timeSlot: true,
               },
             },
           },

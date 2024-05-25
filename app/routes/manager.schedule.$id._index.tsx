@@ -1,6 +1,11 @@
-import { LoaderFunction, LoaderFunctionArgs } from "@remix-run/node";
+import {
+  ActionFunctionArgs,
+  LoaderFunction,
+  LoaderFunctionArgs,
+} from "@remix-run/node";
 import { Form, Link, useLoaderData } from "@remix-run/react";
 import {
+  cancelBooking,
   getBookingList,
   getGroupPitchById,
   getGroupPitchByOwnerId,
@@ -48,7 +53,12 @@ export let loader: LoaderFunction = async ({
     page: searchParams.get("page") || 1,
   };
 };
-
+export async function action({ params, request }: ActionFunctionArgs) {
+  let formData = await request.formData();
+  const bookingId = formData.get("bookingId");
+  const booking = await cancelBooking(bookingId);
+  return null;
+}
 function schedule() {
   const data = useLoaderData<typeof loader>();
   const page = data.page;
@@ -342,7 +352,7 @@ function schedule() {
                     })}
                   </tbody>
                 </table>
-                {page == 1 && bookingList.length < 10 ? (
+                {page == 1 && bookingList.length < 15 ? (
                   ""
                 ) : (
                   <div className="w-full text-center">
@@ -412,6 +422,11 @@ function ChildComponent({ subData, timeSlot, minTime, maxTime, value }) {
               let booking = bookings.filter(
                 (a) => a.id_timeSlot == item.id && a.date == dateFormat(value)
               );
+              const startTime = booking[0]?.booking_timeSlot.endTime;
+              const endDate = new Date(booking[0]?.date);
+              endDate.setHours(parseInt(startTime?.split(":")[0]));
+              endDate.setMinutes(parseInt(startTime?.split(":")[1]));
+              const huy = new Date() < endDate;
               const nextItem =
                 index < array.length - 1 ? array[index + 1] : null;
               let timeEmpty = 0;
@@ -441,6 +456,23 @@ function ChildComponent({ subData, timeSlot, minTime, maxTime, value }) {
                       <>
                         <span>{booking[0]?.booking_user?.name}</span>
                         <span>{booking[0]?.booking_user?.phone}</span>
+                        {huy ? (
+                          <Form method="POST">
+                            <input
+                              type="hidden"
+                              name="bookingId"
+                              value={booking[0]?.id}
+                            ></input>
+                            <button
+                              name="huy"
+                              className="btn btn-warning btn-xs"
+                            >
+                              Huỷ
+                            </button>
+                          </Form>
+                        ) : (
+                          ""
+                        )}
                       </>
                     ) : (
                       ""
