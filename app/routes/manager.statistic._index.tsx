@@ -2,6 +2,7 @@ import { LoaderFunction } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 import {
   getBookingList2,
+  getBookingList4,
   getGroupPitchList,
   getPitchList,
   getPitchList1,
@@ -22,6 +23,7 @@ import {
   BarElement,
 } from "chart.js";
 import { getSession } from "~/session.server";
+import { formatCurrency } from "~/helper";
 ChartJS.register(
   CategoryScale,
   LinearScale,
@@ -47,7 +49,10 @@ export let loader: LoaderFunction = async ({ request }) => {
   const bookingList = await getBookingList2(
     parseInt(session.data.userId ? session.data.userId : "0")
   );
-  return { userList, groupPitchList, pitchList, bookingList };
+  const bookingPrice = await getBookingList4(
+    parseInt(session.data.userId ? session.data.userId : "0")
+  );
+  return { userList, groupPitchList, pitchList, bookingList, bookingPrice };
 };
 function AdminHome() {
   const data = useLoaderData<typeof loader>();
@@ -55,6 +60,12 @@ function AdminHome() {
   const groupPitchList = data.groupPitchList;
   const pitchList = data.pitchList;
   const bookingList = data.bookingList;
+  const bookingPrice = data.bookingPrice;
+  console.log(bookingPrice);
+  let total = 0;
+  bookingPrice.map((item: any) => {
+    total += item.booking_timeSlot.price;
+  });
   const count = [0, 0, 0, 0, 0, 0, 0];
 
   bookingList.map((booking: any, index: number) => {
@@ -269,10 +280,10 @@ function AdminHome() {
                   <div className="flex-none w-2/3 max-w-full px-3">
                     <div>
                       <p className="mb-0 font-sans text-sm font-semibold leading-normal uppercase dark:text-white dark:opacity-60">
-                        Sales
+                        Doanh thu (ước tính)
                       </p>
                       <h5 className="mb-2 font-bold dark:text-white">
-                        $103,430
+                        {formatCurrency(total)}
                       </h5>
                     </div>
                   </div>

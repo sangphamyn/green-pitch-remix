@@ -312,6 +312,12 @@ function schedule() {
                                   <div className="font-medium">
                                     {booking.booking_user.name}
                                   </div>
+                                  <span>
+                                    {booking.booking_timeSlot.startTime}-
+                                    {booking.booking_timeSlot.endTime}{" "}
+                                    {new Date(booking.date).getDate()}/
+                                    {new Date(booking.date).getMonth() + 1}
+                                  </span>
                                 </h6>
                                 {booking.status == 1 ? (
                                   <span className="py-1 px-2 text-[10px] rounded inline-flex items-center whitespace-nowrap text-center font-bold uppercase leading-none text-emerald-600 bg-emerald-200">

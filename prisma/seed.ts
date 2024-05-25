@@ -808,7 +808,7 @@ async function main() {
     return objects;
   }
   let data = [];
-  await generateRandomObjects(10)
+  await generateRandomObjects(100)
     .then((objects) => {
       data.push(objects);
       db.$disconnect();

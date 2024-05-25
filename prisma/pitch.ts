@@ -521,6 +521,39 @@ export const getBookingList3 = async () => {
     throw error;
   }
 };
+
+export const getBookingList4 = async (ownerId: number) => {
+  try {
+    const currentDate = new Date();
+    const currentHours = currentDate.getHours();
+    const currentMinutes = currentDate.getMinutes();
+    const currentTime = `${currentHours
+      .toString()
+      .padStart(2, "0")}:${currentMinutes.toString().padStart(2, "0")}`;
+    const booking = await db.booking.findMany({
+      where: {
+        status: 1,
+        date: {
+          lt: currentDate, // so sánh ngày trước hiện tại
+        },
+        booking_timeSlot: {
+          timeSlot_pitchType: {
+            groupPitch: {
+              id: ownerId,
+            },
+          },
+        },
+      },
+      include: {
+        booking_timeSlot: true,
+      },
+    });
+    return booking;
+  } catch (error) {
+    console.error("Lỗi:", error);
+    throw error;
+  }
+};
 export const getAllBookingListByUser = async (user: string | null) => {
   try {
     const bookingList = await db.booking.findMany({
